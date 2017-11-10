@@ -41,7 +41,7 @@ theme_fix <-   list(
   xlab(NULL), ylab(NULL),
   theme_void(),
   scale_y_continuous(expand = c(0,0), limits = c(0,1)),
-  theme(plot.margin = grid::unit(c(-2.7,-2.7,-2.9,-2.9), unit = "lines"),
+  theme(plot.margin = grid::unit(c(-2.8,-2.8,-3,-3), unit = "lines"),
         legend.position = "none",
         panel.background = element_blank(),
         panel.border = element_blank(),
