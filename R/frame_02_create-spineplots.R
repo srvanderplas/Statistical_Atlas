@@ -5,6 +5,27 @@ cols = c(brewer.pal(n = 12, name = "Paired")[c(1,3,5,7,9,11)], "grey80")
 #cols <- c("#ffcc80","#ff9900")
 #cols <- "#ccf2ff"
 
+theme_fix <-   list(
+  xlab(NULL), ylab(NULL),
+  theme_void(),
+  scale_y_continuous(expand = c(0,0), limits = c(0,1)),
+  theme(plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"),
+        legend.position = "none",
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        aspect.ratio = 1,
+        # probably overkill
+        line = element_blank(),
+        rect = element_blank(),
+        text = element_blank(),
+        title = element_blank())
+)
+
 colRGB <- t(col2rgb(cols))/256
 colMNSL <- rgb2mnsl(colRGB)
 colMNSL <- c(colMNSL,
@@ -15,7 +36,7 @@ colHEX <- mnsl(colMNSL)
 colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
 colHEX <- c(colHEX, "grey60")
 
-church <- read.csv("../../Data/denominations-1874.csv")
+church <- read.csv("data/denominations-1874.csv")
 cl <- church %>% gather(key = "Denomination",
                         value = "Number",
                         c(4:22, 26))
@@ -37,31 +58,32 @@ cl_data$data <- cl_data$data %>% purrr::map(.f = function(x) {
 
 cl_data <- cl_data %>% unnest()
 
+get_plots <- function(sub_data) {
+  sub_data <- sub_data %>% mutate(
+    group = factor(group),
+    group = reorder(group, -Number)
+  )
+  lvls <- levels(sub_data$group)
+  sub_data$group <- factor(sub_data$group,
+                           levels=c(c("Unaccommodated", "Other"),
+                                    rev(setdiff(lvls, c("Other", "Unaccommodated")))))
 
+  sub_data %>% arrange(desc(group)) %>%
+    ggplot() +
+    geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
+             position = "fill", colour="white", size=0.1,
+             width = 1) +
+    scale_fill_manual("Denomination", values = rev(colHEX)[-c(2:4)]) + coord_flip() +
+    geomnet::theme_net() +
+    theme(legend.position = "none") + ylab("") +
+    # ggtitle(state_name) +
+    theme_fix
+}
 
 createSpine <- function(data, state_name) {
   spine_df <- data %>% filter(STATEICP == state_name)
   if (nrow(spine_df) == 0) return()
 
-  get_plots <- function(sub_data) {
-    sub_data <- sub_data %>% mutate(
-      group = factor(group),
-      group = reorder(group, -Number)
-    )
-    lvls <- levels(sub_data$group)
-    sub_data$group <- factor(sub_data$group,
-                             levels=c(c("Unaccommodated", "Other"),
-                                      rev(setdiff(lvls, c("Other", "Unaccommodated")))))
-
-    sub_data %>% arrange(desc(group)) %>%
-      ggplot() +
-      geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
-               position = "fill", colour="white", size=0.1) +
-      scale_fill_manual("Denomination", values = rev(colHEX)[-c(2:4)]) + coord_flip() +
-      geomnet::theme_net() +
-      theme(legend.position = "none") + ylab("") +
-      ggtitle(state_name)
-  }
   plot2 <- spine_df %>% get_plots()
   scalars <- spine_df %>% mutate(
     type = group=="Unaccommodated"
@@ -89,7 +111,9 @@ createSpine <- function(data, state_name) {
     scale_fill_identity() +
     coord_flip() +
     geomnet::theme_net() +
-    ggtitle(state_name)
+    theme_fix +
+    scale_x_continuous(expand = c(0,0), limits = c(0,1))
+    # ggtitle(state_name)
   }
   list(plot1=plot1, plot2=plot2)
 }
@@ -109,7 +133,9 @@ purrr::map(1:length(lvls), function(k) {
   if (is.null(states[1])) return()
 
   print(states[1])
-  ggsave( filename = paste0("../test-images/", lvls[k],"-spine_with_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", lvls[k],"-spine_with_frame.png"),
+          width = 5, height = 5)
   print(states[2])
-  ggsave( filename = paste0("../test-images/", lvls[k],"-spine_without_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", lvls[k],"-spine_without_frame.png"),
+          width = 5, height = 5)
 })
