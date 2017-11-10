@@ -122,7 +122,9 @@ states$mosaics[[1]][2]
 purrr::map(1:nrow(states), function(k) {
   if (is.null(states$mosaics[[k]])) return()
   print(states$mosaics[[k]][1])
-  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_with_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_with_frame.png"),
+          width = 5, height = 5)
   print(states$mosaics[[k]][2])
-  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_without_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_without_frame.png"),
+          width = 5, height = 5)
 })
