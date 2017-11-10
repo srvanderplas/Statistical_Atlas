@@ -37,39 +37,61 @@ cl_data$data <- cl_data$data %>% purrr::map(.f = function(x) {
 
 cl_data <- cl_data %>% unnest()
 
+theme_fix <-   list(
+  xlab(NULL), ylab(NULL),
+  theme_void(),
+  scale_y_continuous(expand = c(0,0), limits = c(0,1)),
+  theme(plot.margin = grid::unit(c(-2.7,-2.7,-2.9,-2.9), unit = "lines"),
+        legend.position = "none",
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        aspect.ratio = 1,
+        # probably overkill
+        line = element_blank(),
+        rect = element_blank(),
+        text = element_blank(),
+        title = element_blank())
+)
+
+
+get_plots <- function(sub_data) {
+  sub_data <- sub_data %>% mutate(
+    group = factor(group),
+    group = reorder(group, -Number)
+  )
+  lvls <- levels(sub_data$group)
+  sub_data$group <- factor(sub_data$group,
+                           levels=c(c("Unaccommodated", "Other"),
+                                    rev(setdiff(lvls, c("Other", "Unaccommodated")))))
+  sub_data %>% arrange(desc(group)) %>%
+    ggplot() +
+    geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
+             position = "fill", colour="white", size=0.1,
+             width=1) +
+    scale_fill_manual("Denomination", values = rev(colHEX)[-c(2:4)]) +
+    geomnet::theme_net() +
+    theme_fix + coord_polar(theta="y")
+}
 
 
 createPie <- function(data, state_name) {
   spine_df <- data %>% filter(STATEICP == state_name)
   if (nrow(spine_df) == 0) return()
 
-  get_plots <- function(sub_data) {
-    sub_data <- sub_data %>% mutate(
-      group = factor(group),
-      group = reorder(group, -Number)
-    )
-    lvls <- levels(sub_data$group)
-    sub_data$group <- factor(sub_data$group,
-                             levels=c(c("Unaccommodated", "Other"),
-                                      rev(setdiff(lvls, c("Other", "Unaccommodated")))))
-    sub_data %>% arrange(desc(group)) %>%
-      ggplot() +
-      geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
-               position = "fill", colour="white", size=0.1,
-               width=1) +
-      scale_fill_manual("Denomination", values = rev(colHEX)[-c(2:4)]) +
-      geomnet::theme_net() +
-      theme(legend.position = "none") + ylab("") +
-      ggtitle(state_name) + coord_polar(theta="y")
-  }
   plot2 <- spine_df %>% get_plots()
   scalars <- spine_df %>% mutate(
     type = group=="Unaccommodated"
   ) %>% group_by(type) %>% summarize(
     Number = sum(Number, na.rm = TRUE)
   )
-  if (nrow(scalars)==1) plot1 <- plot2
-  else {
+  if (nrow(scalars)==1) {
+    plot1 <- plot2
+  } else {
   scalars$weight <- scalars$Number/sum(scalars$Number)
   scalars$weight[1] <- sqrt(scalars$weight[1])
   scalars$weight[2] <- 1 - scalars$weight[1]
@@ -87,7 +109,7 @@ createPie <- function(data, state_name) {
     coord_polar(theta="y") +
     scale_fill_identity() +
     geomnet::theme_net() +
-    ggtitle(state_name)
+    theme_fix
   }
   list(plot1=plot1, plot2=plot2)
 }
@@ -107,7 +129,9 @@ purrr::map(1:length(lvls), function(k) {
   if (is.null(states[1])) return()
 
   print(states[1])
-  ggsave( filename = paste0("../test-images/", lvls[k],"-pie_with_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", lvls[k],"-pie_with_frame.png"),
+          width = 5, height = 5)
   print(states[2])
-  ggsave( filename = paste0("../test-images/", lvls[k],"-pie_without_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", lvls[k],"-pie_without_frame.png"),
+          width = 5, height = 5)
 })
