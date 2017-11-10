@@ -27,9 +27,10 @@ getMosaic <- function(data) {
     coord_equal() +
     theme(axis.line=element_blank(), axis.text=element_blank(),
           axis.title.y = element_blank(), axis.ticks = element_blank()) +
-    ggtitle(state_name) +
+    # ggtitle(state_name) +
     xlab("") + geomnet::theme_net() +
-    theme(legend.position = "none")
+    theme(legend.position = "none",
+          plot.title = element_blank())
 }
 
 createPlots <- function(data = occ3, state_name = "Iowa") {
@@ -67,7 +68,7 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
     xlim(c(0,1)) +
     ylim(c(0,1)) +
     geomnet::theme_net() +
-    ggtitle(state_name)
+    theme(plot.title = element_blank())
 
   plot2 <- getMosaic(occ4)
 
