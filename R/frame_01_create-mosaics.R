@@ -31,7 +31,8 @@ getMosaic <- function(data) {
     labs(x=NULL,y=NULL) +
     geomnet::theme_net() +
     theme(legend.position = "none",
-          plot.title = element_blank())
+          plot.title = element_blank(),
+          plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"))
 }
 
 createPlots <- function(data = occ3, state_name = "Iowa") {
@@ -83,7 +84,8 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
     scale_y_continuous(expand=c(0,0), limits = c(0, 1)) +
     labs(x = NULL,y = NULL) +
     geomnet::theme_net() +
-    theme(plot.title = element_blank())
+    theme(plot.title = element_blank(),
+          plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"))
 
   ggp2 <- getMosaic(occ4)
   ggp2_df <- ggplot_build(ggp2)$data[[1]]
@@ -102,7 +104,8 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
     scale_y_continuous(expand=c(0,0), limits = c(0, 1)) +
     labs(x = NULL,y = NULL) +
     geomnet::theme_net() +
-    theme(plot.title = element_blank())
+    theme(plot.title = element_blank(),
+          plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"))
 
   list(plot1 = plot1, plot2 = plot2)
 }
