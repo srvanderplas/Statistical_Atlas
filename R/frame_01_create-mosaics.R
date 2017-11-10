@@ -28,16 +28,30 @@ getMosaic <- function(data) {
     theme(axis.line=element_blank(), axis.text=element_blank(),
           axis.title.y = element_blank(), axis.ticks = element_blank()) +
     # ggtitle(state_name) +
-    xlab("") + geomnet::theme_net() +
+    labs(x=NULL,y=NULL) +
+    geomnet::theme_net() +
     theme(legend.position = "none",
           plot.title = element_blank())
 }
 
 createPlots <- function(data = occ3, state_name = "Iowa") {
   occ4 <- occ3 %>% filter(State == Area.name, State == state_name)
+
+
+  # Force unaccounted to be female to match frame
+  occ4.unacc <- filter(occ4, Occupation == "Unaccounted")
+  occ4.other <- filter(occ4, Occupation != "Unaccounted")
+
+  occ4 <- bind_rows(
+    occ4.other,
+    occ4.unacc %>%
+      mutate(Number = sum(Number)) %>%
+      filter(Sex == "Female")
+  )
+
   if (nrow(occ4) == 0) return(NULL)
 
-    scalars <- occ4 %>%
+  scalars <- occ4 %>%
     mutate(frame = Occupation == "Unaccounted") %>%
     group_by(frame) %>%
     summarize(
@@ -49,7 +63,7 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
   scalars$weight[2] <- 1-scalars$weight[1]
 
   # make inside plot, then scale
-  ggp <- getMosaic(occ4 %>% filter(Occupation != "Unaccounted"))
+  ggp <- getMosaic(occ4.other %>% filter(Occupation != "Unaccounted"))
   ggp_df <- ggplot_build(ggp)$data[[1]] %>% mutate(
     xmin = xmin*scalars$weight[1] + scalars$weight[2]/2,
     xmax = xmax*scalars$weight[1] + scalars$weight[2]/2,
@@ -65,12 +79,30 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
               colour="grey85", size=0.1) +
     scale_fill_identity() +
     scale_alpha_identity() +
-    xlim(c(0,1)) +
-    ylim(c(0,1)) +
+    scale_x_continuous(expand=c(0,0), limits = c(0, 1)) +
+    scale_y_continuous(expand=c(0,0), limits = c(0, 1)) +
+    labs(x = NULL,y = NULL) +
     geomnet::theme_net() +
     theme(plot.title = element_blank())
 
-  plot2 <- getMosaic(occ4)
+  ggp2 <- getMosaic(occ4)
+  ggp2_df <- ggplot_build(ggp2)$data[[1]]
+
+  # plot2 <- getMosaic(occ4)
+
+  # This is ugly, but scale_x_product is getting in the way
+  # because it doesn't take expand=c(0,0)
+  plot2 <- ggp2_df %>% ggplot() +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50") +
+    geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
+              colour="grey85", size=0.1) +
+    scale_fill_identity() +
+    scale_alpha_identity() +
+    scale_x_continuous(expand=c(0,0), limits = c(0, 1)) +
+    scale_y_continuous(expand=c(0,0), limits = c(0, 1)) +
+    labs(x = NULL,y = NULL) +
+    geomnet::theme_net() +
+    theme(plot.title = element_blank())
 
   list(plot1 = plot1, plot2 = plot2)
 }
@@ -90,7 +122,7 @@ states$mosaics[[1]][2]
 purrr::map(1:nrow(states), function(k) {
   if (is.null(states$mosaics[[k]])) return()
   print(states$mosaics[[k]][1])
-  ggsave( filename = paste0("../test-images/", states$Area.name[k],"-mosaic_with_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_with_frame.png"))
   print(states$mosaics[[k]][2])
-  ggsave( filename = paste0("../test-images/", states$Area.name[k],"-mosaic_without_frame.png"))
+  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_without_frame.png"))
 })
