@@ -6,6 +6,27 @@ cols <- c(brewer.pal(5, "Dark2"), "grey50")
 library(ggmosaic)
 library(tidyverse)
 
+theme_fix <-   list(
+  xlab(NULL), ylab(NULL),
+  theme_void(),
+  scale_x_continuous(expand = c(0,0), limits = c(0,1)),
+  scale_y_continuous(expand = c(0,0), limits = c(0,1)),
+  theme(plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"),
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        aspect.ratio = 1,
+        # probably overkill
+        line = element_blank(),
+        rect = element_blank(),
+        text = element_blank(),
+        title = element_blank())
+)
+
 occ3 <- read.csv("data/occ3.csv")
 occ3 <- occ3 %>% mutate(
   Occupation = factor(Occupation, levels =
@@ -28,11 +49,8 @@ getMosaic <- function(data) {
     theme(axis.line=element_blank(), axis.text=element_blank(),
           axis.title.y = element_blank(), axis.ticks = element_blank()) +
     # ggtitle(state_name) +
-    labs(x=NULL,y=NULL) +
     geomnet::theme_net() +
-    theme(legend.position = "none",
-          plot.title = element_blank(),
-          plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"))
+    theme(legend.position = "none")
 }
 
 createPlots <- function(data = occ3, state_name = "Iowa") {
@@ -80,12 +98,7 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
               colour="grey85", size=0.1) +
     scale_fill_identity() +
     scale_alpha_identity() +
-    scale_x_continuous(expand=c(0,0), limits = c(0, 1)) +
-    scale_y_continuous(expand=c(0,0), limits = c(0, 1)) +
-    labs(x = NULL,y = NULL) +
-    geomnet::theme_net() +
-    theme(plot.title = element_blank(),
-          plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"))
+    theme_fix
 
   ggp2 <- getMosaic(occ4)
   ggp2_df <- ggplot_build(ggp2)$data[[1]]
@@ -100,12 +113,7 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
               colour="grey85", size=0.1) +
     scale_fill_identity() +
     scale_alpha_identity() +
-    scale_x_continuous(expand=c(0,0), limits = c(0, 1)) +
-    scale_y_continuous(expand=c(0,0), limits = c(0, 1)) +
-    labs(x = NULL,y = NULL) +
-    geomnet::theme_net() +
-    theme(plot.title = element_blank(),
-          plot.margin = grid::unit(c(0,0,-.2,-.2), unit = "lines"))
+    theme_fix
 
   list(plot1 = plot1, plot2 = plot2)
 }
