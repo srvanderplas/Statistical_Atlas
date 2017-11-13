@@ -90,8 +90,9 @@ createSpine <- function(data, state_name) {
   ) %>% group_by(type) %>% summarize(
     Number = sum(Number, na.rm = TRUE)
   )
-  if (nrow(scalars)==1) plot1 <- plot2
-  else {
+  if (nrow(scalars)==1) {
+    plot1 <- plot2
+  } else {
   scalars$weight <- scalars$Number/sum(scalars$Number)
   scalars$weight[1] <- sqrt(scalars$weight[1])
   scalars$weight[2] <- 1 - scalars$weight[1]
@@ -125,17 +126,71 @@ states <- createSpine(data = cl_data, state_name = "Florida")
 states[1]
 states[2]
 
+#########
+# Read in plot annotation info
 
+plotlabs <- read.csv("data/PlotLabels.csv", stringsAsFactors = F) %>%
+  filter(Type == "spine") %>%
+  group_by(State, Frame) %>%
+  mutate(num = 1:n()) %>%
+  ungroup() %>%
+  filter(Frame)
+
+
+add_spineplot_label <- function(plot, fill, label = "A", frame = F) {
+  pb <- ggplot_build(plot)
+
+  ldf <- data_frame(fill = fill, label = label) %>%
+    left_join(bind_rows(pb$data)) %>%
+    unique() %>%
+    filter(ymin != ymax) %>%
+    mutate(
+      ylab = (ymin + ymax)/2,
+      xlab = (xmin + xmax)/2
+    )
+
+  if (frame) {
+    ldf$ylab <- 1
+    ldf$xlab <- 1
+    plot +
+      annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold", hjust = 1, vjust = 1)
+  } else {
+    plot +
+      annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold")
+  }
+
+}
 # save plots in folder
 lvls <- unique(cl_data$STATEICP)
+
+# Save all plots
 purrr::map(1:length(lvls), function(k) {
   states <- createSpine(data = cl_data, state_name = lvls[k])
   if (is.null(states[1])) return()
 
-  print(states[1])
-  ggsave( filename = paste0("inst/test-images/", lvls[k],"-spine_with_frame.png"),
+  states[1]$plot1
+  ggsave( filename = paste0("inst/all-images/", lvls[k],
+                            "-spine_with_frame", ".png"),
           width = 5, height = 5)
-  print(states[2])
-  ggsave( filename = paste0("inst/test-images/", lvls[k],"-spine_without_frame.png"),
+  states[2]$plot2
+  ggsave( filename = paste0("inst/all-images/", lvls[k],
+                            "-spine_without_frame", ".png"),
+          width = 5, height = 5)
+})
+
+# Save labeled test plots
+purrr::map(1:nrow(plotlabs), function(k) {
+  states <- createSpine(data = cl_data, state_name = plotlabs$State[k])
+  if (is.null(states[1])) return()
+
+  p <- states[1]$plot1
+  add_spineplot_label(p, fill = plotlabs$fill[k], label = "A", frame = plotlabs$isFrame[k])
+  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+                            "-spine_with_frame", plotlabs$num[k], ".png"),
+          width = 5, height = 5)
+  p <- states[2]$plot2
+  add_spineplot_label(p, fill = plotlabs$fill[k], label = "A", frame = F)
+  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+                            "-spine_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
 })
