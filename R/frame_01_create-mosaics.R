@@ -129,13 +129,78 @@ states$mosaics <- purrr::map2(
 states$mosaics[[1]][1]
 states$mosaics[[1]][2]
 
+
+#########
+# Read in plot annotation info
+
+plotlabs <- read.csv("data/PlotLabels.csv", stringsAsFactors = F) %>%
+  filter(Type == "mosaic") %>%
+  group_by(State, Frame) %>%
+  mutate(num = 1:n()) %>%
+  ungroup() %>%
+  filter(Frame) %>%
+  left_join(states, by = c("State" = "Area.name"))
+
+
+add_mosaicplot_label <- function(plot, fill, label = "A", alpha = 1, frame = F) {
+  pb <- ggplot_build(plot)
+
+  ldf <- if(grepl(fill, "grey")) {
+    data_frame(fill = fill, label = label, alpha = NA)
+  } else {
+    data_frame(fill = fill, label = label, alpha = alpha)
+  }
+
+  ldf <- ldf %>%
+    left_join(bind_rows(pb$data)) %>%
+    unique() %>%
+    mutate(
+      ylab = (ymin + ymax)/2,
+      xlab = (xmin + xmax)/2
+    )
+
+  if (frame) {
+    ldf$ylab <- 1
+    ldf$xlab <- 1
+    plot +
+      annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold", hjust = 1, vjust = 1)
+  } else {
+    plot +
+      annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold")
+  }
+
+}
+
+
 # save plots in folder
 purrr::map(1:nrow(states), function(k) {
   if (is.null(states$mosaics[[k]])) return()
   print(states$mosaics[[k]][1])
-  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_with_frame.png"),
+  ggsave( filename = paste0("inst/all-images/", states$Area.name[k],"-mosaic_with_frame.png"),
           width = 5, height = 5)
   print(states$mosaics[[k]][2])
-  ggsave( filename = paste0("inst/test-images/", states$Area.name[k],"-mosaic_without_frame.png"),
+  ggsave( filename = paste0("inst/all-images/", states$Area.name[k],"-mosaic_without_frame.png"),
+          width = 5, height = 5)
+})
+
+# save annotated plots
+
+purrr::map(1:nrow(plotlabs), function(k) {
+  print(k)
+  if (is.null(plotlabs$mosaics[[k]])) return()
+
+  p <- plotlabs$mosaics[[k]][1]$plot1
+  add_mosaicplot_label(p, fill = plotlabs$fill[k], label = "A",
+                       alpha = plotlabs$alpha[k],
+                       frame = plotlabs$isFrame[k])
+  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+                            "-mosaic_with_frame", plotlabs$num[k], ".png"),
+          width = 5, height = 5)
+  p <- plotlabs$mosaics[[k]][2]$plot2
+  add_mosaicplot_label(p, fill = plotlabs$fill[k], label = "A",
+                       alpha = plotlabs$alpha[k],
+                       frame = F)
+  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+                            "-mosaic_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
 })
