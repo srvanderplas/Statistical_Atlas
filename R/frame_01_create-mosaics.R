@@ -108,7 +108,8 @@ createPlots <- function(data = occ3, state_name = "Iowa") {
   # This is ugly, but scale_x_product is getting in the way
   # because it doesn't take expand=c(0,0)
   plot2 <- ggp2_df %>% ggplot() +
-    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50") +
+#    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50") +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="white") +
     geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
               colour="grey85", size=0.1) +
     scale_fill_identity() +
