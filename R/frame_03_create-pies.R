@@ -15,7 +15,7 @@ colHEX <- mnsl(colMNSL)
 colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
 colHEX <- c(colHEX, "grey60")
 
-church <- read.csv("../../Data/denominations-1874.csv")
+church <- read.csv("data/denominations-1874.csv")
 cl <- church %>% gather(key = "Denomination",
                         value = "Number",
                         c(4:22, 26))
@@ -172,7 +172,7 @@ add_piechart_label <- function(plot, fill, label = "A", frame = F) {
 
 }
 # Save labeled test plots
-purrr::map(1:nrow(plotlabs), function(k) {
+plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
   states <- createPie(data = cl_data, state_name = plotlabs$State[k])
   if (is.null(states[1])) return()
 
@@ -186,4 +186,16 @@ purrr::map(1:nrow(plotlabs), function(k) {
   ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
                             "-pie_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
+  states
 })
+
+
+# get percentages out of plots
+plotlabs$perc <- purrr::map_dbl(1:nrow(plotlabs), function(k) {
+  if (is.null(plotlabs$states[[k]])) return()
+
+  d <- ggplot_build(plotlabs$states[[k]][2]$plot2)[[1]][[1]]
+  d$perc <- d$count/sum(d$count)
+  filter(d,fill==plotlabs$fill[k])$perc*100
+})
+write.csv(plotlabs %>% select(-states), file="pies.csv", row.names=FALSE)

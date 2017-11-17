@@ -187,7 +187,6 @@ purrr::map(1:nrow(states), function(k) {
 # save annotated plots
 
 purrr::map(1:nrow(plotlabs), function(k) {
-  print(k)
   if (is.null(plotlabs$mosaics[[k]])) return()
 
   p <- plotlabs$mosaics[[k]][1]$plot1
@@ -205,3 +204,15 @@ purrr::map(1:nrow(plotlabs), function(k) {
                             "-mosaic_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
 })
+
+
+
+# get percentages out of plots
+plotlabs$perc <- purrr::map_dbl(1:nrow(plotlabs), function(k) {
+  if (is.null(plotlabs$mosaics[[k]])) return()
+
+  d <- plotlabs$mosaics[[k]][2]$plot2[[1]]
+  d$perc <- d$.wt/sum(d$.wt)
+  filter(d,fill==plotlabs$fill[k], alpha==plotlabs$alpha[k])$perc*100
+})
+write.csv(plotlabs %>% select(-data, -mosaics), file="mosaics.csv", row.names=FALSE)

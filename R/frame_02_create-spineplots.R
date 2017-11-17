@@ -178,8 +178,9 @@ purrr::map(1:length(lvls), function(k) {
           width = 5, height = 5)
 })
 
+
 # Save labeled test plots
-purrr::map(1:nrow(plotlabs), function(k) {
+plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
   states <- createSpine(data = cl_data, state_name = plotlabs$State[k])
   if (is.null(states[1])) return()
 
@@ -193,4 +194,15 @@ purrr::map(1:nrow(plotlabs), function(k) {
   ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
                             "-spine_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
+  states
 })
+
+# get percentages out of plots
+plotlabs$perc <- purrr::map_dbl(1:nrow(plotlabs), function(k) {
+  if (is.null(plotlabs$states[[k]])) return()
+#browser()
+  d <- ggplot_build(plotlabs$states[[k]][2]$plot2)[[1]][[1]]
+  d$perc <- d$count/sum(d$count)
+  filter(d,fill==plotlabs$fill[k])$perc*100
+})
+write.csv(plotlabs %>% select(-states), file="spines.csv", row.names=FALSE)
