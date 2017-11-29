@@ -1,20 +1,12 @@
-responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 16, 2017_23.19.csv")
+responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 20, 2017_14.35.csv")
 
-firstclicks <- responses %>% select(ResponseId, contains("First.Click")) %>% gather(clicks, when, contains("First.Click"))
-firstclicks <- firstclicks %>% mutate(when = as.numeric(when))
 
-firstclicks %>% ggplot(aes(x=ResponseId, y=when)) + geom_point() + coord_flip()
 
 percentages <- responses %>% select(IPAddress, ResponseId, grep("Q...$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."))
 percentages$howmuch <- as.numeric(percentages$howmuch)
 
 percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) + geom_point() + coord_flip()
 percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
-percs <- percentages %>% select(-IPAddress) %>% spread(ResponseId, howmuch)
-
-cor(percs[,3:10], use = "pairwise.complete")
-percs %>% ggplot(aes(x = R_2abkkkeQ2FPqoXD, y=R_2YfEpIfXw8WPYn3)) + geom_point()
-percs %>% ggplot(aes(x = R_2WVDySUTNc67XPB, y=R_3KJ8VQluGLaNCT0)) + geom_point()
 
 pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels.csv")
 percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
@@ -25,3 +17,65 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   facet_grid(Frame~Type, labeller="label_both") +
   xlab("Actual Value") +
   ylab("Estimated Value") 
+
+
+percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
+  geom_abline() +
+  geom_point(aes(shape=isFrame, colour=isFrame)) +
+  geom_line(aes(group=ResponseId)) +
+  facet_grid(Frame~Type, labeller="label_both") +
+  xlab("Actual Value") +
+  ylab("Estimated Value") 
+
+#####################
+percentages <- percentages %>% filter(howmuch < 75) %>% na.omit() %>% mutate(
+  rel.error = (howmuch-perc)/perc,
+  diff.error = howmuch-perc
+)
+
+percentages$frameframe <- 0
+percentages <- percentages %>% mutate(
+  frameframe = replace(frameframe, Frame & !isFrame, 1),
+  frameframe = replace(frameframe, Frame & isFrame, 2)
+)
+percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
+percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame")) 
+
+percentages %>% 
+  ggplot(aes(x = perc, y = diff.error)) + geom_point() +
+  facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
+
+error0 <- lm(diff.error ~ perc*Frame, data = percentages)
+
+percentages %>% 
+  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
+  facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
+
+error1 <- lm(diff.error ~ perc*frameframe, data = percentages)
+anova(error0, error1)
+summary(error1)
+
+percentages %>% 
+  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
+  facet_grid(Type~Frame, labeller="label_both") + geom_smooth(method="lm") 
+
+error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
+anova(error1, error2)
+summary(error2)
+
+
+m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
+
+
+#####################
+
+firstclicks <- responses %>% select(ResponseId, contains("First.Click")) %>% gather(clicks, when, contains("First.Click"))
+firstclicks <- firstclicks %>% mutate(when = as.numeric(when))
+
+firstclicks %>% ggplot(aes(x=ResponseId, y=when)) + geom_point() + coord_flip()
+
+percs <- percentages %>% select(-IPAddress) %>% spread(ResponseId, howmuch)
+
+cor(percs[,3:10], use = "pairwise.complete")
+percs %>% ggplot(aes(x = R_2abkkkeQ2FPqoXD, y=R_2YfEpIfXw8WPYn3)) + geom_point()
+percs %>% ggplot(aes(x = R_2WVDySUTNc67XPB, y=R_3KJ8VQluGLaNCT0)) + geom_point()
