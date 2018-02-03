@@ -12,7 +12,7 @@ output:
 ```{r data, echo=FALSE, eval=FALSE, message = FALSE, warning=FALSE}
 library(tidyverse)
 
-responses <- read.csv("../analysis/Frame Study - Pics_January 24, 2018_07.40.csv")
+responses <- read.csv("../analysis/Frame Study - Pics_February 3, 2018_13.57 2.csv")
 responses <- responses[-(1:2),]
 responses <- responses %>% rename(
   Age=Q56, 
@@ -23,7 +23,7 @@ responses <- responses %>% rename(
 percentages <- responses %>% select(IPAddress, ResponseId,  grep("Q...$", names(responses), value=TRUE), grep("Q..$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."), matches("Q.."))
 percentages$howmuch <- as.numeric(percentages$howmuch)
 
-pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels.csv")
+pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels-Pilot.csv")
 percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
 
 # introduce relative and absolute error
@@ -44,6 +44,7 @@ percentages <- percentages %>% mutate(
 )
 percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
 percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame")) 
+write.csv(percentages, "../data/pilotstudy-results.csv", row.names=FALSE)
 ```
 
 ```{r data-new, echo=FALSE, message=FALSE}

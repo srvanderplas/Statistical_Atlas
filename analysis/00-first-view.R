@@ -1,5 +1,5 @@
 #responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 20, 2017_14.35.csv")
-responses <- read.csv("analysis/Frame Study - Pics_January 24, 2018_07.40.csv")
+responses <- read.csv("analysis/Frame Study - Pics_February 3, 2018_13.57 2.csv")
 responses <- responses[-(1:2),]
 library(tidyverse)
 responses <- responses %>% rename(
@@ -15,7 +15,7 @@ percentages$howmuch <- as.numeric(percentages$howmuch)
 percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) + geom_point() + coord_flip()
 percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
 
-pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels.csv")
+pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels-Pilot.csv")
 percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
 
 percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
