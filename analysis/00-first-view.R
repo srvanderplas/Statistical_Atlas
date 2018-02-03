@@ -1,8 +1,15 @@
-responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 20, 2017_14.35.csv")
+#responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 20, 2017_14.35.csv")
+responses <- read.csv("analysis/Frame Study - Pics_January 24, 2018_07.40.csv")
+responses <- responses[-(1:2),]
+library(tidyverse)
+responses <- responses %>% rename(
+  Age=Q56, 
+  Gender = Q520,
+  Education=Q524
+  )
 
 
-
-percentages <- responses %>% select(IPAddress, ResponseId, grep("Q...$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."))
+percentages <- responses %>% select(IPAddress, ResponseId,  grep("Q...$", names(responses), value=TRUE), grep("Q..$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."), matches("Q.."))
 percentages$howmuch <- as.numeric(percentages$howmuch)
 
 percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) + geom_point() + coord_flip()
@@ -16,7 +23,11 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   geom_point(aes(shape=isFrame, colour=isFrame)) +
   facet_grid(Frame~Type, labeller="label_both") +
   xlab("Actual Value") +
-  ylab("Estimated Value") 
+  ylab("Estimated Value") +
+  theme_bw() +
+  scale_colour_brewer("Frame piece estimate", palette="Set1") +
+  scale_shape_discrete("Frame piece estimate") +
+  theme(legend.position="bottom")
 
 
 percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
@@ -63,7 +74,7 @@ error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
 anova(error1, error2)
 summary(error2)
 
-
+library(lme4)
 m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 
 

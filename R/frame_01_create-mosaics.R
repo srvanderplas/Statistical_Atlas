@@ -206,6 +206,17 @@ purrr::map(1:nrow(plotlabs), function(k) {
 })
 
 
+# save small version of annotated plots
+
+setwd("inst/test-images/")
+files <- dir()
+files <- grep("mosaic", files, value = TRUE)
+files <- grep("Nevada", files, value=TRUE) # just for now
+files %>% lapply(FUN = function(x) {
+  saveas <- file.path("../test-images-small", x)
+  system(sprintf("convert %s -resize 300x300 %s", x, saveas))
+})
+setwd("../..")
 
 # get percentages out of plots
 plotlabs$perc <- purrr::map_dbl(1:nrow(plotlabs), function(k) {
