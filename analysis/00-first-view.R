@@ -1,5 +1,7 @@
 #responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 20, 2017_14.35.csv")
-responses <- read.csv("analysis/Frame Study - Pics_February 3, 2018_13.57 2.csv")
+
+read_and_clean <- function(file) {
+responses <- read.csv(file)
 responses <- responses[-(1:2),]
 library(tidyverse)
 responses <- responses %>% rename(
@@ -7,36 +9,24 @@ responses <- responses %>% rename(
   Gender = Q520,
   Education=Q524
   )
-
+responses <- filter(responses, Finished=="True")
 
 percentages <- responses %>% select(IPAddress, ResponseId,  grep("Q...$", names(responses), value=TRUE), grep("Q..$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."), matches("Q.."))
 percentages$howmuch <- as.numeric(percentages$howmuch)
+percentages <- percentages %>% filter(howmuch > 0)
+percentages <- percentages %>% filter(howmuch < 100)
+idx <- which(percentages$howmuch < 1)
+percentages$howmuch[idx] <- percentages$howmuch[idx]*100
 
-percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) + geom_point() + coord_flip()
+
 percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
 
-pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels-Pilot.csv")
+pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels.csv")
 percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
 
-percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
-  geom_abline() +
-  geom_point(aes(shape=isFrame, colour=isFrame)) +
-  facet_grid(Frame~Type, labeller="label_both") +
-  xlab("Actual Value") +
-  ylab("Estimated Value") +
-  theme_bw() +
-  scale_colour_brewer("Frame piece estimate", palette="Set1") +
-  scale_shape_discrete("Frame piece estimate") +
-  theme(legend.position="bottom")
 
 
-percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
-  geom_abline() +
-  geom_point(aes(shape=isFrame, colour=isFrame)) +
-  geom_line(aes(group=ResponseId)) +
-  facet_grid(Frame~Type, labeller="label_both") +
-  xlab("Actual Value") +
-  ylab("Estimated Value") 
+
 
 #####################
 percentages <- percentages %>% filter(howmuch < 75) %>% na.omit() %>% mutate(
@@ -51,7 +41,34 @@ percentages <- percentages %>% mutate(
 )
 percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
 percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame")) 
+percentages
+}
 
+amazon <- read_and_clean("analysis/Frame Study - Amazon_February 9, 2018_13.18.csv")
+reddit <- read_and_clean("analysis/Frame Study - reddit-final.csv")
+amazon$source <- "amazon"
+reddit$source <- "reddit"
+percentages <- rbind(amazon, reddit)
+
+percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) + 
+  geom_point() + coord_flip() +
+  facet_grid(.~source)
+
+
+percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
+  geom_abline() +
+  geom_point(aes(shape=isFrame, colour=isFrame)) +
+  facet_grid(Frame~Type, labeller="label_both") +
+  xlab("Actual Value") +
+  ylab("Estimated Value") +
+  theme_bw() +
+  scale_colour_brewer("Frame piece estimate", palette="Set1") +
+  scale_shape_discrete("Frame piece estimate") +
+  theme(legend.position="bottom") +
+  facet_grid(.~source)
+
+
+ 
 percentages %>% 
   ggplot(aes(x = perc, y = diff.error)) + geom_point() +
   facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
