@@ -703,25 +703,25 @@ popmap <- left_join(map1870, cl, by=c("name"="State")) %>% filter(lat <= 50)
 popmap$jitters1 <- round(popmap$Number/10000,0)
 popmap$jitters2 <- round((popmap$Number %% 10000)/1000,0)
 popmap$jitters3 <- round((popmap$Number %% 1000)/100,0)
-popmap %>% filter(!is.na(Number)) %>%
+
+popmap %>%
+  filter(!is.na(Number), terr_type != "District of Columbia") %>%
   ggplot(aes(x = long, y = lat)) +
-     geom_polygon(aes(group = region, fill=Number), color="white", size=0.1) +
-#   geom_polygon(aes(group = region, fill=terr_type), color="white", size=0.1) +
-#   stat_polygon_jitter(aes(long = long, lat = lat, group = region,
-#                           mapgroup = state_name, n = jitters1,
-#                            size="a", colour="a")) +
-#   stat_polygon_jitter(aes(long = long, lat = lat, group = region,
-#                           mapgroup = group, n = jitters2,
-#                            size="b", colour="b")) +
-#   stat_polygon_jitter(aes(long = long, lat = lat, group = region,
-#                           mapgroup = group, n = jitters3,
-#                            size = "c", colour="c")) +
+    geom_polygon(aes(group = region, fill=terr_type), color="white", size=0.1) +
+    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+                            mapgroup = region, n = jitters1,
+                            size="a", colour="a")) +
+   stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+                           mapgroup = region, n = jitters2,
+                            size="b", colour="b")) +
+   stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+                           mapgroup = region, n = jitters3,
+                            size = "c", colour="c")) +
    ggthemes::theme_map() + facet_wrap(~Denomination, ncol = 4) +
   scale_colour_manual( "Population:", values=colHEX[3:1], labels=c("10,000","1,000", "100")) +
-#  scale_fill_manual(values=c("grey85", "grey95", "white")) +
+  scale_fill_manual("Type", values=c("grey85", "grey95")) +
   theme(legend.position="top") +
-  scale_size_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18)) #+
-#  scale_alpha_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18))
+  scale_size_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18)) 
 @
 
 
