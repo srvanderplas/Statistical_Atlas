@@ -54,7 +54,7 @@
 
 \begin{document}
 
-%\bibliographystyle{natbib}
+\bibliographystyle{plain}
 
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
@@ -565,9 +565,9 @@ p +  geom_text(aes(label = label, x = (xmin+xmax)/2), angle = 90, size =5, colou
 \caption{Panels from three states: Michigan, Minnesota, and Mississippi.\label{orig-state-plots-church}}
 \end{figure}
 
-\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot-1} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
+\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
 
-<<state-church-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = "\\columnwidth", fig.cap = "State religious accommodation plots generated with the \texttt{ggplot2} package\\cite{ggplot2}.">>=
+<<state-church-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = "\\columnwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\cite{ggplot2}.">>=
 
 p <- cl %>%
   filter(State %in% c("Michigan", "Minnesota", "Mississippi"), Number > 0) %>%
@@ -654,70 +654,70 @@ cl %>%
 
 The re-imagined church accomodation plots provide the ability to make comparisons between states, but there is one obvious ingredient which is still missing: geographic context. \autoref{fig:map} shows the geographic distribution of church accomodations; this spatial information allows us to see that the mormon church is highly localized geographically, while the Methodist church is relatively popular across most of the country.
  Numbers of unaccommodation population are -- not surprisingly -- particularly high in the new territories, with the exception of New Mexico.
-%
-% \autoref{fig:map} is an example for a density dot map. The location of the dots within each state is random, but the number of the dots within each state is proportional to the population. Density maps are not new - some of the first examples appear in the Statistical Atlas accompanying the tenth US census of 1880\cite{atlas1883}.\
-%
-% The Statistical Atlases of 1880 and 1890 pick up the theme of religious affiliation again and provide an overview similar to \autoref{fig:map} that shows the geographic strength of the most common denominations. These maps are accompanied by bar charts showing the proportion of individuals in each state who identify with each denomination, providing a very nice picture of the religious affiliations of the residents of the United States.
-%
-% %%% Insert map stuff here!
-% \begin{figure*}
-% \centering
-% \includegraphics[width=\textwidth]{figure/denominations-map-1}
-% \caption{Density dot maps of geographic expansion of religious sittings by denomination. \label{fig:map}}
-% \end{figure*}
-%
-% <<denominations-map, cache=TRUE, include=F, fig.width=8, fig.height = 9, echo=FALSE>>=
-% map_states <- us_boundaries("1870-01-01", type = "state", resolution="low")
-% polys  <- st_geometry(map_states)
-%
-% map1870 <- data.frame(map_states)
-% map1870$poly_df <- polys %>% purrr::map(.f = function(x) {
-%   group = 1
-%   xlist <- x %>% purrr::map_df(.f = function(y) {
-%     tmp <- as.data.frame(y)
-%     names(tmp) <- c("long", "lat")
-%     tmp$order <- 1:nrow(tmp)
-%     tmp$group <- group
-%     group <<- group+1
-%     tmp
-%   })
-%
-%   xlist
-% })
-% map1870 <- map1870 %>% unnest(poly_df)
-% map1870$region <- paste0(map1870$state_abbr, "-", map1870$group)
-% #map1870$Territory <- map1870$terr_type
-% #map1870$Parts <- c("Territory", "State")[is.na(map1870$Territory)+1]
-%
-%
-%
-% cl$State <- as.character(cl$State)
-% cl$Denomination <- factor(cl$Denomination, levels=rev(levels(cl$Denomination)))
-% popmap <- left_join(map1870, cl, by=c("name"="State")) %>% filter(lat <= 50)
-%
-% popmap$jitters1 <- round(popmap$Number/10000,0)
-% popmap$jitters2 <- round((popmap$Number %% 10000)/1000,0)
-% popmap$jitters3 <- round((popmap$Number %% 1000)/100,0)
-%
-% popmap %>%
-%   filter(!is.na(Number), terr_type != "District of Columbia") %>%
-%   ggplot(aes(x = long, y = lat)) +
-%     geom_polygon(aes(group = region, fill=terr_type), color="white", size=0.1) +
-%     stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
-%                             mapgroup = region, n = jitters1,
-%                             size="a", colour="a")) +
-%    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
-%                            mapgroup = region, n = jitters2,
-%                             size="b", colour="b")) +
-%    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
-%                            mapgroup = region, n = jitters3,
-%                             size = "c", colour="c")) +
-%    ggthemes::theme_map() + facet_wrap(~Denomination, ncol = 4) +
-%   scale_colour_manual( "Population:", values=colHEX[3:1], labels=c("10,000","1,000", "100")) +
-%   scale_fill_manual("Type", values=c("grey85", "grey95")) +
-%   theme(legend.position="top") +
-%   scale_size_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18))
-% @
+
+\autoref{fig:map} is an example for a density dot map. The location of the dots within each state is random, but the number of the dots within each state is proportional to the population. Density maps are not new - some of the first examples appear in the Statistical Atlas accompanying the tenth US census of 1880\cite{atlas1883}.\
+
+The Statistical Atlases of 1880 and 1890 pick up the theme of religious affiliation again and provide an overview similar to \autoref{fig:map} that shows the geographic strength of the most common denominations. These maps are accompanied by bar charts showing the proportion of individuals in each state who identify with each denomination, providing a very nice picture of the religious affiliations of the residents of the United States.
+
+%%% Insert map stuff here!
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{figure/denominations-map-1}
+\caption{Density dot maps of geographic expansion of religious sittings by denomination. \label{fig:map}}
+\end{figure*}
+
+<<denominations-map, cache=TRUE, include=F, fig.width=8, fig.height = 9, echo=FALSE>>=
+map_states <- us_boundaries("1870-01-01", type = "state", resolution="low")
+polys  <- st_geometry(map_states)
+
+map1870 <- data.frame(map_states)
+map1870$poly_df <- polys %>% purrr::map(.f = function(x) {
+  group = 1
+  xlist <- x %>% purrr::map_df(.f = function(y) {
+    tmp <- as.data.frame(y)
+    names(tmp) <- c("long", "lat")
+    tmp$order <- 1:nrow(tmp)
+    tmp$group <- group
+    group <<- group+1
+    tmp
+  })
+
+  xlist
+})
+map1870 <- map1870 %>% unnest(poly_df)
+map1870$region <- paste0(map1870$state_abbr, "-", map1870$group)
+#map1870$Territory <- map1870$terr_type
+#map1870$Parts <- c("Territory", "State")[is.na(map1870$Territory)+1]
+
+
+
+cl$State <- as.character(cl$State)
+cl$Denomination <- factor(cl$Denomination, levels=rev(levels(cl$Denomination)))
+popmap <- left_join(map1870, cl, by=c("name"="State")) %>% filter(lat <= 50)
+
+popmap$jitters1 <- round(popmap$Number/10000,0)
+popmap$jitters2 <- round((popmap$Number %% 10000)/1000,0)
+popmap$jitters3 <- round((popmap$Number %% 1000)/100,0)
+
+popmap %>%
+  filter(!is.na(Number), terr_type != "District of Columbia") %>%
+  ggplot(aes(x = long, y = lat)) +
+    geom_polygon(aes(group = region, fill=terr_type), color="white", size=0.1) +
+    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+                            mapgroup = region, n = jitters1,
+                            size="a", colour="a")) +
+   stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+                           mapgroup = region, n = jitters2,
+                            size="b", colour="b")) +
+   stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+                           mapgroup = region, n = jitters3,
+                            size = "c", colour="c")) +
+   ggthemes::theme_map() + facet_wrap(~Denomination, ncol = 4) +
+  scale_colour_manual( "Population:", values=colHEX[3:1], labels=c("10,000","1,000", "100")) +
+  scale_fill_manual("Type", values=c("grey85", "grey95")) +
+  theme(legend.position="top") +
+  scale_size_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18))
+@
 
 \section{Perception of Framed Charts}
 % area comparisons vs. length comparisons, under-estimation biases, etc. Pie charts vs. bar/spine charts, Mosaic plots.
