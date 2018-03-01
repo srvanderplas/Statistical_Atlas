@@ -50,6 +50,7 @@
 
 \newcommand{\hh}[1]{{\color{magenta} #1}}
 
+\newcommand{\svp}[1]{{\color{blue} #1}}
 
 \begin{document}
 
@@ -95,7 +96,7 @@ Computational Reproducibility is a fundamental aspect of the scientific method. 
 \end{abstract}
 
 \noindent%
-{\it Keywords:} mosaic plots, spine plots, translational reproducibility, 
+{\it Keywords:} mosaic plots, spine plots, translational reproducibility,
  statistical graphics, Census Bureau.
 
 \vfill
@@ -121,9 +122,9 @@ datapath <- "../data"
 px2 <- read.csv(file.path(datapath, "px2.csv"), stringsAsFactors = FALSE)
 occ2 <- read.csv(file.path(datapath, "occ2.csv"), stringsAsFactors = FALSE)
 occ3 <- read.csv(file.path(datapath, "occ3.csv"), stringsAsFactors = FALSE)
-church <- read.csv(file.path(datapath, "denominations-1874.csv"), 
+church <- read.csv(file.path(datapath, "denominations-1874.csv"),
                    stringsAsFactors = FALSE)
-churchPixel <- read.csv(file.path(datapath, "church_pixel.csv"), 
+churchPixel <- read.csv(file.path(datapath, "church_pixel.csv"),
                         stringsAsFactors = FALSE)
 
 occ2 <- occ2 %>% mutate(
@@ -214,41 +215,43 @@ px2 %>% data.frame() %>%
 Three times in the past, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in the 9th, 10th, and 11th US census (in 1870, 1880, and 1890). Each of these atlases represents a  masterpiece in science and technology. Here, we want to focus on the ninth Census, supervised by Francis A. Walker. At this time, the United States had a population of about 38.5 million people. The Atlas represents a graphical compendium of the census information prepared in more than 100 lithographic plates. Most of these plates are overlaid maps, but some consist of more abstract and, at that time, novel visualizations.
 Of particular interest are plates \#31 and \#32. Both of these plates have a very similar structure: they show small multiples, one for each state, of what are now known as mosaic plots or  Marimekko charts.
 
-The charts in the Statistical Atlas were created using extremely high-precision methods for the time it was published. Color images were produced by Julius Bien's publishing house~\cite{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
+The charts in the Statistical Atlas were printed by Julius Bien's publishing house~\cite{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
 
-\section{Reproducibility}
-Reproducible research is a frequent topic of discussion in data visualization and data science~\cite{donoho-reproducible, Buckheit1995, amstat-repro, knitr, leisch2002sweave}. This paper sets out to reproduce with as much fidelity as possible two of the hand-drawn charts of the Statistical Atlas, using modern methods. In some cases reproducibility focuses on whether the results of a study can be replicated from the exact same data set using the same methods and computer code; this is not the approach we are taking in this paper. Rather, here we are exploring whether it is possible to access the data from the 1870 census (or a sample thereof) and, using that data, re-create some of the charts in the Statistical Atlas using modern methods. In addition to sampled data, we also extrapolate data from digitized versions of the original charts by measuring the geometric objects. This type of reproducibility might be termed ``translational reproducibility", as it examines whether methodology and data can be translated across more than a century to produce the same results. Faced with a similar problem in Bioinformatics research and results, Baggerly and Coombes \cite{baggerly2009} used the  term ``forensic bioinformatics" to define situations in which researchers attempt to replicate study results using other methods.
+In this study, we describe the methodology used to re-create plots from the 1870 Statistical Atlas, first by recreating the plots as they were presented, and then re-imagining the plots, providing a more visually optimal display that is similar to the original. We assess the accuracy of judgments made from the plots with a user study, and discuss the implications of the study on plot design in the future.
 
-In order for research to be reproducible, it is important to have not only a description of what was done, but also access to as much of the environment in which the analysis was conducted as possible. Buckheit \& Donoho \cite{Buckheit1995} note that:
-\begin{quotation}
-An article about computational science in a scientific publication is not the scholarship itself, it is merely advertising of the scholarship. The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.
-\end{quotation}
-
-Extending this, scholarship in information visualization is then the combination of data (and data collection framework, environment, and methodology), the software and code used to analyze the data and generate results, and the final collection of interpretations and ``advertisement" that summarizes the results in publication form.
-
- Reproducing scholarship from almost 150 years ago relies heavily on the preservation of critical infrastructure used to generate the original images in the 1870 Statistical Atlas. The Library of Congress preserved the original ``advertisement": the pages of the Statistical Atlas, available online through very high-resolution scans. The Census Bureau has preserved the data from the 1870 census, but equally importantly, they have also preserved the basic framework for data collection, which is still used today to compile the modern census; the questions have been adapted and the country has expanded considerably, but the basic goal of the census has not changed. While researchers do not have access to the full 1870 census data, the Integrated Public Use Microdata Series (IPUMS-USA) provided through the Minnesota Population Center \cite{ipums} releases a 1\% microsample for research purposes. This sample allows us to reproduce the graphics in the Statistical Atlas using estimates extrapolated from the 1\% sample of the data. \hh{XXX weird? XXX} By duplicating the graphics using both methods, we are able to compare the data to the final product, examining the fidelity of the printed result compared to the recorded data.
-
-Reproducibility depends on openness: open data and open publications. Without both repositories of information, it would be difficult or impossible to go back and compare past data visualizations with today's methodology.
-
-\hh{XXX Do we still need these ten rules? XXX}
-\cite{sandve:2013} highlights the importance of the entire framework for reproducibility with ten rules for reproducible computational research:
-\begin{compactenum}
-\item For every result, keep track of how it was produced.
-\item Avoid manual data manipulation steps.
-\item Archive the exact versions of all external programs used.
-\item Version control all custom scripts.
-\item Record all intermediate results, when possible in standardized formats.
-\item For analyses that include randomness, note underlying random seeds.
-\item Always store raw data behind plots.
-\item Generate hierarchical analysis output, allowing layers of increasing detail to be inspected.
-\item Connect textual statements to underlying results.
-\item Provide public access to scripts, runs, and results.
-\end{compactenum}
-
-\hh{XXX it's not quite that easy XXX}
-With R \cite{R} and its add-on packages (knitr, packrat), it is ~~incredibly~~ easy to implement these ten suggestions. \texttt{knitr}~\cite{knitr} makes it easy to store code and results while tying computational steps to textual statements, \texttt{packrat}~\cite{packrat} allows researchers to easily archive software, and the use of git with R projects makes version control and intermediate results available to even novice users. The developments in R packages to facilitate reproducible research makes reproducibility much easier for the modern researcher than it would have been for those compiling the 1870 census. These rules are focused on the computational era, but many of the underlying ideas can be translated to the creation of the Statistical Atlas. Intermediate results are recorded in tabular summaries of the census data, raw data was stored (though only a 1\% sample is made available to the public), and hierarchical summaries are shown: plates generally include an overview of the country as well as individual states and territories. While the specific method for producing the plots has not (to our knowledge) survived to the modern era, the plots used in the two plates of the Statistical Atlas examined in this paper are fairly easy to reverse-engineer, which allows us to compare the data shown in the plots to the data provided in the 1\% microsample of the 1870 census, resulting in several surprising discoveries.
-
-This study is intended to examine the persistence of data and methodology across nearly 150 years and several technological revolutions. As the study of statistical visualization has developed considerably over the past 147 years, we also examine the visualization decisions made for the 1870 statistical atlas and create improved graphics which more clearly display the same data. The technological advances since the 1870 census also allow us to more easily add a spatial component, as it is now much easier to display the census data in map form. These improvements allow us to add additional depth to the 1870 statistical atlas graphics without investing hundreds of hours of artistic work for each additional map and chart.
+% \section{Reproducibility}
+% Reproducible research is a frequent topic of discussion in data visualization and data science~\cite{donoho-reproducible, Buckheit1995, amstat-repro, knitr, leisch2002sweave}. This paper sets out to reproduce with as much fidelity as possible two of the hand-drawn charts of the Statistical Atlas, using modern methods. In some cases reproducibility focuses on whether the results of a study can be replicated from the exact same data set using the same methods and computer code; this is not the approach we are taking in this paper. Rather, here we are exploring whether it is possible to access the data from the 1870 census (or a sample thereof) and, using that data, re-create some of the charts in the Statistical Atlas using modern methods. In addition to sampled data, we also extrapolate data from digitized versions of the original charts by measuring the geometric objects. This type of reproducibility might be termed ``translational reproducibility", as it examines whether methodology and data can be translated across more than a century to produce the same results. Faced with a similar problem in Bioinformatics research and results, Baggerly and Coombes \cite{baggerly2009} used the  term ``forensic bioinformatics" to define situations in which researchers attempt to replicate study results using other methods.
+%
+% In order for research to be reproducible, it is important to have not only a description of what was done, but also access to as much of the environment in which the analysis was conducted as possible. Buckheit \& Donoho \cite{Buckheit1995} note that:
+% \begin{quotation}
+% An article about computational science in a scientific publication is not the scholarship itself, it is merely advertising of the scholarship. The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.
+% \end{quotation}
+%
+% Extending this, scholarship in information visualization is then the combination of data (and data collection framework, environment, and methodology), the software and code used to analyze the data and generate results, and the final collection of interpretations and ``advertisement" that summarizes the results in publication form.
+%
+%  Reproducing scholarship from almost 150 years ago relies heavily on the preservation of critical infrastructure used to generate the original images in the 1870 Statistical Atlas. The Library of Congress preserved the original ``advertisement": the pages of the Statistical Atlas, available online through very high-resolution scans. The Census Bureau has preserved the data from the 1870 census, but equally importantly, they have also preserved the basic framework for data collection, which is still used today to compile the modern census; the questions have been adapted and the country has expanded considerably, but the basic goal of the census has not changed. While researchers do not have access to the full 1870 census data, the Integrated Public Use Microdata Series (IPUMS-USA) provided through the Minnesota Population Center \cite{ipums} releases a 1\% microsample for research purposes. This sample allows us to reproduce the graphics in the Statistical Atlas using estimates extrapolated from the 1\% sample of the data. \hh{XXX weird? XXX} By duplicating the graphics using both methods, we are able to compare the data to the final product, examining the fidelity of the printed result compared to the recorded data.
+%
+% Reproducibility depends on openness: open data and open publications. Without both repositories of information, it would be difficult or impossible to go back and compare past data visualizations with today's methodology.
+%
+% \hh{XXX Do we still need these ten rules? XXX}
+% \cite{sandve:2013} highlights the importance of the entire framework for reproducibility with ten rules for reproducible computational research:
+% \begin{compactenum}
+% \item For every result, keep track of how it was produced.
+% \item Avoid manual data manipulation steps.
+% \item Archive the exact versions of all external programs used.
+% \item Version control all custom scripts.
+% \item Record all intermediate results, when possible in standardized formats.
+% \item For analyses that include randomness, note underlying random seeds.
+% \item Always store raw data behind plots.
+% \item Generate hierarchical analysis output, allowing layers of increasing detail to be inspected.
+% \item Connect textual statements to underlying results.
+% \item Provide public access to scripts, runs, and results.
+% \end{compactenum}
+%
+% \hh{XXX it's not quite that easy XXX}
+% With R \cite{R} and its add-on packages (knitr, packrat), it is ~~incredibly~~ easy to implement these ten suggestions. \texttt{knitr}~\cite{knitr} makes it easy to store code and results while tying computational steps to textual statements, \texttt{packrat}~\cite{packrat} allows researchers to easily archive software, and the use of git with R projects makes version control and intermediate results available to even novice users. The developments in R packages to facilitate reproducible research makes reproducibility much easier for the modern researcher than it would have been for those compiling the 1870 census. These rules are focused on the computational era, but many of the underlying ideas can be translated to the creation of the Statistical Atlas. Intermediate results are recorded in tabular summaries of the census data, raw data was stored (though only a 1\% sample is made available to the public), and hierarchical summaries are shown: plates generally include an overview of the country as well as individual states and territories. While the specific method for producing the plots has not (to our knowledge) survived to the modern era, the plots used in the two plates of the Statistical Atlas examined in this paper are fairly easy to reverse-engineer, which allows us to compare the data shown in the plots to the data provided in the 1\% microsample of the 1870 census, resulting in several surprising discoveries.
+%
+% This study is intended to examine the persistence of data and methodology across nearly 150 years and several technological revolutions. As the study of statistical visualization has developed considerably over the past 147 years, we also examine the visualization decisions made for the 1870 statistical atlas and create improved graphics which more clearly display the same data. The technological advances since the 1870 census also allow us to more easily add a spatial component, as it is now much easier to display the census data in map form. These improvements allow us to add additional depth to the 1870 statistical atlas graphics without investing hundreds of hours of artistic work for each additional map and chart.
 
 \section{Statistical Archaeology} % This needs a better name
 
@@ -258,12 +261,13 @@ There is a twist to both plates, though: a grey band is drawn around each one of
 In the second case study, the grey band represents the size of religiously unaccommodated population over the age of ten.
 The choice to show the unaccounted/unaccommodated part of the population by a grey band around the square is somewhat unfortunate, as it breaks the overall metaphor of the mosaic plot and thereby prevents any direct comparisons across charts except for area comparisons, which are cognitively harder and more error prone than comparisons of lengths \cite{cleveland:1984}. It also masks the size of the population that is thus unaccounted/unaccommodated for by visually cutting it into  quarters. This is one of the design choices that we re-visit in our re-creation of the chart.
 
+
 At the time the Statistical Atlas for the ninth census was created, Mosaic plots were a novel way of visualizing data. Even though area plots as a means of visualizing data had been in use before \cite{friendly}, e.g.\ Minard's \cite{minard} plate \#3 \cite{newyork}, Mosaic plots in their modern form  of use were not published until 1877 \cite{mayr}. However,  the descriptions given on both plates \#31 and \#32 clearly state the intention of their creators  that areas are designed to be proportional to the population they represent:
 \begin{quotation}
 The interior squares represent the proportion of the population which is accounted for as engaged in gainful occupations or as attending school. The shaded intervals between the inner and and outer squares represent the proportion of the population not so accounted for.
 \end{quotation}
 
-Both plates \#31 and \#32 are based on population totals for (as stated on the legend, see \autoref{fig:header}) ``the total population over 10 years of age". Because state-level aggregates of the number of total population above the age of ten are not available directly; instead we are extra-polating these numbers based on the 1\% microsample of the ninth census provided by the Integrated Public Use Microdata Series (IPUMS-USA) provided through the Minnesota Population Center \cite{ipums}. Using the small sample, we get counts of the male and female population above ten as well as state totals. This allows us to get estimates for the size of the male and female population above ten for each state by extrapolating from the sample proportions.
+Both plates \#31 and \#32 are based on population totals for (as stated on the legend, see \autoref{fig:header}) ``the total population over 10 years of age". State-level aggregates of the number of total population above the age of ten are not available directly; instead we extrapolate these numbers from the 1\% microsample of the ninth census provided by the Integrated Public Use Microdata Series (IPUMS-USA) provided through the Minnesota Population Center \cite{ipums}. Using the small sample, we get counts of the male and female population above ten as well as state totals. This allows us estimate the size of the male and female population above ten for each state by extrapolating from the sample proportions.
 
 Let $n_{UA}^{(\text{XY})}$ be the --unfortunately unknown-- size of the unaccounted population of state {\it XY}. Then we have the relationship
 \begin{equation}\label{eq:nUA}
@@ -483,17 +487,6 @@ church_noterritories %>%
 @
 
 
-%
-% \comment{SVP: Need to make the denominational colors different, instead of using the same 4 colors each time. Maybe use scale\_identity and merge that information in?
-%
-% Side note: I don't really understand the code to generate the color scheme. there aren't 21 different color values in this plot.
-% HH: ah, so much for my clever color scheme. The way it's generated is that we are starting with six hues, and darken each hue twice. Then I'm adding some grey shades in the back. The idea was to create a ``triple" scheme - for a paired color scheme I am running out of distinguishable hues. So you are seeing four colors?
-%
-% SVP: I guess my problem is that there aren't 6x3 denominations shown in the plot :-p. As a result, I'm having trouble mapping them accurately. I can see the 3 shades of purple in the recreated plot, though.}
-
-
-
-
 <<minnesota-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = F>>=
 
 cl %>%
@@ -660,89 +653,97 @@ cl %>%
 @
 
 The re-imagined church accomodation plots provide the ability to make comparisons between states, but there is one obvious ingredient which is still missing: geographic context. \autoref{fig:map} shows the geographic distribution of church accomodations; this spatial information allows us to see that the mormon church is highly localized geographically, while the Methodist church is relatively popular across most of the country.
- Numbers of unaccommodation population are -- not surprisingly -- particularly high in the new territories, with the exception of New Mexico. \autoref{fig:map} is an example for a density dot map. The location of the dots within each state is random, but the number of the dots within each state is proportional to the population. Density maps are not new - some of the first examples appear in the Statistical Atlas accompanying the tenth US census of 1880\cite{atlas1883}.\
+ Numbers of unaccommodation population are -- not surprisingly -- particularly high in the new territories, with the exception of New Mexico.
+%
+% \autoref{fig:map} is an example for a density dot map. The location of the dots within each state is random, but the number of the dots within each state is proportional to the population. Density maps are not new - some of the first examples appear in the Statistical Atlas accompanying the tenth US census of 1880\cite{atlas1883}.\
+%
+% The Statistical Atlases of 1880 and 1890 pick up the theme of religious affiliation again and provide an overview similar to \autoref{fig:map} that shows the geographic strength of the most common denominations. These maps are accompanied by bar charts showing the proportion of individuals in each state who identify with each denomination, providing a very nice picture of the religious affiliations of the residents of the United States.
+%
+% %%% Insert map stuff here!
+% \begin{figure*}
+% \centering
+% \includegraphics[width=\textwidth]{figure/denominations-map-1}
+% \caption{Density dot maps of geographic expansion of religious sittings by denomination. \label{fig:map}}
+% \end{figure*}
+%
+% <<denominations-map, cache=TRUE, include=F, fig.width=8, fig.height = 9, echo=FALSE>>=
+% map_states <- us_boundaries("1870-01-01", type = "state", resolution="low")
+% polys  <- st_geometry(map_states)
+%
+% map1870 <- data.frame(map_states)
+% map1870$poly_df <- polys %>% purrr::map(.f = function(x) {
+%   group = 1
+%   xlist <- x %>% purrr::map_df(.f = function(y) {
+%     tmp <- as.data.frame(y)
+%     names(tmp) <- c("long", "lat")
+%     tmp$order <- 1:nrow(tmp)
+%     tmp$group <- group
+%     group <<- group+1
+%     tmp
+%   })
+%
+%   xlist
+% })
+% map1870 <- map1870 %>% unnest(poly_df)
+% map1870$region <- paste0(map1870$state_abbr, "-", map1870$group)
+% #map1870$Territory <- map1870$terr_type
+% #map1870$Parts <- c("Territory", "State")[is.na(map1870$Territory)+1]
+%
+%
+%
+% cl$State <- as.character(cl$State)
+% cl$Denomination <- factor(cl$Denomination, levels=rev(levels(cl$Denomination)))
+% popmap <- left_join(map1870, cl, by=c("name"="State")) %>% filter(lat <= 50)
+%
+% popmap$jitters1 <- round(popmap$Number/10000,0)
+% popmap$jitters2 <- round((popmap$Number %% 10000)/1000,0)
+% popmap$jitters3 <- round((popmap$Number %% 1000)/100,0)
+%
+% popmap %>%
+%   filter(!is.na(Number), terr_type != "District of Columbia") %>%
+%   ggplot(aes(x = long, y = lat)) +
+%     geom_polygon(aes(group = region, fill=terr_type), color="white", size=0.1) +
+%     stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+%                             mapgroup = region, n = jitters1,
+%                             size="a", colour="a")) +
+%    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+%                            mapgroup = region, n = jitters2,
+%                             size="b", colour="b")) +
+%    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
+%                            mapgroup = region, n = jitters3,
+%                             size = "c", colour="c")) +
+%    ggthemes::theme_map() + facet_wrap(~Denomination, ncol = 4) +
+%   scale_colour_manual( "Population:", values=colHEX[3:1], labels=c("10,000","1,000", "100")) +
+%   scale_fill_manual("Type", values=c("grey85", "grey95")) +
+%   theme(legend.position="top") +
+%   scale_size_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18))
+% @
 
-The Statistical Atlases of 1880 and 1890 pick up the theme of religious affiliation again and provide an overview similar to \autoref{fig:map} that shows the geographic strength of the most common denominations. These maps are accompanied by bar charts showing the proportion of individuals in each state who identify with each denomination, providing a very nice picture of the religious affiliations of the residents of the United States.
+\section{Perception of Framed Charts}
+% area comparisons vs. length comparisons, under-estimation biases, etc. Pie charts vs. bar/spine charts, Mosaic plots.
 
-%%% Insert map stuff here!
-\begin{figure*}
-\centering
-\includegraphics[width=\textwidth]{figure/denominations-map-1}
-\caption{Density dot maps of geographic expansion of religious sittings by denomination. \label{fig:map}}
-\end{figure*}
-
-<<denominations-map, cache=TRUE, include=F, fig.width=8, fig.height = 9, echo=FALSE>>=
-map_states <- us_boundaries("1870-01-01", type = "state", resolution="low")
-polys  <- st_geometry(map_states)
-
-map1870 <- data.frame(map_states)
-map1870$poly_df <- polys %>% purrr::map(.f = function(x) {
-  group = 1
-  xlist <- x %>% purrr::map_df(.f = function(y) {
-    tmp <- as.data.frame(y)
-    names(tmp) <- c("long", "lat")
-    tmp$order <- 1:nrow(tmp)
-    tmp$group <- group
-    group <<- group+1
-    tmp
-  })
-  
-  xlist
-}) 
-map1870 <- map1870 %>% unnest(poly_df)
-map1870$region <- paste0(map1870$state_abbr, "-", map1870$group)
-#map1870$Territory <- map1870$terr_type
-#map1870$Parts <- c("Territory", "State")[is.na(map1870$Territory)+1]
-
-
-
-cl$State <- as.character(cl$State)
-cl$Denomination <- factor(cl$Denomination, levels=rev(levels(cl$Denomination)))
-popmap <- left_join(map1870, cl, by=c("name"="State")) %>% filter(lat <= 50)
-
-popmap$jitters1 <- round(popmap$Number/10000,0)
-popmap$jitters2 <- round((popmap$Number %% 10000)/1000,0)
-popmap$jitters3 <- round((popmap$Number %% 1000)/100,0)
-
-popmap %>%
-  filter(!is.na(Number), terr_type != "District of Columbia") %>%
-  ggplot(aes(x = long, y = lat)) +
-    geom_polygon(aes(group = region, fill=terr_type), color="white", size=0.1) +
-    stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
-                            mapgroup = region, n = jitters1,
-                            size="a", colour="a")) +
-   stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
-                           mapgroup = region, n = jitters2,
-                            size="b", colour="b")) +
-   stat_polygon_jitter(aes(long = long, lat = lat, group = state_name,
-                           mapgroup = region, n = jitters3,
-                            size = "c", colour="c")) +
-   ggthemes::theme_map() + facet_wrap(~Denomination, ncol = 4) +
-  scale_colour_manual( "Population:", values=colHEX[3:1], labels=c("10,000","1,000", "100")) +
-  scale_fill_manual("Type", values=c("grey85", "grey95")) +
-  theme(legend.position="top") +
-  scale_size_manual("Population:", labels=c("10,000","1,000", "100"), values=c(1,.56,.18)) 
-@
-
-
+\section{Framed Charts in Practice}
+% User Study stuff here
 
 \section{Discussion}
-Plates \# 31 and \# 32 of the statistical atlas are reproducible using modern methods and a bit of exploratory analysis. Reproducing these charts provides important lessons on the importance of archival information to reproducible analyses. Additionally, the reproduction process highlights some interesting features of historical chart creation, such as the use of grey bands around the plots to represent unaccounted or unaccommodated population, and whether 10 year olds are counted in the population or not.
 
-The statistical atlas based on the 1870 census is the only one of the atlases which contains mosaic plots. The atlases based on the 1880 and 1890 censuses contained \href{https://www.loc.gov/resource/g3701gm.gct00010/?sp=67}{pie charts}, \href{https://www.loc.gov/resource/g3701gm.gct00009/?sp=123}{maps}, and \href{https://www.loc.gov/resource/g3701gm.gct00010/?sp=87}{bar charts} instead of mosaic plots. The purpose of the charts may have changed or developed over time as well: in 1870, the statistical atlas shows church sittings, which might be interpreted as the physical building space; in 1880, the atlas shows the geographical strength of each denomination, and in 1890, denominational statistics are displayed as pie charts. This difference may be due to a changing focus: first, it's necessary to make sure the infrastructure is in place as westward expansion occurs, then religious affiliation becomes more of a demographic concern. The mosaic plots for occupational statistics in 1870 give way to state bar charts in 1880 and stacked bar charts in 1890; segregation by gender is no longer a concern, and educational statistics are separated out into different charts entirely. It is likely that the chart design changed due to several factors: different goals, new technological capabilities, and individual preferences. Each atlas was published by a different publishing house, and was likely assembled by different individuals, each with their own preferred methods of data display. The use of different methods for displaying similar data led to discussions of which methods were best\cite{brinton1919graphic,eells1926relative,wickham2013graphical} and the formation of a community devoted to statistical visualization.  True reproducibility of these figures would also include the ``why": the goals of the visualization, known only to the individuals who made the decision to display the data using mosaic and spine plots. We return to Buckheit \& Donoho's \cite{Buckheit1995} insight:
-\begin{quote}
-The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.
-\end{quote}
-While we can no longer access the instructions from the designers of these figures, we can certainly generate comparable figures using what remains of the data and final product.
-
-The reproducibility of the charts in the statistical atlas is only possible because of the infrastructure created by the US Census Bureau, the only government agency with constitutional mandate to gather data, as described in Article 1, Section 2:
-\begin{quote}
-Representatives and direct Taxes shall be apportioned among the several States which may be included within this Union, according to their respective Numbers...
-% , which shall be determined by adding to the whole Number of free Persons, including those bound to Service for a Term of Years, and excluding Indians not taxed, three fifths of all other Persons.
-% Overridden by the 14th amendment section 2
-The actual Enumeration shall be made within three Years after the first Meeting of the Congress of the United States, and within every subsequent Term of ten Years, in such Manner as they shall by Law direct.
-\end{quote}
-The Census Bureau's dedication to preserving the historical data and images from the statistical atlas makes it possible to reproduce the charts from plate \# 31 and \# 32, but most charts created today do not have the same commitment to historical preservation. It is not hard to imagine that most charts we create today will not be easily reproduced in 150 years - the code that we write will almost certainly not run on the operating systems which might be in use then; and our digitally stored data files may not be decodable either. We do not advocate for storing data on stone tablets, but we have made our code and aggregated data available on \href{https://github.com/srvanderplas/InfovisStatisticalAtlas}{github} to ensure at least near-term reproducibility. We have also opted to utilize packrat\cite{packrat}, which preserves the software package versions used to create this report. While these methods may not ensure reproducibility for 150 years, they should provide the ability for others to exactly replicate the steps we have taken for the next 5-10 years at least. Reproducibility longer-term requires a commitment to maintaining archival information in currently-readable formats in perpetuity, and this commitment is (at this point) best left to governments, libraries, and other archives.
+% \section{Discussion}
+% Plates \# 31 and \# 32 of the statistical atlas are reproducible using modern methods and a bit of exploratory analysis. Reproducing these charts provides important lessons on the importance of archival information to reproducible analyses. Additionally, the reproduction process highlights some interesting features of historical chart creation, such as the use of grey bands around the plots to represent unaccounted or unaccommodated population, and whether 10 year olds are counted in the population or not.
+%
+% The statistical atlas based on the 1870 census is the only one of the atlases which contains mosaic plots. The atlases based on the 1880 and 1890 censuses contained \href{https://www.loc.gov/resource/g3701gm.gct00010/?sp=67}{pie charts}, \href{https://www.loc.gov/resource/g3701gm.gct00009/?sp=123}{maps}, and \href{https://www.loc.gov/resource/g3701gm.gct00010/?sp=87}{bar charts} instead of mosaic plots. The purpose of the charts may have changed or developed over time as well: in 1870, the statistical atlas shows church sittings, which might be interpreted as the physical building space; in 1880, the atlas shows the geographical strength of each denomination, and in 1890, denominational statistics are displayed as pie charts. This difference may be due to a changing focus: first, it's necessary to make sure the infrastructure is in place as westward expansion occurs, then religious affiliation becomes more of a demographic concern. The mosaic plots for occupational statistics in 1870 give way to state bar charts in 1880 and stacked bar charts in 1890; segregation by gender is no longer a concern, and educational statistics are separated out into different charts entirely. It is likely that the chart design changed due to several factors: different goals, new technological capabilities, and individual preferences. Each atlas was published by a different publishing house, and was likely assembled by different individuals, each with their own preferred methods of data display. The use of different methods for displaying similar data led to discussions of which methods were best\cite{brinton1919graphic,eells1926relative,wickham2013graphical} and the formation of a community devoted to statistical visualization.  True reproducibility of these figures would also include the ``why": the goals of the visualization, known only to the individuals who made the decision to display the data using mosaic and spine plots. We return to Buckheit \& Donoho's \cite{Buckheit1995} insight:
+% \begin{quote}
+% The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.
+% \end{quote}
+% While we can no longer access the instructions from the designers of these figures, we can certainly generate comparable figures using what remains of the data and final product.
+%
+% The reproducibility of the charts in the statistical atlas is only possible because of the infrastructure created by the US Census Bureau, the only government agency with constitutional mandate to gather data, as described in Article 1, Section 2:
+% \begin{quote}
+% Representatives and direct Taxes shall be apportioned among the several States which may be included within this Union, according to their respective Numbers...
+% % , which shall be determined by adding to the whole Number of free Persons, including those bound to Service for a Term of Years, and excluding Indians not taxed, three fifths of all other Persons.
+% % Overridden by the 14th amendment section 2
+% The actual Enumeration shall be made within three Years after the first Meeting of the Congress of the United States, and within every subsequent Term of ten Years, in such Manner as they shall by Law direct.
+% \end{quote}
+% The Census Bureau's dedication to preserving the historical data and images from the statistical atlas makes it possible to reproduce the charts from plate \# 31 and \# 32, but most charts created today do not have the same commitment to historical preservation. It is not hard to imagine that most charts we create today will not be easily reproduced in 150 years - the code that we write will almost certainly not run on the operating systems which might be in use then; and our digitally stored data files may not be decodable either. We do not advocate for storing data on stone tablets, but we have made our code and aggregated data available on \href{https://github.com/srvanderplas/InfovisStatisticalAtlas}{github} to ensure at least near-term reproducibility. We have also opted to utilize packrat\cite{packrat}, which preserves the software package versions used to create this report. While these methods may not ensure reproducibility for 150 years, they should provide the ability for others to exactly replicate the steps we have taken for the next 5-10 years at least. Reproducibility longer-term requires a commitment to maintaining archival information in currently-readable formats in perpetuity, and this commitment is (at this point) best left to governments, libraries, and other archives.
 
 
 \bibliography{mybibfile}
