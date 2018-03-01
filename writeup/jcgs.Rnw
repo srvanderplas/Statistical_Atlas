@@ -721,6 +721,7 @@ popmap %>%
 
 \section{Perception of Framed Charts}
 % area comparisons vs. length comparisons, under-estimation biases, etc. Pie charts vs. bar/spine charts, Mosaic plots.
+\svp{Reference:\begin{itemize}\item Power model for proportion/area judgments\cite{hollands1997bias}\item Simple graphical elements psychophysics \cite{spence1990visual}\item Cleveland and McGill\end{itemize}}
 
 \section{Framed Charts in Practice}
 % User Study stuff here
