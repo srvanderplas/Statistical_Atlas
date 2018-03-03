@@ -1,0 +1,9 @@
+*.bbl
+*.out
+*.tex
+*.aux
+*.log
+*.blg
+*.synctex.gz
+cache
+figure
