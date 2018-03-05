@@ -478,11 +478,26 @@ While the use of framed plots in plates 31 and 32 of the Statistical Atlas is ae
 Bias in area estimation and comparison has been well studied. \citet{krider2001pizzas} showed that viewers estimate area based on the most salient dimension of an object, rather than on its' total area. citet{piaget1968quantification} showed this bias is stronger in young children, but that the bias decreases with age and cognitive development. \citet{size} examined the perceived size of squares, parallelograms, and other shapes, and found that area estimation was consistent with the psychophysics equation $A_{est} \propto A_{act}^\beta$, with a scaling coefficient of around $\beta = 0.8$. That is, perceived area increases more slowly than the actual area of the estimated region. \citet{lewandowsky1989perception} found that area judgments are approximately accurate in certain conditions: namely, when the variation in size occurs along a single dimension, and other dimensions are aligned. Taken together, these studies suggest that the use of framed charts can be expected to produce biased estimates, and that these estimates should be considerably worse for the mosaic plots than for spine plots, as information in mosaic plots is represented in two dimensions. Furthermore, \citet{lewandowsky1989perception} suggests that we can reduce these biases by integrating the information about unaccommodated individuals into the main part of the plot, treating it as just another category to be displayed.
 
 
-In order to quantify the perceptual biases induced by framed charts, we designed a study which compares the framed and unframed versions of mosaic plots, spine plots, and pie charts, which are commonly used in situations where spine plots are appropriate.
-
+In order to quantify the perceptual biases induced by framed charts, we designed a study which compares the framed and unframed versions of mosaic plots, spine plots, and pie charts, using data reconstructed from the Statistical Atlas charts.
 
 \section{Frames in Practice}
 \label{sec:meth}
+
+\subsection{Study Design}
+\paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. % Add demographic information, explain difference between reddit and turk populations
+
+\paragraph{Survey Composition}
+Participants estimated proportions of __ plots. If an answer was not entered within __ seconds, the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
+
+\begin{itemize}
+\item spine, pie, mosaic
+\item framed interior, not framed interior, framed exterior
+\item small, medium, large proportion
+\end{itemize}
+
+I don't know exactly how the study design worked...?
+
+% Show sample plots from the study - framed and unframed small/med/large
 
 \section{Conclusion}
 \label{sec:conc}
