@@ -1,56 +1,52 @@
 #responses <- read.csv("/Users/heike/Downloads/Frame Study - Pics_November 20, 2017_14.35.csv")
 
 read_and_clean <- function(file) {
-responses <- read.csv(file)
-responses <- responses[-(1:2),]
-library(tidyverse)
-responses <- responses %>% rename(
-  Age=Q56, 
-  Gender = Q520,
-  Education=Q524
+  responses <- read.csv(file)
+  responses <- responses[-(1:2),]
+  library(tidyverse)
+  responses <- responses %>% rename(
+    Age=Q56,
+    Gender = Q520,
+    Education=Q524
   )
-responses <- filter(responses, Finished=="True")
+  responses <- filter(responses, Finished=="True")
 
-percentages <- responses %>% select(IPAddress, ResponseId,  grep("Q...$", names(responses), value=TRUE), grep("Q..$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."), matches("Q.."))
-percentages$howmuch <- as.numeric(percentages$howmuch)
-percentages <- percentages %>% filter(howmuch > 0)
-percentages <- percentages %>% filter(howmuch < 100)
-idx <- which(percentages$howmuch < 1)
-percentages$howmuch[idx] <- percentages$howmuch[idx]*100
-
-
-percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
-
-pl <- read.csv("/Users/heike/papers/2018-Atlas-study/data/PlotLabels.csv")
-percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
+  percentages <- responses %>% select(IPAddress, ResponseId,  grep("Q...$", names(responses), value=TRUE), grep("Q..$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."), matches("Q.."))
+  percentages$howmuch <- as.numeric(percentages$howmuch)
+  percentages <- percentages %>% filter(howmuch > 0)
+  percentages <- percentages %>% filter(howmuch < 100)
+  idx <- which(percentages$howmuch < 1)
+  percentages$howmuch[idx] <- percentages$howmuch[idx]*100
 
 
+  percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
 
+  pl <- read.csv("../data/PlotLabels.csv")
+  percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
 
+  #####################
+  percentages <- percentages %>% filter(howmuch < 75) %>% na.omit() %>% mutate(
+    rel.error = (howmuch-perc)/perc,
+    diff.error = howmuch-perc
+  )
 
-#####################
-percentages <- percentages %>% filter(howmuch < 75) %>% na.omit() %>% mutate(
-  rel.error = (howmuch-perc)/perc,
-  diff.error = howmuch-perc
-)
-
-percentages$frameframe <- 0
-percentages <- percentages %>% mutate(
-  frameframe = replace(frameframe, Frame & !isFrame, 1),
-  frameframe = replace(frameframe, Frame & isFrame, 2)
-)
-percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
-percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame")) 
-percentages
+  percentages$frameframe <- 0
+  percentages <- percentages %>% mutate(
+    frameframe = replace(frameframe, Frame & !isFrame, 1),
+    frameframe = replace(frameframe, Frame & isFrame, 2)
+  )
+  percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
+  percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
+  percentages
 }
 
-amazon <- read_and_clean("analysis/Frame Study - Amazon_February 9, 2018_13.18.csv")
-reddit <- read_and_clean("analysis/Frame Study - reddit-final.csv")
+amazon <- read_and_clean("../analysis/Frame Study - Amazon_February 9, 2018_13.18.csv")
+reddit <- read_and_clean("../analysis/Frame Study - reddit-final.csv")
 amazon$source <- "amazon"
 reddit$source <- "reddit"
 percentages <- rbind(amazon, reddit)
 
-percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) + 
+percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) +
   geom_point() + coord_flip() +
   facet_grid(.~source)
 
@@ -68,14 +64,14 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   facet_grid(.~source)
 
 
- 
-percentages %>% 
+
+percentages %>%
   ggplot(aes(x = perc, y = diff.error)) + geom_point() +
   facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
 
 error0 <- lm(diff.error ~ perc*Frame, data = percentages)
 
-percentages %>% 
+percentages %>%
   ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
   facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
 
@@ -83,9 +79,9 @@ error1 <- lm(diff.error ~ perc*frameframe, data = percentages)
 anova(error0, error1)
 summary(error1)
 
-percentages %>% 
+percentages %>%
   ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
-  facet_grid(Type~Frame, labeller="label_both") + geom_smooth(method="lm") 
+  facet_grid(Type~Frame, labeller="label_both") + geom_smooth(method="lm")
 
 error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
 anova(error1, error2)
