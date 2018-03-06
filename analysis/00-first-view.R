@@ -46,7 +46,7 @@ amazon$source <- "amazon"
 reddit$source <- "reddit"
 percentages <- rbind(amazon, reddit)
 
-percentages %>% ggplot(aes(x=IPAddress, y=howmuch)) +
+percentages %>% ggplot(aes(x=ResponseId, y=howmuch)) + 
   geom_point() + coord_flip() +
   facet_grid(.~source)
 
