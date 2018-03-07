@@ -93,10 +93,32 @@ library(ggmapr)
 
 
 <<code, echo=FALSE>>=
-createMosaics <- function(data = occ3, state_name = "*") {
+theme_mosaic <- function (base_size = 11, base_family = "") {
+    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
+        theme(plot.background = element_blank(), plot.margin = grid::unit(c(0, 
+            0, 0, 0), unit = "cm"), panel.background = element_blank(), 
+            axis.line = element_blank(), axis.text.y = element_blank(), 
+            axis.ticks = element_blank(), axis.title = element_blank(), 
+            legend.key = element_rect(fill = NA, colour = "white"), 
+            panel.border = element_blank(), panel.grid = element_blank(), 
+            aspect.ratio = 1)
+}
+
+theme_spine <- function (base_size = 11, base_family = "") {
+    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
+        theme(plot.background = element_blank(), plot.margin = grid::unit(c(0, 
+            0, 0, 0), unit = "cm"), panel.background = element_blank(), 
+            axis.line = element_blank(), axis.text = element_blank(), 
+            axis.ticks = element_blank(), #axis.title = element_blank(), 
+            legend.key = element_rect(fill = NA, colour = "white"), 
+            panel.border = element_blank(), panel.grid = element_blank(), 
+            aspect.ratio = 1)
+}
+
+createMosaics <- function(data = occ3, state_name = "") {
   occ4 <- occ3 %>% filter(State==Area.name)
   
-  if (state_name != "*")
+  if (state_name != "")
     occ4 <- occ4 %>% filter(State == state_name)
   if (nrow(occ4) == 0) return(NULL)
 
@@ -112,7 +134,7 @@ createMosaics <- function(data = occ3, state_name = "*") {
         theme(axis.line=element_blank(), axis.text=element_blank(),
               axis.title.y = element_blank(), axis.ticks = element_blank()) +
         ggtitle(state_name) +
-        xlab("") + geomnet::theme_net() +
+        xlab("") + theme_mosaic() +
         theme(legend.position = "none")
     }
 
@@ -137,7 +159,7 @@ createMosaics <- function(data = occ3, state_name = "*") {
   )
 
   plot1 <- ggp_df %>% ggplot() +
-    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50") +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50", colour="grey20", size=.5) +
     geom_rect(xmin=scalars$weight[2]/2, xmax=1-scalars$weight[2]/2,
               ymin=scalars$weight[2]/2, ymax=1-scalars$weight[2]/2, fill="white") +
     geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
@@ -146,7 +168,7 @@ createMosaics <- function(data = occ3, state_name = "*") {
     scale_alpha_identity() +
     xlim(c(0,1)) +
     ylim(c(0,1)) +
-    geomnet::theme_net() +
+    theme_mosaic() +
     ggtitle(state_name)
 
   plot2 <- getMosaic(occ4)
@@ -175,9 +197,10 @@ createSpines <- function(data, state_name) {
       geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
                position = "fill", colour="white", size=0.1) +
       scale_fill_manual("Denomination", values=sub_data$colour) + coord_flip() +
-      geomnet::theme_net() +
+   #   geomnet::theme_net() +
+      theme_spine() +
       theme(legend.position = "none") + ylab("") +
-      ggtitle(state_name)
+      ylab(state_name)
   }
   plot2 <- spine_df %>% get_plots()
   scalars <- spine_df %>% mutate(
@@ -201,12 +224,13 @@ createSpines <- function(data, state_name) {
   )
   plot1 <- spine_wo_df %>%
     ggplot(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) +
-    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey60") +
+    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey50", colour="grey20", size=.5) +
     geom_rect(aes(fill=fill), colour="white", size=0.1) +
     scale_fill_identity() +
     coord_flip() +
-    geomnet::theme_net() +
-    ggtitle(state_name)
+  #  geomnet::theme_net() +
+    theme_spine() +
+    ylab(state_name)
   }
   list(plot1=plot1, plot2=plot2)
 }
@@ -606,14 +630,17 @@ cl %>%
 
 \autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
 
-<<state-church-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".9\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
+<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".9\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
-mi <- createSpines(cl_data, "Michigan")
+mi <- createSpines(cl_data, "Michigan") 
 mn <- createSpines(cl_data, "Minnesota")
 ms <- createSpines(cl_data, "Mississippi")
 
-
+mi$plot1 <- mi$plot1 + ylab("MICHIGAN") 
+mn$plot1 <- mn$plot1 + ylab("MINNESOTA") 
+ms$plot1 <- ms$plot1 + ylab("MISSISSIPPI") 
 library(gridExtra)
+
 grid.arrange(mi[1]$plot1, mn[1]$plot1, ms[1]$plot1, nrow=1)
 
 p <- cl %>%
