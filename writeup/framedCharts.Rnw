@@ -91,6 +91,132 @@ library(ggmapr)
 @
 
 
+
+<<code, echo=FALSE>>=
+createMosaics <- function(data = occ3, state_name = "*") {
+  occ4 <- occ3 %>% filter(State==Area.name)
+  
+  if (state_name != "*")
+    occ4 <- occ4 %>% filter(State == state_name)
+  if (nrow(occ4) == 0) return(NULL)
+
+    getMosaic <- function(data) {
+      data %>%
+        ggplot() +
+        geom_mosaic(aes(x = product(Sex, Occupation),
+                        fill=Occupation, alpha = Sex, weight = Number),
+                    offset = 0.00, colour="grey85", size=0.1) +
+        scale_fill_manual(values=cols) + theme_bw() +
+        scale_alpha_manual(values=c(0.8,1)) +
+        coord_equal() +
+        theme(axis.line=element_blank(), axis.text=element_blank(),
+              axis.title.y = element_blank(), axis.ticks = element_blank()) +
+        ggtitle(state_name) +
+        xlab("") + geomnet::theme_net() +
+        theme(legend.position = "none")
+    }
+
+  scalars <- occ4 %>%
+    mutate(frame = Occupation=="Unaccounted") %>%
+    group_by(frame) %>%
+    summarize(
+      Number = sum(Number)
+    ) %>% mutate(
+      weight = Number/sum(Number)
+    )
+  scalars$weight[1] <- sqrt(scalars$weight[1])
+  scalars$weight[2] <- 1-scalars$weight[1]
+
+  # make inside plot, then scale
+  ggp <- getMosaic(occ4 %>% filter(Occupation != "Unaccounted"))
+  ggp_df <- ggplot_build(ggp)$data[[1]] %>% mutate(
+    xmin = xmin*scalars$weight[1] + scalars$weight[2]/2,
+    xmax = xmax*scalars$weight[1] + scalars$weight[2]/2,
+    ymin = ymin*scalars$weight[1] + scalars$weight[2]/2,
+    ymax = ymax*scalars$weight[1] + scalars$weight[2]/2
+  )
+
+  plot1 <- ggp_df %>% ggplot() +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50") +
+    geom_rect(xmin=scalars$weight[2]/2, xmax=1-scalars$weight[2]/2,
+              ymin=scalars$weight[2]/2, ymax=1-scalars$weight[2]/2, fill="white") +
+    geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
+              colour="grey85", size=0.1) +
+    scale_fill_identity() +
+    scale_alpha_identity() +
+    xlim(c(0,1)) +
+    ylim(c(0,1)) +
+    geomnet::theme_net() +
+    ggtitle(state_name)
+
+  plot2 <- getMosaic(occ4)
+
+  list(plot1=plot1, plot2=plot2)
+}
+
+
+createSpines <- function(data, state_name) {
+  spine_df <- data %>% filter(STATEICP == state_name)
+  if (nrow(spine_df) == 0) return()
+
+  get_plots <- function(sub_data) {
+    sub_data <- sub_data %>% mutate(
+      group = factor(group),
+      group = reorder(group, -Number)
+    )
+    lvls <- levels(sub_data$group)
+    sub_data$group <- factor(sub_data$group,
+                             levels=c(c("Unaccommodated", "Other"),
+                                      rev(setdiff(lvls, c("Other", "Unaccommodated")))))
+
+    sub_data <- sub_data %>% arrange(group)
+    sub_data %>%
+      ggplot() +
+      geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
+               position = "fill", colour="white", size=0.1) +
+      scale_fill_manual("Denomination", values=sub_data$colour) + coord_flip() +
+      geomnet::theme_net() +
+      theme(legend.position = "none") + ylab("") +
+      ggtitle(state_name)
+  }
+  plot2 <- spine_df %>% get_plots()
+  scalars <- spine_df %>% mutate(
+    type = group=="Unaccommodated"
+  ) %>% group_by(type) %>% summarize(
+    Number = sum(Number, na.rm = TRUE)
+  )
+  if (nrow(scalars)==1) plot1 <- plot2
+  else {
+  scalars$weight <- scalars$Number/sum(scalars$Number)
+  scalars$weight[1] <- sqrt(scalars$weight[1])
+  scalars$weight[2] <- 1 - scalars$weight[1]
+  spine <- spine_df %>% mutate(Number = replace(Number, group=="Unaccommodated", 0)) %>%
+    get_plots()
+
+  spine_wo_df <- ggplot_build(spine)$data[[1]] %>% mutate(
+    xmin = scalars$weight[2]/2,
+    xmax = scalars$weight[1] + scalars$weight[2]/2,
+    ymin = ymin*scalars$weight[1] + scalars$weight[2]/2,
+    ymax = ymax*scalars$weight[1] + scalars$weight[2]/2
+  )
+  plot1 <- spine_wo_df %>%
+    ggplot(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) +
+    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey60") +
+    geom_rect(aes(fill=fill), colour="white", size=0.1) +
+    scale_fill_identity() +
+    coord_flip() +
+    geomnet::theme_net() +
+    ggtitle(state_name)
+  }
+  list(plot1=plot1, plot2=plot2)
+}
+
+
+#########
+
+
+@
+
 <<data, cache=TRUE>>=
 datapath <- "../data"
 px2 <- read.csv(file.path(datapath, "px2.csv"), stringsAsFactors = FALSE)
@@ -119,6 +245,21 @@ occ3 <- occ3 %>% mutate(
   Area.name = as.character(Area.name)
 )
 
+
+# colours for church denominations
+cols = c(brewer.pal(n = 12, name = "Paired")[c(1,3,5,7,9,11)], "grey80")
+
+colRGB <- t(col2rgb(cols))/256
+colMNSL <- rgb2mnsl(colRGB)
+colMNSL <- c(colMNSL,
+             darker(colMNSL, steps = 2),
+             darker(colMNSL, steps = 4))
+
+colHEX <- mnsl(colMNSL)
+colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
+colHEX <- c(colHEX, "grey60")
+
+
 cl <- church %>% gather(key = Denomination,
                         value = Number,
                         Baptist:Universalist, Unaccommodated)
@@ -129,6 +270,29 @@ cl$Denomination <- factor(cl$Denomination,
                           c("Unaccommodated", levels(cl$Denomination)[-20]))
 levels(cl$Denomination) <- gsub("\\.", " ", levels(cl$Denomination))
 
+
+cl_data <- cl %>% filter(as.character(STATEICP)==as.character(State)) %>%
+  group_by(STATEICP) %>% nest()
+
+cl_data$data <- cl_data$data %>% purrr::map(.f = function(x) {
+  x %>%  arrange(desc(Number)) %>% mutate(
+    group = c(as.character(Denomination[1:5]), rep("Other", n() - 5))
+  ) %>% group_by(group) %>% summarize(Number = sum(Number, na.rm=TRUE))
+})
+
+cl_data <- cl_data %>% unnest()
+
+cl_data <- cl_data %>% group_by(group) %>% mutate(Total = sum(Number, na.rm=TRUE))
+cl_data <- cl_data %>% ungroup(group) %>% mutate(
+  group = reorder(group, -Total, na.rm=TRUE)
+)
+# put other and unaccommodated last:
+levels <- levels(cl_data$group)
+cl_data$group <- factor(cl_data$group, levels=c(setdiff(levels, c("Unaccommodated", "Other")), "Other", "Unaccommodated"))
+cl_data$colour <- colHEX[as.numeric(cl_data$group)]
+cl_data$colour <- with(cl_data, replace(colour, group=="Unaccommodated", "grey60"))
+
+#cl_data %>% filter(STATEICP=="Michigan") %>% ggplot(aes(group, weight=Total, fill=colour)) + geom_bar()  + scale_fill_identity() + coord_flip()
 @
 
 %%% Teaser figure %%%
@@ -215,18 +379,33 @@ occ2 %>% dplyr::filter(State==Area.Name) %>% ggplot() +
 @
 
 <<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=T, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten. \\label{fig:us-plate32-redo}", out.width='.75\\textwidth', fig.width=5, fig.height=6>>=
-cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
-occ3 %>% filter(Area.name == State) %>% ggplot() +
-  geom_mosaic(aes(x = product(Sex, Occupation),
-                  fill = Occupation, alpha = Sex, weight = Number),
-              offset = 0.005) +
-  scale_fill_manual(values = cols) + theme_bw() +
-  scale_alpha_manual(values = c(0.8,1)) +
-  theme(legend.position = "top", legend.box = "vertical") +
-  coord_equal() +
-    theme(axis.line = element_blank(), axis.text = element_blank(),
-        axis.title.y = element_blank(), axis.ticks = element_blank()) +
-  xlab("The United States")
+ cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
+# occ3 %>% filter(Area.name == State) %>% ggplot() +
+#   geom_mosaic(aes(x = product(Sex, Occupation),
+#                   fill = Occupation, alpha = Sex, weight = Number),
+#               offset = 0.005) +
+#   scale_fill_manual(values = cols) + theme_bw() +
+#   scale_alpha_manual(values = c(0.8,1)) +
+#   theme(legend.position = "top", legend.box = "vertical") +
+#   coord_equal() +
+#     theme(axis.line = element_blank(), axis.text = element_blank(),
+#         axis.title.y = element_blank(), axis.ticks = element_blank()) +
+#   xlab("The United States")
+
+us <- createMosaics()
+us$plot1 + theme_bw() +  xlab("The United States") + 
+  theme(aspect.ratio=1,
+        axis.title.y = element_blank(),
+        axis.title.x = element_text(size=rel(1.5)),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank()
+  )
+  
+
+
+
 @
 
 With the help of the description and the legend of \autoref{fig:header} and \autoref{fig:legend}, we can interpret the details of each of the squares at the example of \autoref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
@@ -303,19 +482,7 @@ The Census information about territories is available at a higher resolution tha
 
 \subsection{Plate 31: Church Accommodations by State}
 
-<<data-plate31-colors, echo=FALSE, message=FALSE, warning=FALSE>>=
-cols = c(brewer.pal(n = 12, name = "Paired")[c(1,3,5,7,9,11)], "grey80")
 
-colRGB <- t(col2rgb(cols))/256
-colMNSL <- rgb2mnsl(colRGB)
-colMNSL <- c(colMNSL,
-             darker(colMNSL, steps = 2),
-             darker(colMNSL, steps = 4))
-
-colHEX <- mnsl(colMNSL)
-colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
-colHEX <- c(colHEX, "grey60")
-@
 
 \autoref{fig:plate31} shows a miniature of plate \#31 from the Statistical Atlas. This plate shows the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame). For each state a square of the same size is drawn. The four most common denominations are shown as colored stripes, the width of each is proportional to the number of their sittings. Each denomination is shown by one of eleven different colors, all other denominations are represented jointly by a twelfth color. The color scheme chosen in the Statistical Atlas is essentially that of paired colors, i.e.\ each hue is represented with a lighter shade (using hatching) and a darker shade (see zoom-in to the legend of plate \#31 in \autoref{fig:legend-31}).
 
@@ -441,6 +608,14 @@ cl %>%
 
 <<state-church-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".9\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
+mi <- createSpines(cl_data, "Michigan")
+mn <- createSpines(cl_data, "Minnesota")
+ms <- createSpines(cl_data, "Mississippi")
+
+
+library(gridExtra)
+grid.arrange(mi[1]$plot1, mn[1]$plot1, ms[1]$plot1, nrow=1)
+
 p <- cl %>%
   filter(State %in% c("Michigan", "Minnesota", "Mississippi"), Number > 0) %>%
   mutate(Denomination = factor(Denomination, levels=rev(levels(Denomination)))) %>%
@@ -458,6 +633,8 @@ p + theme(axis.text = element_blank(), axis.title = element_blank(),
             aes(x = (xmin+xmax)/2, label=label, colour = label),
             y = 0.025, angle=90, hjust=0, vjust=0.5, size = 2.5) +
   scale_colour_manual(values = rep("black",20))
+
+
 @
 
 Both sets of re-imagined church accomodation plots use a triple color scheme. The lightest colors were drawn from the Colorbrewer\citep{colorbrewer} ``Paired" palette's light colors (a grey hue was also added); each color was then darkened twice to produce a color scheme composed of 21 colors and 7 hues using the \texttt{munsell} package\citep{munsell}. This scheme is similar to the color scheme in the Statistical Atlas, which is composed of 7 hues and uses crosshatching to create lighter and darker bars.
@@ -487,7 +664,7 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. % Add demographic information, explain difference between reddit and turk populations
 
 \paragraph{Survey Composition}
-Participants estimated proportions of __ plots. If an answer was not entered within __ seconds, the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
+Participants estimated proportions of \_\_ plots. If an answer was not entered within \_\_ seconds, the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
 
 \begin{itemize}
 \item spine, pie, mosaic
@@ -512,7 +689,7 @@ I don't know exactly how the study design worked...?
 
 \item[Online Supplement:] Additional plots and discussion not provided in the print version of this paper. (pdf)
 
-% \item[R-package for  MYNEW routine:] R-package ÒMYNEWÓ containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
+% \item[R-package for  MYNEW routine:] R-package {\tt MYNEW} containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
 
 % \item[HIV data set:] Data set used in the illustration of MYNEW method in Section~ 3.2. (.txt file)
 
