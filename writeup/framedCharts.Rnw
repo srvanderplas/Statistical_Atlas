@@ -745,6 +745,10 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. % Add demographic information, explain difference between reddit and turk populations
 
 
+
+\paragraph{Survey Composition}
+Participants were asked to estimate proportions in six plots (one of each combination of type of plot and design, see fig.~\ref{fig:combinations}) of three areas within each plot, for a total of 18 estimates. For each estimation participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
+
 \begin{figure}
   \centering
   \subfloat[Mosaicplot with frame]{
@@ -768,9 +772,6 @@ In order to quantify the perceptual biases induced by framed charts, we designed
   }
 \caption{\label{fig:combinations} Overview of the six plots shown to one third of the participants: all six combinations of plot types and designs are covered. The yellow `A' marks the area that participants are asked to estimate. Three areas in each of the plots were selected for estimation. }
 \end{figure}
-
-\paragraph{Survey Composition}
-Participants were asked to estimate proportions in six plots (one of each combination of type of plot and design, see fig.~\ref{fig:combinations}) of three areas within each plot, for a total of 18 estimates. For each estimation participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
 
 For all six plots participants were asked to estimate the size of the frame in framed designs and the corresponding integrated area in designs without a frame.
 The other two areas were chosen such that in each plot a small, a medium, and a large area were selected for estimation. To be able to more efficiently estimate variability and ensure comparability, three states were chosen for each plot type and rendered with and without a frame, for a total of 18 plots.
