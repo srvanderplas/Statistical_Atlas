@@ -93,11 +93,33 @@ library(ggmapr)
 
 
 <<code, echo=FALSE>>=
-createMosaics <- function(data = occ3, state_name = "*") {
-  occ4 <- occ3 %>% filter(State==Area.name)
+theme_mosaic <- function (base_size = 11, base_family = "") {
+    theme_grey(base_size = base_size, base_family = base_family) %+replace%
+        theme(plot.background = element_blank(), plot.margin = grid::unit(c(0,
+            0, 0, 0), unit = "cm"), panel.background = element_blank(),
+            axis.line = element_blank(), axis.text = element_blank(),
+            axis.ticks = element_blank(), axis.title.y = element_blank(),
+            legend.key = element_rect(fill = NA, colour = "white"),
+            panel.border = element_blank(), panel.grid = element_blank(),
+            aspect.ratio = 1)
+}
 
-  if (state_name != "*")
+theme_spine <- function (base_size = 11, base_family = "") {
+    theme_grey(base_size = base_size, base_family = base_family) %+replace%
+        theme(plot.background = element_blank(), plot.margin = grid::unit(c(0,
+            0, 0, 0), unit = "cm"), panel.background = element_blank(),
+            axis.line = element_blank(), axis.text = element_blank(),
+            axis.ticks = element_blank(), #axis.title = element_blank(),
+            legend.key = element_rect(fill = NA, colour = "white"),
+            panel.border = element_blank(), panel.grid = element_blank(),
+            aspect.ratio = 1)
+}
+
+createMosaics <- function(data = occ3, state_name = "") {
+  occ4 <- occ3 %>% filter(State==Area.name)
+  if (state_name != "")
     occ4 <- occ4 %>% filter(State == state_name)
+
   if (nrow(occ4) == 0) return(NULL)
 
     getMosaic <- function(data) {
@@ -111,8 +133,8 @@ createMosaics <- function(data = occ3, state_name = "*") {
         coord_equal() +
         theme(axis.line=element_blank(), axis.text=element_blank(),
               axis.title.y = element_blank(), axis.ticks = element_blank()) +
-        ggtitle(state_name) +
-        xlab("") + geomnet::theme_net() +
+        xlab(state_name) +
+        theme_mosaic() +
         theme(legend.position = "none")
     }
 
@@ -137,7 +159,7 @@ createMosaics <- function(data = occ3, state_name = "*") {
   )
 
   plot1 <- ggp_df %>% ggplot() +
-    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey50") +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey60", colour="grey30", size=.5) +
     geom_rect(xmin=scalars$weight[2]/2, xmax=1-scalars$weight[2]/2,
               ymin=scalars$weight[2]/2, ymax=1-scalars$weight[2]/2, fill="white") +
     geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
@@ -146,8 +168,8 @@ createMosaics <- function(data = occ3, state_name = "*") {
     scale_alpha_identity() +
     xlim(c(0,1)) +
     ylim(c(0,1)) +
-    geomnet::theme_net() +
-    ggtitle(toupper(state_name))
+    theme_mosaic() +
+    xlab(state_name)
 
   plot2 <- getMosaic(occ4)
 
@@ -175,9 +197,10 @@ createSpines <- function(data, state_name) {
       geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
                position = "fill", colour="white", size=0.1) +
       scale_fill_manual("Denomination", values=sub_data$colour) + coord_flip() +
-      geomnet::theme_net() +
-      theme(legend.position = "none") + ylab("") +
-      ggtitle(state_name)
+   #   geomnet::theme_net() +
+      theme_spine() +
+      theme(legend.position = "none") + xlab("") +
+      ylab(state_name)
   }
   plot2 <- spine_df %>% get_plots()
   scalars <- spine_df %>% mutate(
@@ -201,17 +224,72 @@ createSpines <- function(data, state_name) {
   )
   plot1 <- spine_wo_df %>%
     ggplot(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) +
-    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey60") +
+    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey60", colour="grey30", size=.5) +
     geom_rect(aes(fill=fill), colour="white", size=0.1) +
     scale_fill_identity() +
     coord_flip() +
-    geomnet::theme_net() +
-    ggtitle(toupper(state_name))
+    theme_spine() +
+    ylab(state_name)
   }
   list(plot1=plot1, plot2=plot2)
 }
 
 
+createPie <- function(data, state_name) {
+  spine_df <- data %>% filter(STATEICP == state_name)
+  if (nrow(spine_df) == 0) return()
+
+  get_plots <- function(sub_data) {
+    sub_data <- sub_data %>% mutate(
+      group = factor(group),
+      group = reorder(group, -Number)
+    )
+    lvls <- levels(sub_data$group)
+    sub_data$group <- factor(sub_data$group,
+                             levels=c(c("Unaccommodated", "Other"),
+                                      rev(setdiff(lvls, c("Other", "Unaccommodated")))))
+    sub_data %>% arrange(desc(group)) %>%
+      ggplot() +
+      geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
+               position = "fill", colour="white", size=0.1,
+               width=1) +
+      scale_fill_manual("Denomination", values = rev(colHEX)[-c(2:4)]) +
+      theme_mosaic() +
+      theme(legend.position = "none") + ylab("") +
+      ylab(state_name) + coord_polar(theta="y")
+  }
+  plot2 <- spine_df %>% get_plots()
+  scalars <- spine_df %>% mutate(
+    type = group=="Unaccommodated"
+  ) %>% group_by(type) %>% summarize(
+    Number = sum(Number, na.rm = TRUE)
+  )
+  if (nrow(scalars)==1) plot1 <- plot2
+  else {
+  scalars$weight <- scalars$Number/sum(scalars$Number)
+  scalars$weight[1] <- sqrt(scalars$weight[1])
+  scalars$weight[2] <- 1 - scalars$weight[1]
+  spine <- spine_df %>% mutate(Number = replace(Number, group=="Unaccommodated", 0)) %>%
+    get_plots()
+
+  spine_wo_df <- ggplot_build(spine)$data[[1]] %>% mutate(
+    xmin = 0,
+    xmax = scalars$weight[1]
+  )
+  plot1 <- spine_wo_df %>%
+    ggplot(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) +
+    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey60") +
+    geom_rect(aes(fill=fill),  colour="white", size=0.1) +
+    coord_polar(theta="y") +
+    scale_fill_identity() +
+    theme_mosaic() +
+    ylab(state_name)
+  }
+  list(plot1=plot1, plot2=plot2)
+}
+
+
+#########
 #########
 
 
@@ -606,14 +684,17 @@ cl %>%
 
 \autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
 
-<<state-church-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".9\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
+<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".9\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
 mi <- createSpines(cl_data, "Michigan")
 mn <- createSpines(cl_data, "Minnesota")
 ms <- createSpines(cl_data, "Mississippi")
 
-
+mi$plot1 <- mi$plot1 + ylab("MICHIGAN")
+mn$plot1 <- mn$plot1 + ylab("MINNESOTA")
+ms$plot1 <- ms$plot1 + ylab("MISSISSIPPI")
 library(gridExtra)
+
 grid.arrange(mi[1]$plot1, mn[1]$plot1, ms[1]$plot1, nrow=1)
 
 p <- cl %>%
@@ -652,7 +733,7 @@ While the use of framed plots in plates 31 and 32 of the Statistical Atlas is ae
 \item The frame cannot easily be divided into male and female portions, which means that information is lost when considering gender differences, as shown in plate 32.
 \end{enumerate}
 
-Bias in area estimation and comparison has been well studied. \citet{krider2001pizzas} showed that viewers estimate area based on the most salient dimension of an object, rather than on its' total area. citet{piaget1968quantification} showed this bias is stronger in young children, but that the bias decreases with age and cognitive development. \citet{size} examined the perceived size of squares, parallelograms, and other shapes, and found that area estimation was consistent with the psychophysics equation $A_{est} \propto A_{act}^\beta$, with a scaling coefficient of around $\beta = 0.8$. That is, perceived area increases more slowly than the actual area of the estimated region. \citet{lewandowsky1989perception} found that area judgments are approximately accurate in certain conditions: namely, when the variation in size occurs along a single dimension, and other dimensions are aligned. Taken together, these studies suggest that the use of framed charts can be expected to produce biased estimates, and that these estimates should be considerably worse for the mosaic plots than for spine plots, as information in mosaic plots is represented in two dimensions. Furthermore, \citet{lewandowsky1989perception} suggests that we can reduce these biases by integrating the information about unaccommodated individuals into the main part of the plot, treating it as just another category to be displayed.
+Bias in area estimation and comparison has been well studied. \citet{krider2001pizzas} showed that viewers estimate area based on the most salient dimension of an object, rather than on its' total area. \citet{piaget1968quantification} showed this bias is stronger in young children, but that the bias decreases with age and cognitive development. \citet{size} examined the perceived size of squares, parallelograms, and other shapes, and found that area estimation was consistent with the psychophysics equation $A_{est} \propto A_{act}^\beta$, with a scaling coefficient of around $\beta = 0.8$. That is, perceived area increases more slowly than the actual area of the estimated region. \citet{lewandowsky1989perception} found that area judgments are approximately accurate in certain conditions: namely, when the variation in size occurs along a single dimension, and other dimensions are aligned. Taken together, these studies suggest that the use of framed charts can be expected to produce biased estimates, and that these estimates should be considerably worse for the mosaic plots than for spine plots, as information in mosaic plots is represented in two dimensions. Furthermore, \citet{lewandowsky1989perception} suggests that we can reduce these biases by integrating the information about unaccommodated individuals into the main part of the plot, treating it as just another category to be displayed.
 
 
 In order to quantify the perceptual biases induced by framed charts, we designed a study which compares the framed and unframed versions of mosaic plots, spine plots, and pie charts, using data reconstructed from the Statistical Atlas charts.
@@ -663,16 +744,39 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \subsection{Study Design}
 \paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. % Add demographic information, explain difference between reddit and turk populations
 
+
+\begin{figure}
+  \centering
+  \subfloat[Mosaicplot with frame]{
+  \includegraphics[width = 0.3\textwidth]{images/Maine-mosaic_with_frame1.png}
+  }
+  \subfloat[Spineplot with frame]{
+  \includegraphics[width=0.3\textwidth]{images/Michigan-spine_with_frame1.png}
+  }
+  \subfloat[Piechart with frame]{
+  \includegraphics[width=0.3\textwidth]{images/Illinois-pie_with_frame1.png}
+  }
+
+  \subfloat[Mosaicplot w/o frame]{
+  \includegraphics[width = 0.3\textwidth]{images/California-mosaic_without_frame1.png}
+  }
+  \subfloat[Spineplot w/o frame]{
+  \includegraphics[width=0.3\textwidth]{images/Connecticut-spine_without_frame1.png}
+  }
+  \subfloat[Piechart w/o frame]{
+  \includegraphics[width=0.3\textwidth]{images/Alabama-pie_without_frame1.png}
+  }
+\caption{\label{fig:combinations} Overview of the six plots shown to one third of the participants: all six combinations of plot types and designs are covered. The yellow `A' marks the area that participants are asked to estimate. Three areas in each of the plots were selected for estimation. }
+\end{figure}
+
 \paragraph{Survey Composition}
-Participants estimated proportions of \_\_ plots. If an answer was not entered within \_\_ seconds, the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
+Participants were asked to estimate proportions in six plots (one of each combination of type of plot and design, see fig.~\ref{fig:combinations}) of three areas within each plot, for a total of 18 estimates. For each estimation participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
 
-\begin{itemize}
-\item spine, pie, mosaic
-\item framed interior, not framed interior, framed exterior
-\item small, medium, large proportion
-\end{itemize}
+For all six plots participants were asked to estimate the size of the frame in framed designs and the corresponding integrated area in designs without a frame.
+The other two areas were chosen such that in each plot a small, a medium, and a large area were selected for estimation. To be able to more efficiently estimate variability and ensure comparability, three states were chosen for each plot type and rendered with and without a frame, for a total of 18 plots.
+These 18 plots were assembled in three sets such that all combinations of plots were included exactly once and no state was included more than once. Each participant evaluated one set of plots.
 
-I don't know exactly how the study design worked...?
+The survey was administered in form of a branched Qualtrics survey, where each set constituted one of the branches. The survey software randomly assigned one of the branches to a participant (while balancing out participants across branches).
 
 % Show sample plots from the study - framed and unframed small/med/large
 
