@@ -116,9 +116,16 @@ theme_spine <- function (base_size = 11, base_family = "") {
 }
 
 createMosaics <- function(data = occ3, state_name = "") {
-  occ4 <- occ3 %>% filter(State==Area.name)
-  if (state_name != "")
+  occ4 <- occ3 %>% filter(State==Area.name) # Get only full states
+
+  if (state_name == "") {
+    occ4 <- occ4 %>%
+      mutate(State = "United States")
+  } else if (state_name == "all") {
+    occ4 <- occ4
+  } else {
     occ4 <- occ4 %>% filter(State == state_name)
+  }
 
   if (nrow(occ4) == 0) return(NULL)
 
@@ -140,38 +147,68 @@ createMosaics <- function(data = occ3, state_name = "") {
 
   scalars <- occ4 %>%
     mutate(frame = Occupation=="Unaccounted") %>%
-    group_by(frame) %>%
+    group_by(State, frame) %>%
     summarize(
       Number = sum(Number)
     ) %>% mutate(
       weight = Number/sum(Number)
-    )
-  scalars$weight[1] <- sqrt(scalars$weight[1])
-  scalars$weight[2] <- 1-scalars$weight[1]
+    ) %>%
+    select(-Number) %>%
+    mutate(frame = ifelse(frame, "Unaccommodated", "Accommodated")) %>%
+    spread(key = frame, value = weight)
+
+  scalarweight <- scalars %>%
+    mutate(Accommodated = sqrt(Accommodated),
+           Unaccommodated = 1 - Accommodated) %>%
+    mutate(mosaicWt = Accommodated, frameWt = Unaccommodated/2) %>%
+    select(-Accommodated, -Unaccommodated)
+
+  getMultiMosaic <- function(data) { # Pass in a single state's data, get out the single state's built data frame
+    getMosaic(data) %>%
+      ggplot_build() %>%
+      magrittr::extract2("data") %>%
+      magrittr::extract2(1) %>%
+      mutate(State = unique(data$State))
+  }
 
   # make inside plot, then scale
-  ggp <- getMosaic(occ4 %>% filter(Occupation != "Unaccounted"))
-  ggp_df <- ggplot_build(ggp)$data[[1]] %>% mutate(
-    xmin = xmin*scalars$weight[1] + scalars$weight[2]/2,
-    xmax = xmax*scalars$weight[1] + scalars$weight[2]/2,
-    ymin = ymin*scalars$weight[1] + scalars$weight[2]/2,
-    ymax = ymax*scalars$weight[1] + scalars$weight[2]/2
+  occ4 %>% filter(Occupation != "Unaccounted") %>%
+    split(.$State) %>%
+    map_df(getMultiMosaic)
+
+  ggp <- occ4 %>% filter(Occupation != "Unaccounted") %>%
+    split(.$State) %>%
+    map_df(getMultiMosaic) %>%
+    left_join(scalarweight)
+
+  ggp_df <- ggp %>% mutate(
+    xmin = xmin*mosaicWt + frameWt,
+    xmax = xmax*mosaicWt + frameWt,
+    ymin = ymin*mosaicWt + frameWt,
+    ymax = ymax*mosaicWt + frameWt
   )
 
-  plot1 <- ggp_df %>% ggplot() +
+  plot1 <- ggp_df %>%
+    ggplot() +
     geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey60", colour="grey30", size=.5) +
-    geom_rect(xmin=scalars$weight[2]/2, xmax=1-scalars$weight[2]/2,
-              ymin=scalars$weight[2]/2, ymax=1-scalars$weight[2]/2, fill="white") +
+    geom_rect(aes(xmin=frameWt, xmax=1-frameWt, ymin=frameWt, ymax=1-frameWt), fill="white") +
     geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
               colour="grey85", size=0.1) +
     scale_fill_identity() +
     scale_alpha_identity() +
     xlim(c(0,1)) +
     ylim(c(0,1)) +
-    theme_mosaic() +
-    xlab(state_name)
+    theme_mosaic()
 
   plot2 <- getMosaic(occ4)
+
+  if (state_name == "all") {
+    plot1 <- plot1 + facet_wrap(~State, ncol = 6)
+    plot2 <- plot2 + facet_wrap(~State, ncol = 6)
+  } else {
+    plot1 <- plot1 + xlab(state_name)
+    plot2 <- plot2 + xlab(state_name)
+  }
 
   list(plot1=plot1, plot2=plot2)
 }
@@ -179,6 +216,7 @@ createMosaics <- function(data = occ3, state_name = "") {
 
 createSpines <- function(data, state_name) {
   spine_df <- data %>% filter(STATEICP == state_name)
+
   if (nrow(spine_df) == 0) return()
 
   get_plots <- function(sub_data) {
@@ -197,17 +235,19 @@ createSpines <- function(data, state_name) {
       geom_bar(aes(weight = Number,  x = STATEICP, fill = group),
                position = "fill", colour="white", size=0.1) +
       scale_fill_manual("Denomination", values=sub_data$colour) + coord_flip() +
-   #   geomnet::theme_net() +
       theme_spine() +
       theme(legend.position = "none") + xlab("") +
       ylab(state_name)
   }
+
   plot2 <- spine_df %>% get_plots()
+
   scalars <- spine_df %>% mutate(
     type = group=="Unaccommodated"
   ) %>% group_by(type) %>% summarize(
     Number = sum(Number, na.rm = TRUE)
   )
+
   if (nrow(scalars)==1) plot1 <- plot2
   else {
   scalars$weight <- scalars$Number/sum(scalars$Number)
@@ -499,17 +539,22 @@ px2 %>% data.frame() %>%
 
 \begin{figure}
 \centering
-\includegraphics[width=.5\textwidth]{images/ca000082}
+\includegraphics[width=.5\textwidth]{images/ca000082.jpg}
 \caption{Miniature of plate \#32 of the Statistical Atlas.}
 \label{fig:plate32}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{images/plate32-repro}
-\caption{Reproduction of plate \#32.}
-\label{fig:plate32-repro}
-\end{figure}
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.5\textwidth]{images/plate32-repro}
+% \caption{Reproduction of plate \#32.}
+% \label{fig:plate32-repro}
+% \end{figure}
+
+<<plate32-repro, dependson="data", include = T, out.width = ".5\\textwidth", fig.width = 8, fig.height = 10.5, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
+tmp <- createMosaics(state_name = "all")
+tmp$plot1
+@
 
 \begin{figure}
 \centering
