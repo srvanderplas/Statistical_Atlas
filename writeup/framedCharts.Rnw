@@ -438,7 +438,7 @@ Estimates for the number of unaccounted women and men over ten years of age in e
 
 \autoref{fig:plate32} shows a miniature of the chart published as plate \#32 in the Statistical Atlas of 1874 \citep{atlas} produced from data collected in the 9th US Census. The chart shows the gender ratio of population over the age of ten in different types of occupations.
 
-<<overall-work-plot, eval=FALSE, out.width='.7\\textwidth', fig.width=5, fig.height=5.5, echo = FALSE, message=FALSE>>=
+<<overall-work-plot, eval=FALSE, out.width='.7\\textwidth', fig.width=5, fig.height=5.5, echo = FALSE, message=FALSE, warning = F>>=
 # Excludes unaccommodated information
 cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d")
 
@@ -456,19 +456,8 @@ occ2 %>% dplyr::filter(State==Area.Name) %>% ggplot() +
   xlab("The United States")
 @
 
-<<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=T, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten. \\label{fig:us-plate32-redo}", out.width='.75\\textwidth', fig.width=5, fig.height=6>>=
+<<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=T, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten. \\label{fig:us-plate32-redo}", out.width='.75\\textwidth', fig.width=5, fig.height=6, warning = F, message=F, fig.align='center'>>=
  cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
-# occ3 %>% filter(Area.name == State) %>% ggplot() +
-#   geom_mosaic(aes(x = product(Sex, Occupation),
-#                   fill = Occupation, alpha = Sex, weight = Number),
-#               offset = 0.005) +
-#   scale_fill_manual(values = cols) + theme_bw() +
-#   scale_alpha_manual(values = c(0.8,1)) +
-#   theme(legend.position = "top", legend.box = "vertical") +
-#   coord_equal() +
-#     theme(axis.line = element_blank(), axis.text = element_blank(),
-#         axis.title.y = element_blank(), axis.ticks = element_blank()) +
-#   xlab("The United States")
 
 us <- createMosaics()
 us$plot1 + theme_bw() +  xlab("The United States") +
@@ -480,10 +469,6 @@ us$plot1 + theme_bw() +  xlab("The United States") +
         panel.border = element_blank(),
         panel.grid = element_blank()
   )
-
-
-
-
 @
 
 With the help of the description and the legend of \autoref{fig:header} and \autoref{fig:legend}, we can interpret the details of each of the squares at the example of \autoref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
