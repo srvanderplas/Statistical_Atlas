@@ -116,7 +116,7 @@ theme_spine <- function (base_size = 11, base_family = "") {
 }
 
 createMosaics <- function(data = occ3, state_name = "") {
-  occ4 <- occ3 %>% filter(State==Area.name) # Get only full states
+  occ4 <- occ3 #%>% filter(State==Area.name) # Get only full states
 
   if (state_name == "") {
     occ4 <- occ4 %>%
@@ -361,8 +361,16 @@ occ3 <- occ3 %>% mutate(
   Sex = factor(Sex, levels = c("Male", "Female")),
   State = as.character(State),
   Area.name = as.character(Area.name)
-)
+) %>%
+  mutate(State = str_replace_all(
+    State,
+    c("(Arizona|New Mexico|Utah|Colorado) Territory" = "Southwest Territories",
+      "(Idaho|Wyoming|Washington|Montana|Dakota) Territory" = "Northwest Territories")))
 
+stateorder <- unique(occ3$State)
+stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia", "Northwest Territories", "Southwest Territories"))],
+                c("District of Columbia", "Northwest Territories", "Southwest Territories"))
+occ3$State <- factor(occ3$State, levels = stateorder, ordered = T)
 
 # colours for church denominations
 cols = c(brewer.pal(n = 12, name = "Paired")[c(1,3,5,7,9,11)], "grey80")
