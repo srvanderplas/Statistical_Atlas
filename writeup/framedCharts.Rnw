@@ -190,7 +190,7 @@ createMosaics <- function(data = occ3, state_name = "") {
 
   plot1 <- ggp_df %>%
     ggplot() +
-    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey60", colour="grey30", size=.5) +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey70", colour="grey40", size=.25) +
     geom_rect(aes(xmin=frameWt, xmax=1-frameWt, ymin=frameWt, ymax=1-frameWt), fill="white") +
     geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fill=fill, alpha=alpha),
               colour="grey85", size=0.1) +
@@ -488,7 +488,11 @@ Estimates for the number of unaccounted women and men over ten years of age in e
 
 <<overall-work-plot, eval=FALSE, out.width='.7\\textwidth', fig.width=5, fig.height=5.5, echo = FALSE, message=FALSE, warning = F>>=
 # Excludes unaccommodated information
-cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d")
+# cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d")
+#cols <- c("#333300", "#000066", "#cc9900", "#202060", "#9e7637", "grey40")
+
+cols <- c("#333300", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey40")
+
 
 occ2 %>% dplyr::filter(State==Area.Name) %>% ggplot() +
   geom_mosaic(aes(x = product(Gender, Occupation),
@@ -505,7 +509,9 @@ occ2 %>% dplyr::filter(State==Area.Name) %>% ggplot() +
 @
 
 <<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=T, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten. \\label{fig:us-plate32-redo}", out.width='.75\\textwidth', fig.width=5, fig.height=6, warning = F, message=F, fig.align='center'>>=
- cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
+ #cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
+cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey40")
+
 
 us <- createMosaics()
 us$plot1 + theme_bw() +  xlab("The United States") +
