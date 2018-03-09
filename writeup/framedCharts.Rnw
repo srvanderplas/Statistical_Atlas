@@ -786,12 +786,12 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \label{sec:meth}
 
 \subsection{Study Design}
-\paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. % Add demographic information, explain difference between reddit and turk populations
+\paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. Reddit participants were recruited through posts on the samplesize and visualization subreddits, thus, participants may be more data-aware than the general population. % Add demographic information, explain difference between reddit and turk populations
 
 
 
 \paragraph{Survey Composition}
-Participants were asked to estimate proportions in six plots (one of each combination of type of plot and design, see fig.~\ref{fig:combinations}) of three areas within each plot, for a total of 18 estimates. For each estimation participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
+Each participant was asked to evaluate 18 plots (details below). For each estimation, participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
 
 \begin{figure}
   \centering
@@ -817,9 +817,9 @@ Participants were asked to estimate proportions in six plots (one of each combin
 \caption{\label{fig:combinations} Overview of the six plots shown to one third of the participants: all six combinations of plot types and designs are covered. The yellow `A' marks the area that participants are asked to estimate. Three areas in each of the plots were selected for estimation. }
 \end{figure}
 
-For all six plots participants were asked to estimate the size of the frame in framed designs and the corresponding integrated area in designs without a frame.
-The other two areas were chosen such that in each plot a small, a medium, and a large area were selected for estimation. To be able to more efficiently estimate variability and ensure comparability, three states were chosen for each plot type and rendered with and without a frame, for a total of 18 plots.
-These 18 plots were assembled in three sets such that all combinations of plots were included exactly once and no state was included more than once. Each participant evaluated one set of plots.
+Three plot types were used in this study - mosaic plots (as in \autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states, to provide replication. Finally, three sections of each plot were selected for estimation - a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, where each participant evaluated a single set of plots.
+
+Each set of 18 plots was chosen such that all combinations of framed and unframed plot types were included. For each plot type x frame combination, the participant evaluated a small, medium, and large region in the same plot. Thus, if a participant evaluated the framed pie chart for Illinois, they might evaluate the unframed pie chart for Alabama. At the end of the evaluation, a participant saw plots from 6 states, corresponding to each combination of plot type and frame condition.
 
 The survey was administered in form of a branched Qualtrics survey, where each set constituted one of the branches. The survey software randomly assigned one of the branches to a participant (while balancing out participants across branches).
 
