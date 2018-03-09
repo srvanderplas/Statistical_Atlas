@@ -777,7 +777,7 @@ While the use of framed plots in plates 31 and 32 of the Statistical Atlas is ae
 \item The frame cannot easily be divided into male and female portions, which means that information is lost when considering gender differences, as shown in plate 32.
 \end{enumerate}
 
-Bias in area estimation and comparison has been well studied. \citet{krider2001pizzas} showed that viewers estimate area based on the most salient dimension of an object, rather than on its' total area. \citet{piaget1968quantification} showed this bias is stronger in young children, but that the bias decreases with age and cognitive development. \citet{size} examined the perceived size of squares, parallelograms, and other shapes, and found that area estimation was consistent with the psychophysics equation $A_{est} \propto A_{act}^\beta$, with a scaling coefficient of around $\beta = 0.8$. That is, perceived area increases more slowly than the actual area of the estimated region. \citet{lewandowsky1989perception} found that area judgments are approximately accurate in certain conditions: namely, when the variation in size occurs along a single dimension, and other dimensions are aligned. Taken together, these studies suggest that the use of framed charts can be expected to produce biased estimates, and that these estimates should be considerably worse for the mosaic plots than for spine plots, as information in mosaic plots is represented in two dimensions. Furthermore, \citet{lewandowsky1989perception} suggests that we can reduce these biases by integrating the information about unaccommodated individuals into the main part of the plot, treating it as just another category to be displayed.
+Bias in area estimation and comparison has been well studied. \citet{krider2001pizzas} showed that viewers estimate area based on the most salient dimension of an object, rather than on its' total area. \citet{piaget1968quantification} showed this bias is stronger in young children, but that the bias decreases with age and cognitive development. \citet{size} examined the perceived size of squares, parallelograms, and other shapes, and found that area estimation was consistent with the psychophysics equation $A_{est} \propto A_{act}^\beta$, with a scaling coefficient of around $\beta = 0.8$. That is, perceived area increases more slowly than the actual area of the estimated region. \citet{lewandowsky1989perception} found that area judgments are approximately accurate in certain conditions: namely, when the variation in size occurs along a single dimension, and other dimensions are aligned. Taken together, these studies suggest that the use of framed charts can be expected to produce biased estimates, and that these estimates should be considerably worse for the mosaic plots than for spine plots, as information in mosaic plots is represented in two dimensions. In addition, \citet{lewandowsky1989perception} suggests that we can reduce these biases by integrating the information about unaccommodated individuals into the main part of the plot, treating it as just another category to be displayed.
 
 
 In order to quantify the perceptual biases induced by framed charts, we designed a study which compares the framed and unframed versions of mosaic plots, spine plots, and pie charts, using data reconstructed from the Statistical Atlas charts.
@@ -825,9 +825,12 @@ The survey was administered in form of a branched Qualtrics survey, where each s
 
 % Show sample plots from the study - framed and unframed small/med/large
 
-<<r model>>=
+<<model, message = F, warning = F>>=
+percentages <- readr::read_csv("../data/study-results.csv")
+questions <- readr::read_csv("../data/PlotLabels.csv")
+percentages <- left_join(percentages, questions)
 
-percentages %>% ggplot(aes(x=ResponseId, y=howmuch)) + 
+percentages %>% ggplot(aes(x=ResponseId, y=howmuch)) +
   geom_point() + coord_flip() +
   facet_grid(.~source)
 
@@ -862,7 +865,7 @@ summary(error1)
 
 percentages %>%
   ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
-  facet_grid(Type~Frame, labeller="label_both") + geom_smooth(method="lm")
+  facet_grid(.~Type, labeller="label_both") + geom_smooth(method="lm")
 
 error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
 anova(error1, error2)
