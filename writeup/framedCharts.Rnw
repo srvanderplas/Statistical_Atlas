@@ -825,6 +825,53 @@ The survey was administered in form of a branched Qualtrics survey, where each s
 
 % Show sample plots from the study - framed and unframed small/med/large
 
+<<r model>>=
+
+percentages %>% ggplot(aes(x=ResponseId, y=howmuch)) + 
+  geom_point() + coord_flip() +
+  facet_grid(.~source)
+
+
+percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
+  geom_abline() +
+  geom_point(aes(shape=isFrame, colour=isFrame)) +
+  facet_grid(Frame~Type, labeller="label_both") +
+  xlab("Actual Value") +
+  ylab("Estimated Value") +
+  theme_bw() +
+  scale_colour_brewer("Frame piece estimate", palette="Set1") +
+  scale_shape_discrete("Frame piece estimate") +
+  theme(legend.position="bottom") +
+  facet_grid(.~source)
+
+
+
+percentages %>%
+  ggplot(aes(x = perc, y = diff.error)) + geom_point() +
+  facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
+
+error0 <- lm(diff.error ~ perc*Frame, data = percentages)
+
+percentages %>%
+  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
+  facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
+
+error1 <- lm(diff.error ~ perc*frameframe, data = percentages)
+anova(error0, error1)
+summary(error1)
+
+percentages %>%
+  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
+  facet_grid(Type~Frame, labeller="label_both") + geom_smooth(method="lm")
+
+error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
+anova(error1, error2)
+summary(error2)
+
+library(lme4)
+m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
+@
+
 \section{Conclusion}
 \label{sec:conc}
 
