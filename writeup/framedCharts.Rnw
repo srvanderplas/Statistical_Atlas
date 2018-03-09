@@ -345,6 +345,8 @@ church <- read.csv(file.path(datapath, "denominations-1874.csv"),
 churchPixel <- read.csv(file.path(datapath, "church_pixel.csv"),
                         stringsAsFactors = FALSE)
 
+percentages <- read.csv(file.path(datapath, "study-results.csv"))
+
 occ2 <- occ2 %>% mutate(
   Occupation = factor(Occupation, levels =
                         c("Agriculture", "Manufacturing",
@@ -825,11 +827,38 @@ The survey was administered in form of a branched Qualtrics survey, where each s
 
 % Show sample plots from the study - framed and unframed small/med/large
 
-<<r model>>=
+<<model, echo=FALSE>>=
 
-percentages %>% ggplot(aes(x=ResponseId, y=howmuch)) + 
+percentages %>%
+  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + 
+  geom_hline(yintercept=0, colour="grey30") +
+  geom_point() +
+  facet_grid(.~Type, labeller="label_both") + 
+  geom_smooth(method="lm") +
+  theme_bw() +
+  theme(legend.position="bottom") +
+  scale_colour_brewer("Plot area", palette = "Set2") +
+  xlab("Actual Percentages") +
+  ylab("Difference between observed and actual percentages") 
+  
+
+error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
+anova(error2)
+summary(error2)
+
+library(lme4)
+m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
+@
+
+
+For the discussion: more people from amazon than from reddit; all of the participants shows preferences to report to the closest 5 percent; the variability in the responses from amazon are much higher than the reddit responses
+<<echo=FALSE>>=
+percentages %>% mutate(
+  ResponseId = reorder(ResponseId, as.numeric(as.factor(source)))
+) %>% 
+  ggplot(aes(x=ResponseId, y=howmuch)) + 
   geom_point() + coord_flip() +
-  facet_grid(.~source)
+  facet_grid(source~., space="free", scales="free")
 
 
 percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
@@ -844,33 +873,8 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   theme(legend.position="bottom") +
   facet_grid(.~source)
 
-
-
-percentages %>%
-  ggplot(aes(x = perc, y = diff.error)) + geom_point() +
-  facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
-
-error0 <- lm(diff.error ~ perc*Frame, data = percentages)
-
-percentages %>%
-  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
-  facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
-
-error1 <- lm(diff.error ~ perc*frameframe, data = percentages)
-anova(error0, error1)
-summary(error1)
-
-percentages %>%
-  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
-  facet_grid(Type~Frame, labeller="label_both") + geom_smooth(method="lm")
-
-error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
-anova(error1, error2)
-summary(error2)
-
-library(lme4)
-m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 @
+
 
 \section{Conclusion}
 \label{sec:conc}
