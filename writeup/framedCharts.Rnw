@@ -655,7 +655,7 @@ cl %>% ggplot(aes(x = Denomination, weight=Number/10^6, fill=Denomination)) +
 
 We initially computed the unaccommodated population for each state as described in equation \eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:matches-plate31}) for all states except Minnesota, which we discuss below.
 
-<<religious-bias-plot, echo = FALSE, include=T, fig.width=5, fig.height=5, fig.caption = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".8\\textwidth">>=
+<<religious-bias-plot, echo = FALSE, include=T, fig.width=5, fig.height=5, fig.caption = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".5\\textwidth">>=
 church_noterritories <- churchPixel %>%
   filter(!(State.Territory %in% c("SW Territories", "NW Territories")))
 church_noterritories %>%
@@ -829,31 +829,53 @@ Each set of 18 plots was chosen such that all combinations of framed and unframe
 
 The survey was administered in form of a branched Qualtrics survey, where each set constituted one of the branches. The survey software randomly assigned one of the branches to a participant (while balancing out participants across branches).
 
-<<model, message = F, warning = F, echo=FALSE>>=
-percentages %>% mutate(
-  ResponseId = reorder(ResponseId, as.numeric(as.factor(source)))
-) %>%
-geom_point() + coord_flip() +
-  facet_grid(source~., space="free", scales="free")
-@
+\section{Results}
 
+Figure~\ref{check0} shows that:
+\begin{itemize}
+\item  estimates of frame pieces are not different from estimates of other pieces in designs without a frame
+\item  pieces outside the frame have a tendency to be overestimated in framed designs
+\item  pieces of the frame are underestimated in framed designs
+\item several weird outliers
+\end{itemize}
 
-For the discussion: more people from amazon than from reddit; all of the participants shows preferences to report to the closest 5 percent; the variability in the responses from amazon are much higher than the reddit responses
+Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces and designs: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot.
 
-<<echo=FALSE>>=
-
-percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
+<<check0, fig.width=7.5, fig.height = 4.25, fig.cap="Scatterplots of actual versus estimated areas. The color and shape of points distinguish between areas that are part of the frame (or correspond to frame pieces) and inside the plot.">>=
+percentages %>% 
+  ggplot(aes(x = perc, y = howmuch)) +
   geom_abline() +
   geom_point(aes(shape=isFrame, colour=isFrame)) +
   facet_grid(Frame~Type, labeller="label_both") +
-  xlab("Actual Value") +
-  ylab("Estimated Value") +
+  xlab("Actual Value of piece") +
+  ylab("Estimated Value of piece") +
   theme_bw() +
   scale_colour_brewer("Frame piece estimate", palette="Set1") +
   scale_shape_discrete("Frame piece estimate") +
-  theme(legend.position="bottom") +
-  facet_grid(.~source)
+  theme(legend.position="bottom")
+@
 
+As a measure of the error we use the difference between the estimated and the actual size of the piece. A positive difference means that the participant  overestimated the size of the piece in his or her estimate. Similarly, a negative difference corresponds to a visual underestimation of the piece.
+
+
+
+<<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y ~ x$ for each type of area within plot types. ">>=
+percentages %>%
+  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + 
+  geom_point() +
+  facet_grid(.~Type, labeller="label_both") + 
+  geom_smooth(method="lm") +
+  theme_bw() +
+  theme(legend.position="none",
+        aspect.ratio=1) +
+  scale_colour_brewer("Plot Area", palette="Set2") +
+  xlab("Actual Percentage of Area") +
+  ylab("Difference between actual \nand observed percentage") 
+@
+
+
+
+<<>>=
 percentages %>%
   ggplot(aes(x = perc, y = diff.error)) + geom_point() +
   facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
@@ -868,9 +890,6 @@ error1 <- lm(diff.error ~ perc*frameframe, data = percentages)
 anova(error0, error1)
 summary(error1)
 
-percentages %>%
-  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + geom_point() +
-  facet_grid(.~Type, labeller="label_both") + geom_smooth(method="lm")
 
 error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
 anova(error1, error2)
@@ -878,6 +897,27 @@ summary(error2)
 
 library(lme4)
 m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
+@
+
+
+
+For the discussion: more people from amazon than from reddit; all of the participants shows preferences to report to the closest 5 percent; the variability in the responses from amazon are much higher than the reddit responses
+
+<<echo=FALSE>>=
+percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
+  geom_abline() +
+  geom_point(aes(shape=isFrame, colour=isFrame)) +
+  facet_grid(Frame~Type, labeller="label_both") +
+  xlab("Actual Value") +
+  ylab("Estimated Value") +
+  theme_bw() +
+  scale_colour_brewer("Frame piece estimate", palette="Set1") +
+  scale_shape_discrete("Frame piece estimate") +
+  theme(legend.position="bottom") +
+  facet_grid(.~source)
+
+
+
 @
 
 
