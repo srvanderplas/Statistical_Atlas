@@ -855,10 +855,24 @@ percentages %>%
   theme(legend.position="bottom")
 @
 
+Using this categorization, we
+
+<<demographics>>=
+percentages %>% ggplot(aes(x = frameframe, fill=source)) + 
+  geom_bar(position="dodge") +
+  facet_grid(Type~.) +
+  coord_flip() +
+  xlab("Piece Location") +
+  ylab("Number of responses")
+@
+
 As a measure of the error we use the difference between the estimated and the actual size of the piece. A positive difference means that the participant  overestimated the size of the piece in his or her estimate. Similarly, a negative difference corresponds to a visual underestimation of the piece.
 
 
 <<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y \tilde x$ for each type of area within plot types. ">>=
+percentages <- percentages %>% mutate(
+  frameframe = factor(frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
+)
 percentages %>%
   ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + 
   geom_hline(yintercept=0, colour="grey50", size=0.5) +
@@ -866,28 +880,31 @@ percentages %>%
   facet_grid(.~Type, labeller="label_both") + 
   geom_smooth(method="lm") +
   theme_bw() +
-  theme(legend.position="none",
+  theme(legend.position="bottom",
         aspect.ratio=1) +
-  scale_colour_brewer("Plot Area", palette="Set2") +
+  scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("Actual Percentage of Area") +
   ylab("Difference between estimated \nand actual percentage") 
+
+error2b <- lm(diff.error ~ Type-1 + (frameframe*perc):Type, data = percentages)
 @
 
 Figure~\ref{fig:model} shows a scatterplot of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows:
 
 Let $d_{ijk}$ be the difference between estimated and observed difference of the questioned area, where 
 \begin{itemize}
-\item[$i$].
-\item[$j$].
-\item[$k$].
+\item[$i$] corresponds to the plot type, with 1 = mosaic, 2 = pie, and 3 = spine, 
+\item[$j$] is the piece location, with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot.
+\item[$k$] is the number of responses for each combination of $i$ and $j$. Each combinations has at least 25 responses from reddit users and 50 responses from amazon turk participants. See figure~\ref{fig:demographics} for an overview. 
 \end{itemize}
+
+\hh{the idea is to write the model in form of intercepts and slopes by actual size, with the unframed version of each of the types as base line. The other parameters can then be written as contrasts to the base line and be interpreted nicely.}
 
 We model $d_{ijk}$ as 
 \begin{equation}\nolabel
-d_{ijk} &=& a_{k1} + b_{k1} \cdot p  + \left(a_{kj} + b_{kj} \cdot p\right),\\
+d_{ijk} &=& a_{i} + b_{i} \cdot p  + \left(a_{ij} + b_{ij} \cdot p\right) + \epsilon_{ijk},\\
 \end{equation}
 
-Let $k = 1, 2, 3$ correspond to the three plot types, with 1 = mosaic, 2 = spine, and 3 = pie. 
 
 
 <<>>=
@@ -910,7 +927,7 @@ error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
 anova(error1, error2)
 summary(error2)
 
-error2b <- lm(diff.error ~ Type-1 + (frameframe-1+perc:frameframe):Type, data = percentages)
+error2b <- lm(diff.error ~ Type:frameframe-1 + (frameframe-1+perc:frameframe):Type, data = percentages)
 
 
 library(lme4)
