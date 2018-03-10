@@ -901,9 +901,9 @@ Let $d_{ijk}$ be the difference between estimated and observed difference of the
 \hh{the idea is to write the model in form of intercepts and slopes by actual size, with the unframed version of each of the types as base line. The other parameters can then be written as contrasts to the base line and be interpreted nicely.}
 
 We model $d_{ijk}$ as 
-\begin{equation}\nolabel
+\begin{eqnarray*}
 d_{ijk} &=& a_{i} + b_{i} \cdot p  + \left(a_{ij} + b_{ij} \cdot p\right) + \epsilon_{ijk},\\
-\end{equation}
+\end{eqnarray*}
 
 
 
