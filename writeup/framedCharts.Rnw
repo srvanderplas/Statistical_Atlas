@@ -858,10 +858,10 @@ percentages %>%
 As a measure of the error we use the difference between the estimated and the actual size of the piece. A positive difference means that the participant  overestimated the size of the piece in his or her estimate. Similarly, a negative difference corresponds to a visual underestimation of the piece.
 
 
-
-<<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y ~ x$ for each type of area within plot types. ">>=
+<<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y \tilde x$ for each type of area within plot types. ">>=
 percentages %>%
   ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + 
+  geom_hline(yintercept=0, colour="grey50", size=0.5) +
   geom_point() +
   facet_grid(.~Type, labeller="label_both") + 
   geom_smooth(method="lm") +
@@ -870,9 +870,24 @@ percentages %>%
         aspect.ratio=1) +
   scale_colour_brewer("Plot Area", palette="Set2") +
   xlab("Actual Percentage of Area") +
-  ylab("Difference between actual \nand observed percentage") 
+  ylab("Difference between estimated \nand actual percentage") 
 @
 
+Figure~\ref{fig:model} shows a scatterplot of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows:
+
+Let $d_{ijk}$ be the difference between estimated and observed difference of the questioned area, where 
+\begin{itemize}
+\item[$i$].
+\item[$j$].
+\item[$k$].
+\end{itemize}
+
+We model $d_{ijk}$ as 
+\begin{equation}\nolabel
+d_{ijk} &=& a_{k1} + b_{k1} \cdot p  + \left(a_{kj} + b_{kj} \cdot p\right),\\
+\end{equation}
+
+Let $k = 1, 2, 3$ correspond to the three plot types, with 1 = mosaic, 2 = spine, and 3 = pie. 
 
 
 <<>>=
@@ -894,6 +909,9 @@ summary(error1)
 error2 <- lm(diff.error ~ perc*frameframe*Type, data = percentages)
 anova(error1, error2)
 summary(error2)
+
+error2b <- lm(diff.error ~ Type-1 + (frameframe-1+perc:frameframe):Type, data = percentages)
+
 
 library(lme4)
 m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
