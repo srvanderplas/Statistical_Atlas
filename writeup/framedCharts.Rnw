@@ -897,15 +897,15 @@ The idea is to write the model in form of regressions lines of the difference $d
 
 We model $d_{ijk}$ as Model (1)
 \begin{eqnarray*}
-d_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot p  + \left(\alpha_{ij} + \beta_{ij} \cdot p\right) + \epsilon_{ijk} + u_\ell,
+d_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot p  + \left(\alpha_{ij} + \beta_{ij} \cdot p\right) + e_{ijk} + u_\ell,
 \end{eqnarray*}
 where 
 \begin{itemize}
-\item[$a_i$] can be interpreted as the estimated size of an area in an unframed design with an actual size of zero for each of the plot types $i$ ($i = 1, 2, 3$),
-\item[$b_i$] can be interpreted as the average change in the difference between estimated and actual size of a piece in an unframed design of plot type $i$ ($i = 1, 2, 3$) when the actual size increase by 1 percentage point,  
-\item[$a_{ij}$, $b_{ij}$] are the average changes to $a_i$ and $b_i$ for a piece in location $j$ ($j = 1,2,3$). For estimability, $a_{i1} = b_{i1} = 0$ for all plot types $i$,
-\item[$\epsilon_{ijk}$] is the error observed within each combination of plot type and piece location $ij$. We assume $\epsilon_{ijk} \sim N(0, \sigma^2)$ i.i.d.\ for all $k=1, ..., n_{ij}$,
-\item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant was supposed to evaluate 18 pieces. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of the 18. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, \epsilon) = 0$.
+\item[$\alpha_i$] can be interpreted as the estimated size of an area in an unframed design with an actual size of zero for each of the plot types $i$ ($i = 1, 2, 3$),
+\item[$\beta_i$] can be interpreted as the average change in the difference between estimated and actual size of a piece in an unframed design of plot type $i$ ($i = 1, 2, 3$) when the actual size increase by 1 percentage point,  
+\item[$\alpha_{ij}$, $\beta_{ij}$] are the average changes to $\alpha_i$ and $\beta_i$ for a piece in location $j$ ($j = 1,2,3$). For estimability, $\alpha_{i1} = \beta_{i1} = 0$ for all plot types $i$,
+\item[$e_{ijk}$] is the error observed within each combination of plot type and piece location $ij$. We assume $e_{ijk} \sim N(0, \sigma_e^2)$ i.i.d.\ for all $k=1, ..., n_{ij}$,
+\item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant was supposed to evaluate 18 pieces. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of the 18. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, e) = 0$.
 \end{itemize}
 
 <<re_model, warning=FALSE, message=FALSE>>=
@@ -947,7 +947,7 @@ xtab$Type[c(2:6,8:12,14:18)] <- ""
 xtab$Location[(1:9)*2] <- ""
 
 xtab$Signif. <- cut(xtab$Pr...t.., breaks=c(-1, 0.001, 0.01, 0.05, 0.1, 1), labels=c("***", "**", "*", ".", ""))
-xtab <- xtab %>% dplyr::select(-Pr...t.., -Slope)
+xtab <- xtab %>% dplyr::select(-Slope)
 
 print(xtable(xtab,
              caption="Table of parameters and corresponding estimates for Model (1). "), 
