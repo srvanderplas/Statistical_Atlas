@@ -345,7 +345,6 @@ church <- read.csv(file.path(datapath, "denominations-1874.csv"),
 churchPixel <- read.csv(file.path(datapath, "church_pixel.csv"),
                         stringsAsFactors = FALSE)
 
-percentages <- read.csv(file.path(datapath, "study-results.csv"))
 
 percentages <- readr::read_csv(file.path(datapath, "study-results.csv"))
 questions <- readr::read_csv(file.path(datapath, "PlotLabels.csv"))
@@ -831,7 +830,7 @@ The survey was administered in form of a branched Qualtrics survey, where each s
 
 \section{Results}
 
-Figure~\ref{check0} shows that:
+Figure~\ref{fig:check0} shows that:
 \begin{itemize}
 \item  estimates of frame pieces are not different from estimates of other pieces in designs without a frame
 \item  pieces outside the frame have a tendency to be overestimated in framed designs
@@ -855,21 +854,13 @@ percentages %>%
   theme(legend.position="bottom")
 @
 
-Using this categorization, we
 
-<<demographics>>=
-percentages %>% ggplot(aes(x = frameframe, fill=source)) + 
-  geom_bar(position="dodge") +
-  facet_grid(Type~.) +
-  coord_flip() +
-  xlab("Piece Location") +
-  ylab("Number of responses")
-@
+
 
 As a measure of the error we use the difference between the estimated and the actual size of the piece. A positive difference means that the participant  overestimated the size of the piece in his or her estimate. Similarly, a negative difference corresponds to a visual underestimation of the piece.
 
 
-<<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y \tilde x$ for each type of area within plot types. ">>=
+<<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y$ versus $x$ for each type of area within plot types. ">>=
 percentages <- percentages %>% mutate(
   frameframe = factor(frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
 )
@@ -885,29 +876,97 @@ percentages %>%
   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("Actual Percentage of Area") +
   ylab("Difference between estimated \nand actual percentage") 
-
-error2b <- lm(diff.error ~ Type-1 + (frameframe*perc):Type, data = percentages)
 @
 
-Figure~\ref{fig:model} shows a scatterplot of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows:
+Figure~\ref{fig:model} shows a scatterplot of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows.
 
-Let $d_{ijk}$ be the difference between estimated and observed difference of the questioned area, where 
+<<demographics, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
+percentages %>% ggplot(aes(x = frameframe, fill=source)) + 
+  geom_bar(position="dodge") +
+  facet_grid(Type~.) +
+  coord_flip() +
+  xlab("Piece Location") +
+  ylab("Number of responses") +
+  theme_bw() +
+  scale_fill_brewer(palette="Set1")
+@
+
+Let $d_{ijk}$ be the difference between estimated and observed difference of the questioned area for plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine), piece location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot) and response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$. Each combinations has at least 25 responses from reddit users and 50 responses from amazon turk participants. See figure~\ref{fig:demographics} for an overview. 
+
+The idea is to write the model in form of regressions lines of the difference $d$ by actual size $p$, with the unframed version of each of the types as base line. The other parameters can then be written as contrasts to the base line and be interpreted nicely.
+
+We model $d_{ijk}$ as Model (1)
+\begin{eqnarray*}
+d_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot p  + \left(\alpha_{ij} + \beta_{ij} \cdot p\right) + \epsilon_{ijk} + u_\ell,
+\end{eqnarray*}
+where 
 \begin{itemize}
-\item[$i$] corresponds to the plot type, with 1 = mosaic, 2 = pie, and 3 = spine, 
-\item[$j$] is the piece location, with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot.
-\item[$k$] is the number of responses for each combination of $i$ and $j$. Each combinations has at least 25 responses from reddit users and 50 responses from amazon turk participants. See figure~\ref{fig:demographics} for an overview. 
+\item[$a_i$] can be interpreted as the estimated size of an area in an unframed design with an actual size of zero for each of the plot types $i$ ($i = 1, 2, 3$),
+\item[$b_i$] can be interpreted as the average change in the difference between estimated and actual size of a piece in an unframed design of plot type $i$ ($i = 1, 2, 3$) when the actual size increase by 1 percentage point,  
+\item[$a_{ij}$, $b_{ij}$] are the average changes to $a_i$ and $b_i$ for a piece in location $j$ ($j = 1,2,3$). For estimability, $a_{i1} = b_{i1} = 0$ for all plot types $i$,
+\item[$\epsilon_{ijk}$] is the error observed within each combination of plot type and piece location $ij$. We assume $\epsilon_{ijk} \sim N(0, \sigma^2)$ i.i.d.\ for all $k=1, ..., n_{ij}$,
+\item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant was supposed to evaluate 18 pieces Each participants evaluated at least ten of the 18 pieces and give, on average, 17 (valid) estimations out of the 18. We assume that the random effect is normally distributed, i.e.\ $\u{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $cov(u, \epsilon) = 0$.
 \end{itemize}
 
-\hh{the idea is to write the model in form of intercepts and slopes by actual size, with the unframed version of each of the types as base line. The other parameters can then be written as contrasts to the base line and be interpreted nicely.}
+<<re_model, warning=FALSE, message=FALSE>>=
+base <- lm(diff.error ~ Type-1 + (frameframe*perc):Type, data = percentages)
 
-We model $d_{ijk}$ as 
-\begin{eqnarray*}
-d_{ijk} &=& a_{i} + b_{i} \cdot p  + \left(a_{ij} + b_{ij} \cdot p\right) + \epsilon_{ijk},\\
-\end{eqnarray*}
+library(lme4)
+library(lmerTest)
+library(xtable)
+
+baseplus <- lmer(diff.error ~ Type-1 + (frameframe*perc):Type + (1|ResponseId), data = percentages)
+
+confints <- data.frame(confint(baseplus, method="Wald"))[-(c(1:2)),]
+names(confints) <- c("LB", "UB")
+
+base_summary <- summary(baseplus)
+table <- data.frame(base_summary$coefficients)
+table$Parameter <- row.names(table)
+table <- data.frame(table, confints)
+table <- table %>% mutate(
+  PlotFrame = gsub("Type", "", Parameter),
+  PlotFrame = gsub("frameframe", "", PlotFrame)
+) %>% separate(PlotFrame, into=c("Type", "Location", "Slope"), sep=":") %>% mutate(
+  Slope = replace(Slope, Location=="perc", "perc"),
+  Location = replace(Location, Location=="perc", NA),
+  Location = replace(Location, is.na(Location), "Unframed")
+)
+table <- table %>% mutate(
+  Type = factor(Type, levels=c("mosaic", "pie", "spine")),
+  Location = factor(Location, levels=c("Unframed", "Framed-inside", "Framed-frame"))
+)
+@
+
+<<re_results, results='asis', warning=FALSE, message=FALSE>>=
+xtab <- table %>% arrange(Type, Location)
+xtab <- xtab %>% mutate(Param = paste0(c("$\\alpha_{", "$\\beta_{"),  c(1,1,12,12,13,13,2,2,22,22,23,23,3,3,32,32, 33,33), "}$"))
+xtab <- xtab %>% 
+  dplyr::select(Type, Location, Param, Estimate, LB, UB, Slope, Pr...t..) 
+xtab$Type[c(2:6,8:12,14:18)] <- ""
+xtab$Location[(1:9)*2] <- ""
+
+xtab$Signif. <- cut(xtab$Pr...t.., breaks=c(-1, 0.001, 0.01, 0.05, 0.1, 1), labels=c("***", "**", "*", ".", ""))
+xtab <- xtab %>% dplyr::select(-Pr...t.., -Slope)
+
+print(xtable(xtab,
+             caption="Table of parameters and corresponding estimates for Model (1). "), 
+      include.rownames=FALSE, 
+      hline.after=c(-1,0,6, 12, nrow(xtab)),
+      sanitize.text.function=function(x){x})
+@
+
+<<participants, eval=FALSE>>=
+percentages %>% count(ResponseId) %>% 
+  ggplot(aes(x = factor(n))) + 
+  geom_bar() +
+  theme_bw() + 
+  xlab("Number of evaluations per participant")
+@
 
 
 
-<<>>=
+<<results="hide">>=
 percentages %>%
   ggplot(aes(x = perc, y = diff.error)) + geom_point() +
   facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")

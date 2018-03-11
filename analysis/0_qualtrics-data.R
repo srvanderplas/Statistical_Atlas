@@ -12,7 +12,7 @@ read_and_clean <- function(file) {
   percentages <- responses %>% select(IPAddress, ResponseId,  grep("Q...$", names(responses), value=TRUE), grep("Q..$", names(responses), value=TRUE)) %>% gather(question, howmuch, matches("Q..."), matches("Q.."))
   percentages$howmuch <- as.numeric(percentages$howmuch)
   percentages <- percentages %>% filter(howmuch > 0)
-  percentages <- percentages %>% filter(howmuch < 100)
+#  percentages <- percentages %>% filter(howmuch < 100)
   idx <- which(percentages$howmuch < 1)
   percentages$howmuch[idx] <- percentages$howmuch[idx]*100
   
