@@ -962,7 +962,7 @@ unframed <- lmer(log(howmuch) ~ Type-1 + (log(perc)):Type + (1|ResponseId), data
 # baseplus <- lmer(log(howmuch) ~ -1 + frameframe:(Type + (log(perc)):Type) + (1|ResponseId), data = percentages)
 
 # contrasts wrt to first level of frameframe (== "Unframed")
-baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*perc):Type + (1|ResponseId), data = percentages)
+baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages)
 
 confints <- data.frame(confint(baseplus, method="Wald"))[-(c(1:2)),]
 names(confints) <- c("LB", "UB")
@@ -974,11 +974,16 @@ table <- data.frame(table, confints)
 table <- table %>% mutate(
   PlotFrame = gsub("Type", "", Parameter),
   PlotFrame = gsub("frameframe", "", PlotFrame)
-) %>% separate(PlotFrame, into=c("Type", "Location", "Slope"), sep=":") %>% mutate(
-  Slope = replace(Slope, Location=="perc", "perc"),
-  Location = replace(Location, Location=="perc", NA),
+)
+table <- table %>% separate(PlotFrame, into=c("Type", "Location", "Slope"), sep=":")
+
+table <- table %>% mutate(
+  Slope = replace(Slope, Location=="log(perc)", "log(perc)"),
+  Location = replace(Location, Location=="log(perc)", NA),
   Location = replace(Location, is.na(Location), "Unframed")
 )
+
+
 table <- table %>% mutate(
   Type = factor(Type, levels=c("mosaic", "pie", "spine")),
   Location = factor(Location, levels=c("Unframed", "Framed-inside", "Framed-frame"))
