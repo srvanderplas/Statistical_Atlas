@@ -329,13 +329,10 @@ createPie <- function(data, state_name) {
 }
 
 
-#########
-#########
-
-
 @
 
 <<data, cache=TRUE, message = F, warning = F>>=
+### Data #####
 datapath <- "../data"
 px2 <- read.csv(file.path(datapath, "px2.csv"), stringsAsFactors = FALSE)
 occ2 <- read.csv(file.path(datapath, "occ2.csv"), stringsAsFactors = FALSE)
