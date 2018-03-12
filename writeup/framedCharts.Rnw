@@ -958,7 +958,8 @@ library(xtable)
 # baseplus <- lmer(log(ratio) ~ Type-1 + (frameframe*perc):Type + (1|ResponseId), data = percentages)
 unframed <- lmer(log(howmuch) ~ Type-1 + (log(perc)):Type + (1|ResponseId), data = filter(percentages, frameframe == "Unframed"))
 
-baseplus <- lmer(log(howmuch) ~ frameframe:Type-1 + (frameframe:log(perc)):Type + (1|ResponseId), data = percentages)
+# parameters for all nine lines separately: 
+baseplus <- lmer(log(howmuch) ~ -1 + frameframe:Type + frameframe:(log(perc)):Type + (1|ResponseId), data = percentages)
 
 
 confints <- data.frame(confint(baseplus, method="Wald"))[-(c(1:2)),]
