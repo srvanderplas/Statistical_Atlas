@@ -639,19 +639,19 @@ cl %>% ggplot(aes(x = Denomination, weight=Number/10^6, fill=Denomination)) +
 \begin{figure}
   \centering
   \subfloat[Legend section of plate \#31.]{
-  \includegraphics[width = 0.49\textwidth]{images/plate31-legend.png}
+  \includegraphics[width = 0.48\textwidth]{images/plate31-legend.png}
   \label{fig:legend-31}
   }
   \subfloat[Church sittings by denomination.]{
-  \includegraphics[width=0.49\textwidth]{figure/barchart-denominations-1}
+  \includegraphics[width=0.48\textwidth]{figure/barchart-denominations-1}
   \label{fig:barchart-31}
   }
 \caption{Old and new side-by-side: denominations are ordered from top to bottom according to the nation-wide number of sittings. On the right, all denominations are shown that were accommodated for in 1874. We also see that the number of unaccommodated people over the age of ten is higher than the number of sittings in any of the denominations.}
 \end{figure}
 
-We initially computed the unaccommodated population for each state as described in equation \eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:matches-plate31}) for all states except Minnesota, which we discuss below.
+We initially computed the unaccommodated population for each state as described in equation \eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:religious-bias-plot}) for all states except Minnesota, which we discuss below.
 
-<<religious-bias-plot, echo = FALSE, include=T, fig.width=5, fig.height=5, fig.caption = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".5\\textwidth">>=
+<<religious-bias-plot, echo = FALSE, include=T, fig.width=5, fig.height=5, fig.cap = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".5\\textwidth", fig.align='center', fig.env = 'figure'>>=
 church_noterritories <- churchPixel %>%
   filter(!(State.Territory %in% c("SW Territories", "NW Territories")))
 church_noterritories %>%
@@ -671,7 +671,7 @@ church_noterritories %>%
 
 A close examination of plate \#31 will also reveal that the different color layers of the lithographic prints are not as well aligned. In addition, the state plots are much more variable in size in plate \#31 than in plate \#32. These differences suggest that plate \#31 might have been created by a less experienced lithographer than plate \#32. Both plate \#31 and plate \#32 were based off of data compiled from the 1870 census by Francis A. Walker, but it appears the artistry and methodology may not have been consistent between the two plates.
 
-When we compare the proportions of state populations shown in the Statistical Atlas and the proportions of different denominations in the 1\% microsample data, another interesting anomaly emerges. The proportion of unaccommodated individuals in Minnesota is much higher in the Statistical Atlas plot than it is in the 1\% microsample, while the proportions are comparable for every other state. \autoref{fig:matches-plate31} shows the relationship between the 1\% microsample population and the pixel proportions in plate \#31. The most likely explanation for this large discrepancy is that the lithographer made an error when creating the state sub-plot for Minnesota.
+When we compare the proportions of state populations shown in the Statistical Atlas and the proportions of different denominations in the 1\% microsample data, another interesting anomaly emerges. The proportion of unaccommodated individuals in Minnesota is much higher in the Statistical Atlas plot than it is in the 1\% microsample, while the proportions are comparable for every other state. \autoref{fig:religious-bias-plot} shows the relationship between the 1\% microsample population and the pixel proportions in plate \#31. The most likely explanation for this large discrepancy is that the lithographer made an error when creating the state sub-plot for Minnesota.
 
 <<minnesota-plot, dependson="data-plate31", echo = F, message = F, warning = F, include = F>>=
 
@@ -728,9 +728,9 @@ cl %>%
 \end{figure}
 
 
-\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
+\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot1} shows a modern replication of the original charts, and \autoref{fig:state-church-plot2} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
 
-<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".9\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
+<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".98\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
 mi <- createSpines(cl_data, "Michigan")
 mn <- createSpines(cl_data, "Minnesota")
@@ -825,6 +825,16 @@ Each set of 18 plots was chosen such that all combinations of framed and unframe
 
 The survey was administered in form of a branched Qualtrics survey, where each set constituted one of the branches. The survey software randomly assigned one of the branches to a participant (while balancing out participants across branches).
 
+
+<<participants, eval=FALSE>>=
+percentages %>% count(ResponseId) %>%
+  ggplot(aes(x = factor(n))) +
+  geom_bar() +
+  theme_bw() +
+  xlab("Number of evaluations per participant")
+@
+
+
 \section{Results}
 
 Figure~\ref{fig:check0} shows that:
@@ -838,7 +848,7 @@ Figure~\ref{fig:check0} shows that:
 Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces and designs: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot.
 
 <<check0, fig.width=7.5, fig.height = 4.25, fig.cap="Scatterplots of actual versus estimated areas. The color and shape of points distinguish between areas that are part of the frame (or correspond to frame pieces) and inside the plot.">>=
-percentages %>% 
+percentages %>%
   ggplot(aes(x = perc, y = howmuch)) +
   geom_abline() +
   geom_point(aes(shape=isFrame, colour=isFrame)) +
@@ -861,40 +871,40 @@ As a measure of the error we use the difference between the estimated and the ac
 percentages <- percentages %>% mutate(
   frameframe = factor(frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
 )
-percentages %>%
-  ggplot(aes(x = perc, y = diff.error, colour=frameframe)) + 
-  geom_hline(yintercept=0, colour="grey50", size=0.5) +
-  geom_point() +
-  facet_grid(.~Type, labeller="label_both") + 
-  geom_smooth(method="lm") +
-  theme_bw() +
-  theme(legend.position="bottom",
-        aspect.ratio=1) +
-  scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
-  xlab("Actual Percentage of Area") +
-  ylab("Difference between estimated \nand actual percentage") 
+# percentages %>%
+#   ggplot(aes(x = perc, y = diff.error, colour=frameframe)) +
+#   geom_hline(yintercept=0, colour="grey50", size=0.5) +
+#   geom_point() +
+#   facet_grid(.~Type, labeller="label_both") +
+#   geom_smooth(method="lm") +
+#   theme_bw() +
+#   theme(legend.position="bottom",
+#         aspect.ratio=1) +
+#   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
+#   xlab("Actual Percentage of Area") +
+#   ylab("Difference between estimated \nand actual percentage")
 
 percentages <- percentages %>% mutate(
   ratio = howmuch/perc
 )
 percentages %>%
-  ggplot(aes(x = perc, y = log(ratio), colour=frameframe)) + 
+  ggplot(aes(x = perc, y = log(ratio), colour=frameframe)) +
   geom_hline(yintercept=0, colour="grey50", size=0.5) +
   geom_point() +
-  facet_grid(.~Type, labeller="label_both") + 
+  facet_grid(.~Type, labeller="label_both") +
   geom_smooth(method="lm") +
   theme_bw() +
   theme(legend.position="bottom",
         aspect.ratio=1) +
   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("Actual Percentage of Area") +
-  ylab("(Log) Ratio of estimated \nand actual percentage") 
+  ylab("(Log) Ratio of estimated \nand actual percentage")
 @
 
 Figure~\ref{fig:model} shows a scatterplot of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows.
 
 <<demographics, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
-percentages %>% ggplot(aes(x = frameframe, fill=source)) + 
+percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   geom_bar(position="dodge") +
   facet_grid(Type~.) +
   coord_flip() +
@@ -968,23 +978,15 @@ xtab$Signif. <- cut(xtab$Pr...t.., breaks=c(-1, 0.001, 0.01, 0.05, 0.1, 1), labe
 xtab <- xtab %>% dplyr::select(-Slope)
 
 print(xtable(xtab, digits=3,
-             caption="Table of parameters and corresponding estimates for Model (1). "), 
-      include.rownames=FALSE, 
+             caption="Table of parameters and corresponding estimates for Model (1). "),
+      include.rownames=FALSE,
       hline.after=c(-1,0,6, 12, nrow(xtab)),
       sanitize.text.function=function(x){x})
 @
 
-<<participants, eval=FALSE>>=
-percentages %>% count(ResponseId) %>% 
-  ggplot(aes(x = factor(n))) + 
-  geom_bar() +
-  theme_bw() + 
-  xlab("Number of evaluations per participant")
-@
 
 
-
-<<results="hide">>=
+<<results="hide", fig.width = 5, fig.height = 5, out.width = ".9\\textwidth", fig.cap = "">>=
 percentages %>%
   ggplot(aes(x = perc, y = diff.error)) + geom_point() +
   facet_grid(.~Frame, labeller="label_both") + geom_smooth(method="lm")
@@ -1015,7 +1017,7 @@ m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 
 For the discussion: more people from amazon than from reddit; all of the participants shows preferences to report to the closest 5 percent; the variability in the responses from amazon are much higher than the reddit responses
 
-<<echo=FALSE>>=
+<<echo=FALSE, fig.width = 5, fig.height = 5, out.width = ".9\\textwidth", fig.cap = "">>=
 percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   geom_abline() +
   geom_point(aes(shape=isFrame, colour=isFrame)) +
