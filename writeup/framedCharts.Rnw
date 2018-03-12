@@ -905,6 +905,20 @@ percentages <- percentages %>% mutate(
 percentages %>%
   ggplot(aes(x = log(perc), y = log(howmuch), colour=frameframe)) +
   geom_abline(slope = 1, colour="grey50", size=0.5) +
+  geom_point(aes(shape= abs(log(ratio)) > 2)) +
+  facet_grid(.~Type, labeller="label_both") +
+  geom_smooth(method="lm") +
+  theme_bw() +
+  theme(legend.position="bottom",
+        aspect.ratio=1) +
+  scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
+  xlab("(Log) Percent Actual Area") +
+  ylab("(Log) Percent Estimated Area")
+
+
+percentages %>% filter(abs(ratio) < 2.5) %>%
+  ggplot(aes(x = log(perc), y = log(howmuch), colour=frameframe)) +
+  geom_abline(slope = 1, colour="grey50", size=0.5) +
   geom_point() +
   facet_grid(.~Type, labeller="label_both") +
   geom_smooth(method="lm") +
@@ -914,6 +928,7 @@ percentages %>%
   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("(Log) Percent Actual Area") +
   ylab("(Log) Percent Estimated Area")
+
 @
 
 Figure~\ref{fig:model} shows a scatterplot of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows.
@@ -926,7 +941,8 @@ percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   xlab("Piece Location") +
   ylab("Number of responses") +
   theme_bw() +
-  scale_fill_brewer(palette="Set1")
+  scale_fill_brewer(palette="Set1") 
+  
 @
 
 Let $r_{ijk\ell}$ be the ratio of estimated and actual size of the questioned area for plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine), piece location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot) and response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$. We then model the log ratio $\log r_{ijk\ell}$. Results in the table are from the log ratio. Each combinations has at least 25 responses from reddit users and 50 responses from amazon turk participants (see figure~\ref{fig:demographics} for an overview).
@@ -962,7 +978,7 @@ unframed <- lmer(log(howmuch) ~ Type-1 + (log(perc)):Type + (1|ResponseId), data
 # baseplus <- lmer(log(howmuch) ~ -1 + frameframe:(Type + (log(perc)):Type) + (1|ResponseId), data = percentages)
 
 # contrasts wrt to first level of frameframe (== "Unframed")
-baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages)
+baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages %>% filter(abs(log(ratio)) < 2))
 
 confints <- data.frame(confint(baseplus, method="Wald"))[-(c(1:2)),]
 names(confints) <- c("LB", "UB")
