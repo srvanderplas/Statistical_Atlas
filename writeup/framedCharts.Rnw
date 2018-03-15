@@ -533,6 +533,7 @@ With the help of the description and the legend of \autoref{fig:header} and \aut
 Showing the unaccounted population as a frame masks the size of the corresponding population by visually cutting it into quarters. The percentage of unaccounted individuals nation-wide is about 30\%. This number is  higher than any of the other groups. Assessing the size of the unaccounted population in form of the area of the grey frame is mentally strenuous, as discussed in \autoref{sec:psych}. The task becomes much easier, if we incorporate the information directly into the mosaic plot, as shown in \autoref{fig:us-plate32-redo}.
 This figure reveals another previously hidden finding:
 about 97\% of the unaccounted population are women and girls!
+\svp{Need to add in plate-32-redo with no frame - this sentance doesn't make sense without that.}
 
 <<plate32-scatterplot, dependson="data", include=FALSE, results='hide', echo=FALSE, fig.width = 6, fig.height = 4, warning = FALSE, message=FALSE>>=
 # only run this once
@@ -861,7 +862,7 @@ As a measure of the error we use the log ratio between the estimated and the act
 
 <<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y$ versus $x$ for each type of area within plot types. ">>=
 percentages <- percentages %>% mutate(
-  frameframe = factor(frameframe, 
+  frameframe = factor(frameframe,
                       levels=c("Unframed", "Framed-inside", "Framed-frame")),
   ratio = howmuch/perc
 )
@@ -878,7 +879,7 @@ percentages <- percentages %>% mutate(
 #   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
 #   xlab("(Log) Percent Actual Area") +
 #   ylab("(Log) Percent Estimated Area")
-# 
+#
 
 percentages %>% filter(abs(log(ratio)) < log(5)) %>%
   ggplot(aes(x = log(perc), y = log(howmuch), colour=frameframe)) +
@@ -895,13 +896,13 @@ percentages %>% filter(abs(log(ratio)) < log(5)) %>%
 
 @
 
-This approach brings us back directly to the psychophysics equation 
+This approach brings us back directly to the psychophysics equation
 $A_{est} \propto A_{act}^\beta$ by \citet{size},
 which can be written as the linear dependency $\log A_{est} = \alpha + \beta \log A_{act}$.
-Figure~\ref{fig:model} shows a scatterplots of log estimated versus log actual sizes of areas, with simple linear regressions summarising the relationship between estimated and actual size for each of the plot types and each of the types of pieces. 
+Figure~\ref{fig:model} shows a scatterplots of log estimated versus log actual sizes of areas, with simple linear regressions summarising the relationship between estimated and actual size for each of the plot types and each of the types of pieces.
 %of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows.
 
-Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by participant $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece. 
+Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by participant $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece.
 <<demographics, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
 percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   geom_bar(position="dodge") +
@@ -927,7 +928,7 @@ where
 \item[$e_{ijk}$] is the error observed within each combination of plot type and piece location $ij$. We assume $e_{ijk} \sim N(0, \sigma_e^2)$ i.i.d.\ for all $k=1, ..., n_{ij}$,
 \item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant was supposed to evaluate 18 pieces. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of the 18. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, e) = 0$.
 \end{itemize}
-Estimates for all of the parameters are shown in table~\ref{tab:results}.
+Estimates for all of the parameters are shown in \autoref{tab:results}.
 \hh{and now on to a dicussion of all of those results}
 
 
@@ -1034,8 +1035,8 @@ m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 \hh{Discussion of the study results:
 
 \begin{itemize}
-\item $\beta_1, \beta_2$, and $\beta_3$ correspond to our inability to correctly estimate the size of areas in unframed, i.e. regular versions of mosaics, pie charts and spine plots. The closer these values are to 1, the less pronounced is this affliction. Spine plots are the best in this set, while mosaic plots are the worst. This coincides with the initial hypothesis, that the 2d nature of area assessment in mosaics might make the plots suffer more. 
-\item 
+\item $\beta_1, \beta_2$, and $\beta_3$ correspond to our inability to correctly estimate the size of areas in unframed, i.e. regular versions of mosaics, pie charts and spine plots. The closer these values are to 1, the less pronounced is this affliction. Spine plots are the best in this set, while mosaic plots are the worst. This coincides with the initial hypothesis, that the 2d nature of area assessment in mosaics might make the plots suffer more.
+\item
 \end{itemize}}
 
 
