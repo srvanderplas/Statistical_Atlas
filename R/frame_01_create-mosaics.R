@@ -227,3 +227,72 @@ plotlabs$perc <- purrr::map_dbl(1:nrow(plotlabs), function(k) {
   filter(d,fill==plotlabs$fill[k], alpha==plotlabs$alpha[k])$perc*100
 })
 write.csv(plotlabs %>% select(-data, -mosaics), file="mosaics.csv", row.names=FALSE)
+
+
+
+#######################
+# summarized test images for the paper
+
+
+add_m_label <- function(plot, fill, label = "A", alpha = 1, frame = F) {
+  pb <- ggplot_build(plot)
+  
+  ldf <- if(grepl(fill, "grey")) {
+    data_frame(fill = fill, label = label, alpha = NA)
+  } else {
+    data_frame(fill = fill, label = label, alpha = alpha)
+  }
+  
+  ldf <- ldf %>%
+    left_join(bind_rows(pb$data)) %>%
+    unique() %>%
+    mutate(
+      ylab = (ymin + ymax)/2,
+      xlab = (xmin + xmax)/2
+    )
+  
+  if (frame) {
+    ldf$ylab <- 1
+    ldf$xlab <- 1
+    annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold", hjust = 1, vjust = 1)
+  } else {
+    annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold")
+  }
+  
+}
+
+purrr::map(1:nrow(plotlabs), function(k) {
+  if (is.null(plotlabs$mosaics[[k]])) return()
+  
+  k <- 3*(k %/% 3)
+  p <- plotlabs$mosaics[[k+1]]$plot1
+  labelA <- add_m_label(p, fill = plotlabs$fill[k+1], label = "A",
+                       alpha = plotlabs$alpha[k+1],
+                       frame = plotlabs$isFrame[k+1])
+  labelB <- add_m_label(p, fill = plotlabs$fill[k+2], label = "B",
+                       alpha = plotlabs$alpha[k+2],
+                       frame = plotlabs$isFrame[k+2])
+  labelC <- add_m_label(p, fill = plotlabs$fill[k+3], label = "C",
+                       alpha = plotlabs$alpha[k+3],
+                       frame = plotlabs$isFrame[k+3])
+  
+  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k],
+                            "-mosaic_with_frame", plotlabs$num[k], ".png"),
+          width = 5, height = 5)
+  
+  p <- plotlabs$mosaics[[k+1]]$plot2
+  labelA <- add_m_label(p, fill = plotlabs$fill[k+1], label = "A",
+                        alpha = plotlabs$alpha[k+1],
+                        frame = F)
+  labelB <- add_m_label(p, fill = plotlabs$fill[k+2], label = "B",
+                        alpha = plotlabs$alpha[k+2],
+                        frame = F)
+  labelC <- add_m_label(p, fill = plotlabs$fill[k+3], label = "C",
+                        alpha = plotlabs$alpha[k+3],
+                        frame = F)
+  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k],
+                            "-mosaic_without_frame", plotlabs$num[k], ".png"),
+          width = 5, height = 5)
+  k <- k + 3
+})
+
