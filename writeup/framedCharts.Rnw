@@ -916,7 +916,7 @@ percentages %>%
   ylab("(Log) Percent Estimated Area")
 
 
-percentages %>% filter(abs(ratio) < 2.5) %>%
+percentages %>% filter(abs(log(ratio)) < 2.5) %>%
   ggplot(aes(x = log(perc), y = log(howmuch), colour=frameframe)) +
   geom_abline(slope = 1, colour="grey50", size=0.5) +
   geom_point() +
@@ -968,7 +968,7 @@ where
 library(lme4)
 library(lmerTest)
 library(xtable)
-library(heavy)
+#library(heavy)
 
 #baseplus <- lmer(diff.error ~ Type-1 + (frameframe*perc):Type + (1|ResponseId), data = percentages)
 
@@ -979,8 +979,13 @@ unframed <- lmer(log(howmuch) ~ Type-1 + (log(perc)):Type + (1|ResponseId), data
 # baseplus <- lmer(log(howmuch) ~ -1 + frameframe:(Type + (log(perc)):Type) + (1|ResponseId), data = percentages)
 
 # contrasts wrt to first level of frameframe (== "Unframed")
-baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages %>% filter(abs(log(ratio)) < 2))
+baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages %>% filter(abs(log(ratio)) < log(5)))
 # baseplus <- heavyLme(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type , ~1, groups = ~ResponseId, data = percentages, family = contaminated())
+
+#baseplus <- heavyLme(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type , ~1, groups = ~ResponseId, data = percentages, family = Student(df=5))
+
+# baseplus <- lmer(log(howmuch+5) ~ Type-1 + (frameframe*log(perc+5)):Type + (1|ResponseId), data = percentages)
+
 
 confints <- data.frame(confint(baseplus, method="Wald"))[-(c(1:2)),]
 names(confints) <- c("LB", "UB")
