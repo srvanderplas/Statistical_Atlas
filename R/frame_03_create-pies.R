@@ -199,3 +199,55 @@ plotlabs$perc <- purrr::map_dbl(1:nrow(plotlabs), function(k) {
   filter(d,fill==plotlabs$fill[k])$perc*100
 })
 write.csv(plotlabs %>% select(-states), file="pies.csv", row.names=FALSE)
+
+
+
+#######################
+# summarized test images for the paper
+
+
+add_p_label <- function(plot, fill, label = "A", frame = F) {
+  pb <- ggplot_build(plot)
+  
+  ldf <- data_frame(fill = fill, label = label) %>%
+    left_join(bind_rows(pb$data)) %>%
+    unique() %>%
+    filter(ymin != ymax) %>%
+    mutate(
+      ylab = (ymin + ymax)/2,
+      xlab = .75*xmax
+    )
+  
+  if (frame) {
+    ldf$ylab <- 1
+    ldf$xlab <- 1
+      annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold", hjust = 0.5, vjust = 1.2)
+  } else {
+      annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold")
+  }
+  
+}
+
+plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
+  k <- 3*(k %/% 3)
+  
+  states <- createPie(data = cl_data, state_name = plotlabs$State[k+1])
+  if (is.null(states[1])) return()
+  
+  p <- states[1]$plot1
+  labelA <- add_p_label(p, fill = plotlabs$fill[k+1], label = "A", frame = plotlabs$isFrame[k+1])
+  labelB <- add_p_label(p, fill = plotlabs$fill[k+2], label = "B", frame = plotlabs$isFrame[k+2])
+  labelC <- add_p_label(p, fill = plotlabs$fill[k+3], label = "C", frame = plotlabs$isFrame[k+3])
+  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+                                                   "-pie_with_frame", plotlabs$num[k+1], ".png"),
+         width = 5, height = 5)
+  p <- states[2]$plot2
+  labelA <- add_p_label(p, fill = plotlabs$fill[k+1], label = "A", frame = F)
+  labelB <- add_p_label(p, fill = plotlabs$fill[k+2], label = "B", frame = F)
+  labelC <- add_p_label(p, fill = plotlabs$fill[k+3], label = "C", frame = F)
+  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+                            "-pie_without_frame", plotlabs$num[k+1], ".png"),
+          width = 5, height = 5)
+  k <- k+3
+  states
+})

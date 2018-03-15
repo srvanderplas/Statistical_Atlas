@@ -123,8 +123,8 @@ createSpine <- function(data, state_name) {
 #########
 
 states <- createSpine(data = cl_data, state_name = "Florida")
-states[1]
-states[2]
+states$plot1
+states$plot2
 
 #########
 # Read in plot annotation info
@@ -240,18 +240,18 @@ plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
   states <- createSpine(data = cl_data, state_name = plotlabs$State[k+1])
   if (is.null(states[1])) return()
   
-  p <- states[1]$plot1
+  p <- states$plot1
   labelA <- add_s_label(p, fill = plotlabs$fill[k+1], label = "A", frame = plotlabs$isFrame[k+1])
   labelB <- add_s_label(p, fill = plotlabs$fill[k+2], label = "B", frame = plotlabs$isFrame[k+2])
   labelC <- add_s_label(p, fill = plotlabs$fill[k+3], label = "C", frame = plotlabs$isFrame[k+3])
   ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
                             "-spine_with_frame", plotlabs$num[k+1], ".png"),
           width = 5, height = 5)
-  p <- states[2]$plot2
+  p <- states$plot2
   labelA <- add_s_label(p, fill = plotlabs$fill[k+1], label = "A", frame = F)
   labelB <- add_s_label(p, fill = plotlabs$fill[k+2], label = "B", frame = F)
   labelC <- add_s_label(p, fill = plotlabs$fill[k+3], label = "C", frame = F)
-  ggsave( filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
                             "-spine_without_frame", plotlabs$num[k+1], ".png"),
           width = 5, height = 5)
   k <- k+3
