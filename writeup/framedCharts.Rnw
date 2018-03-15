@@ -901,7 +901,7 @@ which can be written as the linear dependency $\log A_{est} = \alpha + \beta \lo
 Figure~\ref{fig:model} shows a scatterplots of log estimated versus log actual sizes of areas, with simple linear regressions summarising the relationship between estimated and actual size for each of the plot types and each of the types of pieces. 
 %of the difference in estimated and actual size of the area in the plot colored by different types of areas. We can see that for inside pieces of unframed and unframed designs participants have a tendency to overestimate the size of small areas and underestimate the size of the larger areas. For framed designs the error made in the visual estimation is much larger overall and depends on the location of the estimated area. Areas on the inside are overestimated, while areas of the frame are grossly underestimated. We can model these differences in estimated and actual area size as follows.
 
-Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot) and response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$, and $A_{ijk\ell}$ the corresponding actual size of the piece. 
+Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by participant $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece. 
 <<demographics, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
 percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   geom_bar(position="dodge") +
@@ -917,7 +917,7 @@ percentages %>% ggplot(aes(x = frameframe, fill=source)) +
 The model is written in the form of regressions lines of the form  $\log E = \alpha + \beta \log E$, with the unframed version of each of the types as base line. The other parameters can then be written as contrasts to the base line, producing a set of  easily interpretable results:
 
 \begin{eqnarray*}
-\log E_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot \log A_{ijk\ell}  + \left(\alpha_{ij} + \beta_{ij} \cdot p\right) + e_{ijk} + u_\ell, \hspace{1.5cm} \text{Model (1)}
+\log E_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot \log A_{ij}  + \left(\alpha_{ij} + \beta_{ij} \cdot \log A_{ij}\right) + e_{ijk} + u_\ell, \hspace{1.5cm} \text{Model (1)}
 \end{eqnarray*}
 where
 \begin{itemize}
