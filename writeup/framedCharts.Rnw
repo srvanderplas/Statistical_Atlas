@@ -857,8 +857,9 @@ There are also quite a few very extreme differences between estimated and actual
 
 Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot.
 
-As a measure of the error we use the log ratio between the estimated and the actual size of the piece. A positive log ratio means that the participant  overestimated the size of the piece in his or her estimate. Similarly, a negative log ratio corresponds to a visual underestimation of the piece.
+As a measure of the error we use the log ratio between the estimated and the actual size of the piece. A positive log ratio means that the participant  overestimated the size of the piece in his or her estimate. Similarly, a negative log ratio corresponds to a visual underestimation of the piece.\svp{This should change, shouldn't it?}
 
+\svp{Need to discuss excluding the errors which are more than 5x higher/lower.}
 
 <<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y$ versus $x$ for each type of area within plot types. ">>=
 percentages <- percentages %>% mutate(
