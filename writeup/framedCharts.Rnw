@@ -1006,8 +1006,6 @@ print(xtable(xtab, digits=3,
       sanitize.text.function=function(x){x})
 @
 
-
-
 <<results="hide", eval = F, fig.width = 5, fig.height = 5, out.width = ".9\\textwidth", fig.cap = "">>=
 percentages %>%
   ggplot(aes(x = perc, y = diff.error)) + geom_point() +
@@ -1037,9 +1035,9 @@ m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 
 Assessing the fitted model, there are three main conclusions:
 \begin{itemize}
-\item $\beta_1, \beta_2, \beta_3$ represent perceptual biases for area estimation in unframed (regular) mosaic, pie, and spine charts. A $\beta$ value of one would indicate no bias; $\beta > 1$ indicate over-estimates, and $\beta < 1$ indicate under-estimates. Spine plots ($\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to this bias; Mosaic plots ($\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
+\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent perceptual biases for estimation of an area of size A in unframed (regular) mosaic, pie, and spine charts. A value of one would indicate no bias; a value greater than one would indicate an over-estimate, and a value less than one would indicate an under-estimate. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to this bias; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
 \item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in any of the plot types. Both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. \svp{It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region).}
-\item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for mosaic and pie charts, but not for spine plots.
+\item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for mosaic and pie charts, but not for spine plots. In the unframed version of mosaic and pie charts, the unaccomodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
 \end{itemize}
 
 From these observations, we can conclude that framed plots are perceptually not an ideal choice, even though they are aesthetically pleasing. When spine plots are framed, area estimation does not suffer significantly, but with both pie and mosaic plots, it does; this inconsistency is likely due to the different perceptual demands of pie charts and mosaic plots compared to spine plots. Pie charts require estimation of the relative angle of the slice, which inherently requires consideration of two dimensions simultaneously. Spine plots require consideration of the relative length of a single dimension; \citet{cleveland:1984} ranks this as one of the easiest psychophysical estimation tasks.
