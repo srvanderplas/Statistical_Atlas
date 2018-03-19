@@ -848,9 +848,10 @@ percentages %>%
   xlab("(Log) Actual Area") +
   ylab("(Log) Estimated Area") +
   theme_bw() +
+  coord_fixed() +
   scale_colour_brewer("Frame piece estimate", palette="Set1") +
   scale_shape_discrete("Frame piece estimate") +
-  theme(legend.position="bottom")
+  theme(legend.position="right")
 @
 
 <<format-pcts, echo = F, include = F>>=
@@ -893,8 +894,8 @@ percentages %>% filter(abs(log(ratio)) < log(5)) %>%
   facet_grid(.~Type, labeller="label_both") +
   geom_smooth(method="lm", se=FALSE) +
   theme_bw() +
-  theme(legend.position="bottom",
-        aspect.ratio=1) +
+  coord_fixed() +
+  theme(legend.position="right") +
   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("(Log) Percent Actual Area") +
   ylab("(Log) Percent Estimated Area")
@@ -1053,8 +1054,9 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   theme_bw() +
   scale_colour_brewer("Frame piece estimate", palette="Set1") +
   scale_shape_discrete("Frame piece estimate", solid = F) +
-  theme(legend.position="bottom") +
+  theme(legend.position="right") +
   facet_grid(.~source) +
+  coord_fixed() +
   ggtitle("Participant Recruitment")
 @
 
