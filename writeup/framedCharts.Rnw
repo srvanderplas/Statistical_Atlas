@@ -14,7 +14,6 @@
 
 %%% Extra packages %%%
 
-\usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage[font=small,skip=5pt]{caption}
 \usepackage{setspace}
@@ -23,6 +22,7 @@
 \usepackage[table]{xcolor}
 \usepackage{subfig}
 \usepackage{paralist}
+\usepackage{hyperref}
 
 %%% Settings %%%
 \DeclareGraphicsExtensions{.png,.pdf}
@@ -33,7 +33,6 @@
 \newcommand{\svp}[1]{{\color{blue} #1}}
 
 \begin{document}
-\bibliographystyle{plainnat}
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
 
@@ -1089,6 +1088,7 @@ Our participants were drawn from two different populations - reddit and amazon m
 \end{description}
 
 
+\bibliographystyle{plainnat}
 \bibliography{mybibfile}
 
 \end{document}
