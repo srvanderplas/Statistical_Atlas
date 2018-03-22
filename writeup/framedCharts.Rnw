@@ -797,15 +797,19 @@ p <- cl %>%
   scale_fill_manual(values = rev(rev(colHEX)[-c(3:4)])) +
   theme(legend.position = "none")
 
-scales <- ggplot_build(p)$data[[1]] %>% filter(xmax > xmin + 0.025) %>%
-  mutate(State = c("Michigan", "Minnesota", "Mississippi")[PANEL])
+scales <- ggplot_build(p)$data[[1]] %>% 
+  filter(xmax > xmin + 0.025) %>%
+  mutate(
+    State = c("Michigan", "Minnesota", "Mississippi")[PANEL],
+    label = factor(label, levels = levels(cl$Denomination))
+         )
 
 p + theme(axis.text = element_blank(), axis.title = element_blank(),
         axis.ticks = element_blank(), panel.grid.major.x = element_blank()) +
   geom_text(data = scales,
             aes(x = (xmin+xmax)/2, label=label, colour = label),
             y = 0.025, angle=90, hjust=0, vjust=0.5, size = 2.5) +
-  scale_colour_manual(values = rep("black",20))
+  scale_colour_manual(values = rep(c("grey90", "grey20", "grey90"), 7)) #rep("black",20))
 
 
 @
