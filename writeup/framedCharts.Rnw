@@ -496,6 +496,8 @@ Results from this estimation process are shown in Figures \ref{fig:plate32-simil
 
 \subsection{Plate 32: Gender Ratio in Agriculture, Trade, Service, Manufacturing, and Schools}
 
+\hh{mosaics are novel in 1874 - Georg von Mayr didn't publish his form of mosaic plots until 1877 (see \citet{friendly} ) }
+
 \autoref{fig:plate32} shows a miniature of the chart published as plate \#32 in the Statistical Atlas of 1874 \citep{atlas} produced from data collected in the 9th US Census. The chart shows the gender ratio of population over the age of ten in different types of occupations.
 
 
