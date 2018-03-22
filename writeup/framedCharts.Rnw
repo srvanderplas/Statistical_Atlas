@@ -711,8 +711,8 @@ church_noterritories %>%
       filter(UAPixperc - UAEstperc > 10)) +
   coord_equal() +
   geom_smooth(method = "lm", se = FALSE, linetype = 2, size = .5) +
-  scale_x_continuous("Estimated Unaccomodated Population, 1% microsample") +
-  scale_y_continuous("Estimated Unaccomodated Population, pixel values")
+  scale_x_continuous("Estimated Unaccommodated Population, 1% microsample") +
+  scale_y_continuous("Estimated Unaccommodated Population, pixel values")
 @
 
 A close examination of plate \#31 will also reveal that the different color layers of the lithographic prints are not as well aligned. In addition, the state plots are much more variable in size in plate \#31 than in plate \#32. These differences suggest that plate \#31 might have been created by a less experienced lithographer than plate \#32. Both plate \#31 and plate \#32 were based off of data compiled from the 1870 census by Francis A. Walker, but it appears the artistry and methodology may not have been consistent between the two plates.
@@ -774,7 +774,7 @@ cl %>%
 \end{figure}
 
 
-\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot1} shows a modern replication of the original charts, and \autoref{fig:state-church-plot2} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccomodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccomodated persons.
+\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot1} shows a modern replication of the original charts, and \autoref{fig:state-church-plot2} shows an improved version of the same plots. We have added an additional bar for the proportion of the population which is unaccommodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccommodated persons.
 
 <<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".98\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
@@ -814,7 +814,7 @@ p + theme(axis.text = element_blank(), axis.title = element_blank(),
 
 @
 
-Both sets of re-imagined church accomodation plots use a triple color scheme. The lightest colors were drawn from the Colorbrewer\citep{colorbrewer} ``Paired" palette's light colors (a grey hue was also added); each color was then darkened twice to produce a color scheme composed of 21 colors and 7 hues using the \texttt{munsell} package\citep{munsell}. This scheme is similar to the color scheme in the Statistical Atlas, which is composed of 7 hues and uses crosshatching to create lighter and darker bars.
+Both sets of re-imagined church accommodation plots use a triple color scheme. The lightest colors were drawn from the Colorbrewer\citep{colorbrewer} ``Paired" palette's light colors (a grey hue was also added); each color was then darkened twice to produce a color scheme composed of 21 colors and 7 hues using the \texttt{munsell} package\citep{munsell}. This scheme is similar to the color scheme in the Statistical Atlas, which is composed of 7 hues and uses crosshatching to create lighter and darker bars.
 
 \section{Perception of Framed Plots}
 \label{sec:psych}
@@ -1081,7 +1081,7 @@ Assessing the fitted model, there are three main conclusions:
 \begin{itemize}
 \item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent perceptual biases for estimation of an area of size A in unframed (regular) mosaic, pie, and spine charts. A value of one would indicate no bias; a value greater than one would indicate an over-estimate, and a value less than one would indicate an under-estimate. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to this bias; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
 \item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in any of the plot types. Both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. \svp{It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region).}
-\item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for mosaic and pie charts, but not for spine plots. In the unframed version of mosaic and pie charts, the unaccomodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
+\item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for mosaic and pie charts, but not for spine plots. In the unframed version of mosaic and pie charts, the unaccommodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
 \end{itemize}
 
 From these observations, we can conclude that framed plots are perceptually not an ideal choice, even though they are aesthetically pleasing. When spine plots are framed, area estimation does not suffer significantly, but with both pie and mosaic plots, it does; this inconsistency is likely due to the different perceptual demands of pie charts and mosaic plots compared to spine plots. Pie charts require estimation of the relative angle of the slice, which inherently requires consideration of two dimensions simultaneously. Spine plots require consideration of the relative length of a single dimension; \citet{cleveland:1984} ranks this as one of the easiest psychophysical estimation tasks.
