@@ -428,7 +428,7 @@ cl_data$colour <- with(cl_data, replace(colour, group=="Unaccommodated", "grey60
 \section{Introduction}
 \label{sec:intro}
 
-Three times in the past, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in the 9th, 10th, and 11th US census (in 1870, 1880, and 1890). Each of these atlases represents a  masterpiece in science and technology. The ninth census, supervised by Francis A. Walker, assessed a country of about 38.5 million people. The Statistical Atlas is a graphical compendium of census information prepared in more than 100 lithographic plates. Most of these plates are overlaid maps, but some consist of more abstract and, at that time, novel visualizations. This paper addresses several types of charts from the 1870 statistical atlas which were presented as small multiples; that is, a separate chart was shown for each state and territory.
+Three times in the past, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in the 9th, 10th, and 11th US census (in 1870, 1880, and 1890). Each of these atlases represents a  masterpiece in science and technology. The ninth census, supervised by Francis A. Walker, assessed a country of about 38.5 million people. The Statistical Atlas is a graphical compendium of census information laid out over more than 100 pages. Most of the illustrations are overlaid maps (38 of 107 pages), but some consist of more abstract and, at that time, novel visualizations\svp{count up different visualizations}. This paper addresses several types of charts from the 1870 statistical atlas which were presented as small multiples; that is, a separate chart was shown for each state and territory.
 
 The charts in the Statistical Atlas were printed by Julius Bien's publishing house~\citep{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
 
@@ -465,21 +465,16 @@ In both plates, a grey band is drawn around each one of the states' squares repr
 
 In order to reproduce these charts using modern plotting methods, some statistical archaeology is necessary - we must reconstruct the data underlying the charts, using only sources available nearly 150 years later.
 
-\hh{The National Historical Geographic Information System (NHGIS) \citep{NHGIS} provides a wealth of tabulated data, and most of the data needed to reproduce plate \#32 is available directly from table NT13 on ``Employed Population by Occupation by Age by Sex" from the 1870 Census: Religious Bodies, Occupation \& Government Data (1870\_sROG). Unfortunately, the size of the unemployed population is not published with this information. }
-\hh{To get an estimate for the size of the unemployed population in each state, we make use of the 1\%~microsample of the 1870 census provided by the Integrated Public Use Microdata Series (IPUMS-USA) through the Minnesota Population Center \citep{ipums}. }
+The National Historical Geographic Information System (NHGIS) \citep{NHGIS} provides a wealth of tabulated data, and most of the data needed to reproduce plate \#32 is available directly from table NT13 on ``Employed Population by Occupation by Age by Sex" from the 1870 Census: Religious Bodies, Occupation \& Government Data (1870\_sROG). Unfortunately, the size of the unemployed population is not published with this information. To get an estimate for the size of the unemployed population in each state, we make use of the 1\%~microsample of the 1870 census provided by the Integrated Public Use Microdata Series (IPUMS-USA) through the Minnesota Population Center \citep{ipums}.
 
-%We do not have access to the full 1870 census data, but we can access a 1\%~microsample of that data provided by the Integrated Public Use Microdata Series (IPUMS-USA) provided through the Minnesota Population Center \citep{ipums}.
-\hh{The main idea here is to get  }
-%This information can be used to obtain
-estimates of state-level population totals for individuals above the age of ten. Using the small sample, we obtain counts of the male and female population above ten as well as state population numbers, which allows us to get estimates  for each state by extrapolating from the sample proportions. This information is then used to calculate the size of the unaccommodated populations in each set of charts -- either those who are not gainfully employed (plate \#32) or those who are not accommodated religiously (plate \#31):
+Using the microsample sample, we obtain counts of the male and female population above ten as well as state population numbers, which allows us to get estimates of the state-level population totals for individuals above the age of ten for each state by extrapolating from the sample proportions. This information is then used to calculate the size of the unaccommodated populations in each set of charts -- either those who are not gainfully employed (plate \#32) or those who are not accommodated religiously (plate \#31):
 
 Let $n_{UA}^{(\text{XY})}$ be the --unfortunately unknown-- size of the unaccounted population of state {\it XY}. Then we have the relationship
 \begin{equation}\label{eq:nUA}
 n_{UA}^{(\text{XY})} = n_{\text{AGE}\ge 10}^{(\text{XY})}  - n_{\text{acc}}^{(XY)},
 \end{equation}
 where $n_{\text{AGE}\ge 10}^{(\text{XY})}$ is the number of over ten year olds in the state, and $n_{\text{acc}}^{(XY)}$ is the size of the population accounted for (i.e. gainfully employed or going to school). $n_{\text{acc}}^{(XY)}$ is known for each state from table NT13.
-\hh{We get an estimate for the unkown number of over ten year olds in each state $n_{\text{AGE}\ge 10}^{(\text{XY})}$ from: }
-%Unfortunately, the total number of over ten year olds in each state $n_{\text{AGE}\ge 10}^{(\text{XY})}$ is not known. We do have the relationship to $n_\text{total}^{(\text{XY})}$, the total population size of state {\it XY}:
+We get an estimate for the unkown number of over ten year olds in each state $n_{\text{AGE}\ge 10}^{(\text{XY})}$ from:
 \[
 n_{\text{AGE}\ge 10}^{(\text{XY})} = n_\text{total}^{(\text{XY})} \cdot p_{\text{AGE}\ge 10}^{(\text{XY})}.
 \]
@@ -493,7 +488,7 @@ Piecing this result back into \autoref{eq:nUA}, we get both estimates for the si
 s.e.(\widehat{n_{UA}}^{(\text{XY})})^2 &=& \widehat{p_{\text{AGE}\ge 10}} \cdot \left( 1- \widehat{p_{\text{AGE}\ge 10}}\right) n_\text{total}^{(\text{XY})}.
 \end{eqnarray}
 Estimates for the number of unaccounted women and men over ten years of age in each state can be achieved similarly. We also use these results to get estimates and standard errors for the size of the religiously unaccommodated population over ten years of age, used to recreate plate 31.
-\hh{Results from this estimation process are shown in Figures \ref{fig:plate32-similarities} and \ref{fig:religious-bias-plot}.}
+Results from this estimation process are shown in Figures \ref{fig:plate32-similarities} and \ref{fig:religious-bias-plot}.
 
 
 
@@ -571,9 +566,7 @@ us$plot2 + theme_bw() +  xlab("The United States") +
 With the help of the description and the legend of \autoref{fig:header} and \autoref{fig:legend}, we can interpret the details of each of the squares at the example of \autoref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
 
 Showing the unaccounted population as a frame masks the size of the corresponding population by visually cutting it into quarters. The percentage of unaccounted individuals nation-wide is about 30\%. This number is  higher than any of the other groups. Assessing the size of the unaccounted population in form of the area of the grey frame is mentally strenuous, as discussed in \autoref{sec:psych}. The task becomes much easier, if we incorporate the information directly into the mosaic plot, as shown in \autoref{fig:redo-2}.
-This figure reveals another previously hidden finding:
-about 97\% of the unaccounted population are women and girls!
-%\svp{Need to add in plate-32-redo with no frame - this sentence doesn't make sense without that.}
+This figure reveals another previously hidden finding: about 97\% of the unaccounted population are women and girls!
 
 
 \begin{figure}
@@ -583,12 +576,6 @@ about 97\% of the unaccounted population are women and girls!
 \label{fig:plate32}
 \end{figure}
 
-% \begin{figure}
-% \centering
-% \includegraphics[width=0.5\textwidth]{images/plate32-repro}
-% \caption{Reproduction of plate \#32.}
-% \label{fig:plate32-repro}
-% \end{figure}
 
 <<plate32-repro, dependson="data", include = T, out.width = ".5\\textwidth", fig.width = 8, fig.height = 10.5, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
 cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey60")
@@ -831,7 +818,6 @@ While the use of framed plots in plates 31 and 32 of the Statistical Atlas is ae
 \end{enumerate}
 
 Bias in area estimation and comparison has been well studied. \citet{krider2001pizzas} showed that viewers estimate area based on the most salient dimension of an object, rather than on its' total area. \citet{piaget1968quantification} showed this bias is stronger in young children, but that the bias decreases with age and cognitive development. \citet{size} examined the perceived size of squares, parallelograms, and other shapes, and found that area estimation was consistent with the psychophysics equation $A_{est} \propto A_{act}^\beta$, with a scaling coefficient of around $\beta = 0.8$. That is, perceived area increases more slowly than the actual area of the estimated region. \citet{lewandowsky1989perception} found that area judgments are approximately accurate in certain conditions: namely, when the variation in size occurs along a single dimension, and other dimensions are aligned. Taken together, these studies suggest that the use of framed charts can be expected to produce biased estimates, and that these estimates should be considerably worse for the mosaic plots than for spine plots, as information in mosaic plots is represented in two dimensions. In addition, \citet{lewandowsky1989perception} suggests that we can reduce these biases by integrating the information about unaccommodated individuals into the main part of the plot, treating it as just another category to be displayed.
-
 
 In order to quantify the perceptual biases induced by framed charts, we designed a study which compares the framed and unframed versions of mosaic plots, spine plots, and pie charts, using data reconstructed from the Statistical Atlas charts.
 
