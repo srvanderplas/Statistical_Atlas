@@ -128,3 +128,15 @@ levels(cl$Denomination) <- gsub("\\.", " ", levels(cl$Denomination))
 % Reproduce all plots from plate 32
 
 \section{Plate 31: Church Accommodations By State}
+
+% Reproduce all plots from plate 31
+
+\section{Experimental Details}
+% Screenshot from one question
+
+% Link to anonymized data - digest on any ID/IP address/etc.
+
+% Participant demographics
+
+
+\end{document}
