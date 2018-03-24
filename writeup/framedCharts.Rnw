@@ -825,7 +825,8 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \label{sec:meth}
 
 \subsection{Study Design}
-\paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. Reddit participants were recruited through posts on the samplesize and visualization subreddits, thus, participants may be more data-aware than the general population. % Add demographic information, explain difference between reddit and turk populations
+\paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. Participants were required to be over 18, and we collected information about their age, gender, and education levels. \svp{Add in more information about demographics.}
+% Add demographic information, explain difference between reddit and turk populations
 
 
 
