@@ -473,7 +473,7 @@ Let $n_{UA}^{(\text{XY})}$ be the --unfortunately unknown-- size of the unaccoun
 \begin{equation}\label{eq:nUA}
 n_{UA}^{(\text{XY})} = n_{\text{AGE}\ge 10}^{(\text{XY})}  - n_{\text{acc}}^{(XY)},
 \end{equation}
-where $n_{\text{AGE}\ge 10}^{(\text{XY})}$ is the number of over ten year olds in the state, and $n_{\text{acc}}^{(XY)}$ is the size of the population accounted for (i.e. gainfully employed or going to school). $n_{\text{acc}}^{(XY)}$ is known for each state from table NT13.
+where $n_{\text{AGE}\ge 10}^{(\text{XY})}$ is the number of over ten year olds in the state, and $n_{\text{acc}}^{(XY)}$ is the size of the population accounted for (i.e. gainfully employed or going to school, or those who are religiously accommodated). $n_{\text{acc}}^{(XY)}$ is known for each state from table NT13.
 We get an estimate for the unkown number of over ten year olds in each state $n_{\text{AGE}\ge 10}^{(\text{XY})}$ from:
 \[
 n_{\text{AGE}\ge 10}^{(\text{XY})} = n_\text{total}^{(\text{XY})} \cdot p_{\text{AGE}\ge 10}^{(\text{XY})}.
