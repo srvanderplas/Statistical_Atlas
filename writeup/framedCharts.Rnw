@@ -24,6 +24,8 @@
 \usepackage{paralist}
 \usepackage{hyperref}
 
+\usepackage[export]{adjustbox}
+\usepackage{placeins}
 %%% Settings %%%
 \DeclareGraphicsExtensions{.png,.pdf}
 \graphicspath{{images/}}
@@ -520,9 +522,14 @@ occ2 %>% dplyr::filter(State==Area.Name) %>% ggplot() +
 @
 
 
-<<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=F, eval=TRUE, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten.", warning = F, message=F, fig.align='center', fig.keep=TRUE>>=
+<<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=F, eval=TRUE, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten.", warning = F, message=F, fig.align='center', fig.keep=TRUE, fig.width = 3.5>>=
  #cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
 cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey60")
+g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
 
 
 us <- createMosaics()
@@ -535,7 +542,7 @@ us$plot1 + theme_bw() +  xlab("The United States") +
         panel.border = element_blank(),
         panel.grid = element_blank()
   )
-us$plot2 + theme_bw() +  xlab("The United States") +
+plot2 <- us$plot2 + theme_bw() +  xlab("The United States") +
   theme(aspect.ratio=1,
         axis.title.y = element_blank(),
         axis.title.x = element_text(size=rel(1.5)),
@@ -544,18 +551,27 @@ us$plot2 + theme_bw() +  xlab("The United States") +
         panel.border = element_blank(),
         panel.grid = element_blank()
   )
-@
 
+plot2 + theme(legend.position = "none")
+@
+<<overall-work-mosaic-legend, include = F, fig.width = 1.5>>=
+library(grid)
+grid.newpage()
+grid.draw(g_legend(plot2))
+@
 \begin{figure}
 %  \centering
   \hfill
   \subfloat[Reproduction of the US-wide overview in plate \#32.]{
-\includegraphics[height=.4\textwidth]{figure/overall-work-mosaic-unaccommodated-1}
+\includegraphics[width=.4\textwidth,valign=c]{figure/overall-work-mosaic-unaccommodated-1}
 \label{fig:redo-1}
   }
-  \hfill
-  \subfloat[US-wide overview with integrated number of not-gainfully employed population.]{
-\includegraphics[height=.4\textwidth]{figure/overall-work-mosaic-unaccommodated-2}
+  \subfloat{
+\includegraphics[width=.14\textwidth,valign=c]{figure/overall-work-mosaic-legend-1}
+  }
+  \addtocounter{subfigure}{-1}%
+  \subfloat[US-wide overview with integrated unemployed population.]{
+\includegraphics[width=.4\textwidth,valign=c]{figure/overall-work-mosaic-unaccommodated-2}
   \label{fig:redo-2}
   }
   \hfill
@@ -564,7 +580,7 @@ us$plot2 + theme_bw() +  xlab("The United States") +
 
 With the help of the description and the legend of \autoref{fig:header} and \autoref{fig:legend}, we can interpret the details of each of the squares at the example of \autoref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the size of the ``unaccounted" for population, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
 
-Showing the unaccounted population as a frame masks the size of the corresponding population by visually cutting it into quarters. The percentage of unaccounted individuals nation-wide is about 30\%. This number is  higher than any of the other groups. Assessing the size of the unaccounted population in form of the area of the grey frame is mentally strenuous, as discussed in \autoref{sec:psych}. The task becomes much easier, if we incorporate the information directly into the mosaic plot, as shown in \autoref{fig:redo-2}.
+Showing the unaccounted population as a frame masks the size of the corresponding population by visually cutting it into quarters. The percentage of unaccounted individuals nation-wide is about 30\%. This number is  higher than any of the other groups. Assessing the size of the unaccounted population in form of the area of the grey frame is mentally strenuous, as discussed in \autoref{sec:psych}. The task becomes much easier if we incorporate the information directly into the mosaic plot, as shown in Figure \ref{fig:redo-2}.
 This figure reveals another previously hidden finding: about 97\% of the unaccounted population are women and girls!
 
 
@@ -948,7 +964,7 @@ percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   xlab("Piece Location") +
   ylab("Number of responses") +
   theme_bw() +
-  scale_fill_brewer(palette="Set1")
+  scale_fill_manual(values = c(reddit = "#9494FF", amazon = "#F79B34"))
 
 @
 
