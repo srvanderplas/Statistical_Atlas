@@ -78,7 +78,7 @@ library(munsell)
 library(USAboundaries)
 library(RColorBrewer)
 library(sf)
-library(ggmapr)
+# library(ggmapr)
 @
 
 
@@ -162,9 +162,9 @@ createMosaics <- function(data = occ3, state_name = "") {
   }
 
   # make inside plot, then scale
-  occ4 %>% filter(Occupation != "Unaccounted") %>%
-    split(.$State) %>%
-    map_df(getMultiMosaic)
+  # occ4 %>% filter(Occupation != "Unaccounted") %>%
+  #   split(.$State) %>%
+  #   map_df(getMultiMosaic)
 
   ggp <- occ4 %>% filter(Occupation != "Unaccounted") %>%
     split(.$State) %>%
@@ -204,7 +204,7 @@ createMosaics <- function(data = occ3, state_name = "") {
 }
 
 
-createSpines <- function(data, state_name) {
+createSpines <- function(data, state_name = "") {
 
   spine_df <- data #%>% filter(STATEICP == state_name) # Get only full states
 
@@ -237,7 +237,7 @@ createSpines <- function(data, state_name) {
     sub_data <- sub_data %>% arrange(group)
     sub_data %>%
       ggplot() +
-      geom_bar(aes(weight = Number,  x = 1, fill = group),
+      geom_bar(aes(weight = Number,  x = 0.5, fill = group),
                position = "fill", colour="white", size=0.1) +
       scale_fill_manual("Denomination", values=colormap) + coord_flip() +
       theme_spine() +
@@ -245,38 +245,67 @@ createSpines <- function(data, state_name) {
       ylab(ylabtxt)
   }
 
-  plot2 <- spine_df %>% get_plots()
-
-  scalars <- spine_df %>% mutate(
-    type = group=="Unaccommodated"
-  ) %>% group_by(type) %>% summarize(
-    Number = sum(Number, na.rm = TRUE)
-  )
-
-  if (nrow(scalars)==1) {
-    plot1 <- plot2
-  } else {
-  scalars$weight <- scalars$Number/sum(scalars$Number)
-  scalars$weight[1] <- sqrt(scalars$weight[1])
-  scalars$weight[2] <- 1 - scalars$weight[1]
-  spine <- spine_df %>% mutate(Number = replace(Number, group=="Unaccommodated", 0)) %>%
-    get_plots()
-
-  spine_wo_df <- ggplot_build(spine)$data[[1]] %>% mutate(
-    xmin = scalars$weight[2]/2,
-    xmax = scalars$weight[1] + scalars$weight[2]/2,
-    ymin = ymin*scalars$weight[1] + scalars$weight[2]/2,
-    ymax = ymax*scalars$weight[1] + scalars$weight[2]/2
-  )
-  plot1 <- spine_wo_df %>%
-    ggplot(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) +
-    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1), fill="grey60", colour="grey30", size=.5) +
-    geom_rect(aes(fill=fill), colour="white", size=0.1) +
-    scale_fill_identity() +
-    coord_flip() +
-    theme_spine() +
-    ylab(state_name)
+  getMultiSpline <- function(df) { # Pass in a single state's data, get out the single state's built data frame
+    get_plots(df) %>%
+      ggplot_build() %>%
+      magrittr::extract2("data") %>%
+      magrittr::extract2(1) %>%
+      mutate(STATEICP = unique(df$STATEICP))
   }
+
+  scalars <- spine_df %>%
+    mutate(frame = group=="Unaccommodated") %>%
+    group_by(STATEICP, frame) %>%
+    summarize(
+      Number = sum(Number)
+    ) %>% mutate(
+      weight = Number/sum(Number)
+    ) %>%
+    select(-Number) %>%
+    mutate(frame = ifelse(frame, "Unaccommodated", "Accommodated")) %>%
+    spread(key = frame, value = weight)
+
+  scalarweight <- scalars %>%
+    mutate(Accommodated = sqrt(Accommodated),
+           Unaccommodated = 1 - Accommodated) %>%
+    mutate(splineWt = Accommodated, frameWt = Unaccommodated/2) %>%
+    select(-Accommodated, -Unaccommodated)
+
+  # make inside plot, then scale
+  ggp <- spine_df %>% filter(group != "Unaccommodated") %>%
+    split(.$STATEICP) %>%
+    map_df(getMultiSpline) %>%
+    left_join(scalarweight)
+
+  ggp_df <- ggp %>% mutate(
+    xmin = xmin*splineWt + frameWt,
+    xmax = xmax*splineWt + frameWt,
+    ymin = ymin*splineWt + frameWt,
+    ymax = ymax*splineWt + frameWt
+  )
+
+  plot1 <- ggp_df %>%
+    ggplot() +
+    geom_rect(xmin=0, xmax=1, ymin=0, ymax=1, fill="grey70", colour="grey40", size=.25) +
+    geom_rect(aes(xmin=frameWt, xmax=1-frameWt, ymin=frameWt, ymax=1-frameWt), fill="white", color = "grey50") +
+    geom_rect(aes(xmin=ymin, xmax=ymax, ymin=frameWt, ymax=1-frameWt, fill=fill, alpha=alpha),
+              colour="grey85", size=0.1) +
+    scale_fill_identity() +
+    scale_alpha_identity() +
+    xlim(c(0,1)) +
+    ylim(c(0,1)) +
+    theme_spine()
+
+  plot2 <- get_plots(spine_df)
+
+  if (state_name == "all") {
+    plot1 <- plot1 + facet_wrap(~STATEICP, ncol = 6)
+    plot2 <- plot2 + facet_wrap(~STATEICP, ncol = 6)
+  } else {
+    plot1 <- plot1 + xlab(state_name)
+    plot2 <- plot2 + xlab(state_name)
+  }
+
   list(plot1=plot1, plot2=plot2)
 }
 
@@ -372,12 +401,12 @@ occ3 <- occ3 %>% mutate(
 ) %>%
   mutate(State = str_replace_all(
     State,
-    c("(Arizona|New Mexico|Utah|Colorado) Territory" = "Southwest Territories",
-      "(Idaho|Wyoming|Washington|Montana|Dakota) Territory" = "Northwest Territories")))
+    c("(Arizona|New Mexico|Utah|Colorado) Territory" = "SW Territories",
+      "(Idaho|Wyoming|Washington|Montana|Dakota) Territory" = "NW Territories")))
 
 stateorder <- unique(occ3$State)
-stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia", "Northwest Territories", "Southwest Territories"))],
-                c("District of Columbia", "Northwest Territories", "Southwest Territories"))
+stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia", "NW Territories", "SW Territories"))],
+                c("District of Columbia", "NW Territories", "SW Territories"))
 occ3$State <- factor(occ3$State, levels = stateorder, ordered = T)
 
 # colours for church denominations
@@ -405,7 +434,15 @@ cl$Denomination <- factor(cl$Denomination,
 levels(cl$Denomination) <- gsub("\\.", " ", levels(cl$Denomination))
 
 
-cl_data <- cl %>% filter(as.character(STATEICP)==as.character(State)) %>%
+cl_data <- cl %>%
+  mutate(STATEICP = as.character(Area.name))
+
+stateorder <- unique(cl_data$STATEICP)
+stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia", "NW Territories", "SW Territories"))],
+                c("District of Columbia", "NW Territories", "SW Territories"))
+cl_data$STATEICP <- factor(cl_data$STATEICP, levels = stateorder, ordered = T)
+
+cl_data <- cl_data  %>%
   group_by(STATEICP) %>% nest()
 
 cl_data$data <- cl_data$data %>% purrr::map(.f = function(x) {
@@ -426,13 +463,12 @@ cl_data$group <- factor(cl_data$group, levels=c(setdiff(levels, c("Unaccommodate
 cl_data$colour <- colHEX[as.numeric(cl_data$group)]
 cl_data$colour <- with(cl_data, replace(colour, group=="Unaccommodated", "grey60"))
 
-#cl_data %>% filter(STATEICP=="Michigan") %>% ggplot(aes(group, weight=Total, fill=colour)) + geom_bar()  + scale_fill_identity() + coord_flip()
 @
 
 
 
 \section{Plate 32: Gender Ratio in Agriculture, Trade, Service, Manufacturing, and Schools}
-<<plate32-repro, dependson="data", include = T, out.width = "\\textwidth", fig.width = 7.5, fig.height = 10, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
+<<plate32-repro, dependson="data", include = T, out.width = "\\textwidth", fig.width = 7.5, fig.height = 9, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
 cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey60")
 
 tmp <- createMosaics(state_name = "all")
@@ -443,17 +479,19 @@ tmp$plot1
 \section{Plate 31: Church Accommodations By State}
 
 % Reproduce all plots from plate 31
-<<plate31-repro, dependson="data", include = T, out.width = "\\textwidth", fig.width = 7.5, fig.height = 10, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
-
-# Need to fix this to do frames for each state separately. Should be able to rip off the mosaic code...
+<<plate31-repro, dependson="data", include = T, out.width = "\\textwidth", fig.width = 7.5, fig.height = 9, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
 tmp <- createSpines(data = cl_data, state_name = "all")
-# It works for the unframed plots...
-tmp$plot2 + facet_wrap(~STATEICP)
+tmp$plot1
 @
 
 \section{Experimental Details}
 % Screenshot from one question
-
+\autoref{fig:qualtrics-screenshot} shows one question from the Qualtrics survey. After 25 seconds showing one image, the survey automatically advances to the next question.
+\begin{figure}
+\centering
+\includegraphics[width=.9\textwidth]{images/Area_Study_screenshot}
+\caption{Screenshot from the Qualtrics survey.} \label{fig:qualtrics-screenshot}
+\end{figure}
 % Link to anonymized data - digest on any ID/IP address/etc.
 
 % Participant demographics
