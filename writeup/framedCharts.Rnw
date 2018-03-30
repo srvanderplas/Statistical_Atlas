@@ -34,6 +34,11 @@
 \newcommand{\hh}[1]{{\color{magenta} #1}}
 \newcommand{\svp}[1]{{\color{blue} #1}}
 
+%%% Figure placement %%%
+\renewcommand{\topfraction}{0.99}	% max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+\renewcommand{\textfraction}{0.05}	% allow minimal text w. figs
+
 \begin{document}
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
@@ -524,7 +529,7 @@ occ2 %>% dplyr::filter(State==Area.Name) %>% ggplot() +
 @
 
 
-<<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=F, eval=TRUE, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten.", warning = F, message=F, fig.align='center', fig.keep=TRUE, fig.width = 3.5>>=
+<<overall-work-mosaic-unaccommodated, dependson="data", echo = FALSE, include=F, eval=TRUE, fig.cap="Recreation of the mosaicplot nation-wide overview of gender ratio by occupation based on gainfully employed population over ten.", warning = F, message=F, fig.align='center', fig.keep=TRUE, fig.width = 3.5, fig.height=4>>=
  #cols <- c("#333300", "#000066", "#cc9900", "#202060", "#86742d", "grey40")
 cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey60")
 g_legend<-function(a.gplot){
@@ -556,7 +561,7 @@ plot2 <- us$plot2 + theme_bw() +  xlab("The United States") +
 
 plot2 + theme(legend.position = "none")
 @
-<<overall-work-mosaic-legend, include = F, fig.width = 1.5>>=
+<<overall-work-mosaic-legend, include = F, fig.width = 1.5, fig.height=4>>=
 library(grid)
 grid.newpage()
 grid.draw(g_legend(plot2))
@@ -632,7 +637,7 @@ px2 %>% data.frame() %>%
 
 \begin{figure}
 \centering
-\includegraphics[width=0.49\textwidth, height=2in]{figure/plate32-scatterplot-1.pdf}
+\includegraphics[width=0.75\textwidth]{figure/plate32-scatterplot-1.pdf}
 \caption{Differences/similarities between numbers from the Statistical Atlas and the modern reproduction.}
 \label{fig:plate32-similarities}
 \end{figure}
@@ -702,7 +707,7 @@ cl %>% ggplot(aes(x = Denomination, weight=Number/10^6, fill=Denomination)) +
 
 We initially computed the unaccommodated population for each state as described in equation \eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:religious-bias-plot}) for all states except Minnesota, which we discuss below.
 
-<<religious-bias-plot, echo = FALSE, include=T, fig.width=5, fig.height=5, fig.cap = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".5\\textwidth", fig.align='center', fig.env = 'figure'>>=
+<<religious-bias-plot, echo = FALSE, include=T, fig.width=4, fig.height=4, fig.cap = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".5\\textwidth", fig.align='center', fig.env = 'figure'>>=
 church_noterritories <- churchPixel %>%
   filter(!(State.Territory %in% c("SW Territories", "NW Territories")))
 church_noterritories %>%
@@ -716,8 +721,8 @@ church_noterritories %>%
       filter(UAPixperc - UAEstperc > 10)) +
   coord_equal() +
   geom_smooth(method = "lm", se = FALSE, linetype = 2, size = .5) +
-  scale_x_continuous("Estimated Unaccommodated Population, 1% microsample") +
-  scale_y_continuous("Estimated Unaccommodated Population, pixel values")
+  scale_x_continuous("Estimated based on 1% microsample") +
+  scale_y_continuous("Estimate based on pixel values")
 @
 
 A close examination of plate \#31 will also reveal that the different color layers of the lithographic prints are not as well aligned. In addition, the state plots are much more variable in size in plate \#31 than in plate \#32. These differences suggest that plate \#31 might have been created by a less experienced lithographer than plate \#32. Both plate \#31 and plate \#32 were based off of data compiled from the 1870 census by Francis A. Walker, but it appears the artistry and methodology may not have been consistent between the two plates.
@@ -903,7 +908,7 @@ percentages %>%
   theme_bw() +
   coord_fixed() +
   scale_colour_brewer("Frame piece estimate", palette="Set1") +
-  scale_shape_discrete("Frame piece estimate") +
+  scale_shape_discrete("Frame piece estimate", solid = F) +
   theme(legend.position="right")
 @
 
@@ -944,7 +949,7 @@ As a measure of the error we compare the log estimated size of a portion of the 
 percentages %>% filter(abs(log(ratio)) < log(5)) %>%
   ggplot(aes(x = log(perc), y = log(howmuch), colour=frameframe)) +
   geom_abline(slope = 1, colour="grey50", size=0.5) +
-  geom_point() +
+  geom_point(shape = "o") +
   facet_grid(.~Type, labeller="label_both") +
   geom_smooth(method="lm", se=FALSE) +
   theme_bw() +
@@ -952,8 +957,7 @@ percentages %>% filter(abs(log(ratio)) < log(5)) %>%
   theme(legend.position="right") +
   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("(Log) Percent Actual Area") +
-  ylab("(Log) Percent Estimated Area")
-
+  ylab("(Log) Percent Estimated Area") 
 @
 
 
@@ -1094,7 +1098,7 @@ From these observations, we can conclude that framed plots are perceptually not 
 
 <<participant-source, echo=FALSE, fig.width = 7, fig.height = 4, out.width = ".9\\textwidth", fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
 percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
-  geom_abline() +
+  geom_abline(colour="grey50") +
   geom_jitter(aes(shape=isFrame, colour=isFrame)) +
   xlab("Actual Value") +
   ylab("Estimated Value") +
