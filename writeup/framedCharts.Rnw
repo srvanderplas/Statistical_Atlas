@@ -947,9 +947,10 @@ As a measure of the error we compare the log estimated size of a portion of the 
 #
 
 percentages %>% filter(abs(log(ratio)) < log(5)) %>%
-  ggplot(aes(x = log(perc), y = log(howmuch), colour=frameframe)) +
+  ggplot(aes(x = log(perc), y = log(howmuch), 
+             colour=frameframe, shape=frameframe)) +
   geom_abline(slope = 1, colour="grey50", size=0.5) +
-  geom_point(shape = "o") +
+  geom_point() +
   facet_grid(.~Type, labeller="label_both") +
   geom_smooth(method="lm", se=FALSE) +
   theme_bw() +
@@ -957,7 +958,8 @@ percentages %>% filter(abs(log(ratio)) < log(5)) %>%
   theme(legend.position="right") +
   scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
   xlab("(Log) Percent Actual Area") +
-  ylab("(Log) Percent Estimated Area") 
+  ylab("(Log) Percent Estimated Area") +
+  scale_shape_discrete("Plot Area", solid=F)
 @
 
 
@@ -1095,8 +1097,41 @@ Assessing the fitted model, there are three main conclusions:
 
 From these observations, we can conclude that framed plots are perceptually not an ideal choice, even though they are aesthetically pleasing. When spine plots are framed, area estimation does not suffer significantly, but with both pie and mosaic plots, it does; this inconsistency is likely due to the different perceptual demands of pie charts and mosaic plots compared to spine plots. Pie charts require estimation of the relative angle of the slice, which inherently requires consideration of two dimensions simultaneously. Spine plots require consideration of the relative length of a single dimension; \citet{cleveland:1984} ranks this as one of the easiest psychophysical estimation tasks.
 
+\begin{figure}
+  \subfloat[Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.]{
+  \includegraphics[width=0.48\textwidth]{figure/participant-variability-1.pdf}
+  \label{fig:participantvar}
+  }
+  \subfloat[Histograms show preference for rounding to 5.]{
+  \includegraphics[width=0.48\textwidth]{figure/participant-preference-1.pdf}
+  \label{fig:participantpref}
+  }
+\caption{\label{participant-source} Comparison of results from the two different sources of participant recruitment. }
+\end{figure}
 
-<<participant-source, echo=FALSE, fig.width = 7, fig.height = 4, out.width = ".9\\textwidth", fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
+<<participant-variability, hide=TRUE,  eval=FALSE, echo=FALSE, fig.width = 5, fig.height = 3,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
+percentages %>% 
+  na.omit() %>% 
+  ggplot(aes(x = source, y= log(howmuch/perc) )) + 
+    geom_boxplot() + 
+    theme_bw() + 
+    ylab("Log (Estimated Size/Actual Size)") +
+    xlab("Recruitment source") +
+  coord_flip()
+@
+
+<<participant-preference, hide=TRUE, eval=FALSE, echo=FALSE, fig.width = 5, fig.height = 4,  fig.cap = "Histograms show preference for rounding to 5.">>=
+percentages %>% 
+  na.omit() %>% 
+  ggplot(aes(x = howmuch)) + 
+    geom_histogram(binwidth=1) + 
+    facet_grid(source~., space="free", scale="free") + 
+    theme_bw() + 
+    ylab("# Evaluations") +   
+    xlab("Estimated Percentage") 
+@
+
+<<participant-source-old, eval=FALSE, echo=FALSE, fig.width = 7, fig.height = 4, out.width = ".9\\textwidth", fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
 percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   geom_abline(colour="grey50") +
   geom_jitter(aes(shape=isFrame, colour=isFrame)) +
@@ -1110,10 +1145,11 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
   coord_fixed() +
   xlim(c(0,50)) +
   ggtitle("Participant Recruitment")
+
+
 @
 
-Our participants were drawn from two different populations - reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have somewhat lower variability than responses from amazon mechanical turkers. \autoref{fig:participant-source} shows responses from redditors and mechanical turkers. Both groups tend to round their area estimates to the nearest 5\%, as seen in the clustering of responses along the $y$ axis.
-
+Our participants were drawn from two different populations - reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see \autoref{fig:participantvar}). \autoref{fig:participant-source} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms.
 %
 % \hh{Discussion of the study results:
 %
