@@ -947,7 +947,7 @@ As a measure of the error we compare the log estimated size of a portion of the 
 #
 
 percentages %>% filter(abs(log(ratio)) < log(5)) %>%
-  ggplot(aes(x = log(perc), y = log(howmuch), 
+  ggplot(aes(x = log(perc), y = log(howmuch),
              colour=frameframe, shape=frameframe)) +
   geom_abline(slope = 1, colour="grey50", size=0.5) +
   geom_point() +
@@ -1109,26 +1109,26 @@ From these observations, we can conclude that framed plots are perceptually not 
 \caption{\label{participant-source} Comparison of results from the two different sources of participant recruitment. }
 \end{figure}
 
-<<participant-variability, hide=TRUE,  eval=FALSE, echo=FALSE, fig.width = 5, fig.height = 3,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
-percentages %>% 
-  na.omit() %>% 
-  ggplot(aes(x = source, y= log(howmuch/perc) )) + 
-    geom_boxplot() + 
-    theme_bw() + 
+<<participant-variability, include = F,  eval=T, echo=FALSE, fig.width = 5, fig.height = 3,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
+percentages %>%
+  na.omit() %>%
+  ggplot(aes(x = source, y= log(howmuch/perc) )) +
+    geom_boxplot() +
+    theme_bw() +
     ylab("Log (Estimated Size/Actual Size)") +
     xlab("Recruitment source") +
   coord_flip()
 @
 
-<<participant-preference, hide=TRUE, eval=FALSE, echo=FALSE, fig.width = 5, fig.height = 4,  fig.cap = "Histograms show preference for rounding to 5.">>=
-percentages %>% 
-  na.omit() %>% 
-  ggplot(aes(x = howmuch)) + 
-    geom_histogram(binwidth=1) + 
-    facet_grid(source~., space="free", scale="free") + 
-    theme_bw() + 
-    ylab("# Evaluations") +   
-    xlab("Estimated Percentage") 
+<<participant-preference, include = F, eval=T, echo=FALSE, fig.width = 5, fig.height = 4,  fig.cap = "Histograms show preference for rounding to 5.">>=
+percentages %>%
+  na.omit() %>%
+  ggplot(aes(x = howmuch)) +
+    geom_histogram(binwidth=1) +
+    facet_grid(source~., space="free", scale="free") +
+    theme_bw() +
+    ylab("# Evaluations") +
+    xlab("Estimated Percentage")
 @
 
 <<participant-source-old, eval=FALSE, echo=FALSE, fig.width = 7, fig.height = 4, out.width = ".9\\textwidth", fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
@@ -1149,7 +1149,7 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
 
 @
 
-Our participants were drawn from two different populations - reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see Figure~\autoref{fig:participantvar}). \autoref{fig:participant-source} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms.
+Our participants were drawn from two different populations - reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see Figure\autoref{fig:participantvar}). Figure\autoref{fig:participantpref} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms.
 %
 % \hh{Discussion of the study results:
 %
