@@ -19,7 +19,7 @@ read_and_clean <- function(file) {
   
   percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
   
-  pl <- read.csv("../data/PlotLabels.csv")
+  pl <- read.csv(file.path(path, "PlotLabels.csv"))
   percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
   
   #####################
@@ -37,7 +37,7 @@ read_and_clean <- function(file) {
   percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
   percentages
 }
-
+path <- "../data"
 amazon <- read_and_clean("../analysis/Frame Study - Amazon_February 9, 2018_13.18.csv")
 reddit <- read_and_clean("../analysis/Frame Study - reddit-final.csv")
 amazon$source <- "amazon"
