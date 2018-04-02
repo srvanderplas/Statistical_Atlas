@@ -80,7 +80,7 @@ The statistical atlases published by the Census Bureau in the late 1800s utilize
 
 \noindent%
 {\it Keywords:}  Mosaic plots, spine plots, statistical graphics, pie charts, Statistical Atlas, Census Bureau
-\spacingset{1.45}
+\spacingset{2}
 
 
 <<setup, echo=FALSE, warning=FALSE, message=FALSE>>=
@@ -450,21 +450,26 @@ Plate 31 (see \autoref{fig:plate31}) gives an overview of the percentage of reli
 plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population over the age of ten in different types of occupations.
 
 \begin{figure}
-  \centering
   \subfloat[Description section of plate \#32.]{
   \includegraphics[width = 0.6\textwidth]{images/header.png}
   \label{fig:header}
   }
+  \hfill
   \subfloat[Legend to plate \#32.]{
   \includegraphics[width=0.3\textwidth]{images/legend.png}
   \label{fig:legend}
   }
 
   \subfloat[US wide distribution of genders across occupations.]{
-  \includegraphics[width=0.48\textwidth]{images/occupations-us.png}
+  \includegraphics[width=0.4\textwidth,valign=c]{images/occupations-us.png}
   \label{fig:us}
   }
-\caption{Zoom-ins to different aspects of plate \#32.}
+  \hfill
+  \subfloat[Miniature of plate \#32 of the Statistical Atlas.]{
+\includegraphics[width=.54\textwidth,valign=c]{images/ca000082.jpg}
+  \label{fig:plate32}
+  }
+\caption{Overview of plate \#32, with zoom-ins to different components.}
 \end{figure}
 
 
@@ -585,21 +590,21 @@ grid.draw(g_legend(plot2))
 \caption{Nation-wide overview of gender ratio by occupation based on gainfully employed population over ten. \label{fig:us-plate32-redo}}
 \end{figure}
 
-With the help of the description and the legend of \autoref{fig:header} and \autoref{fig:legend}, we can interpret the details of each of the squares at the example of \autoref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the size of the ``unaccounted" for population, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
+With the help of the description (Figure~\ref{fig:header}) and the legend (Figure~\ref{fig:legend}), we can interpret the details of each of the squares in Figure~\ref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the size of the ``unaccounted" for population, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
 
 Showing the unaccounted population as a frame masks the size of the corresponding population by visually cutting it into quarters. The percentage of unaccounted individuals nation-wide is about 30\%. This number is  higher than any of the other groups. Assessing the size of the unaccounted population in form of the area of the grey frame is mentally strenuous, as discussed in \autoref{sec:psych}. The task becomes much easier if we incorporate the information directly into the mosaic plot, as shown in Figure \ref{fig:redo-2}.
 This figure reveals another previously hidden finding: about 97\% of the unaccounted population are women and girls!
 
 
-\begin{figure}
-\centering
-\includegraphics[width=.5\textwidth]{images/ca000082.jpg}
-\caption{Miniature of plate \#32 of the Statistical Atlas.}
-\label{fig:plate32}
-\end{figure}
+% \begin{figure}
+% \centering
+% \includegraphics[width=.5\textwidth]{images/ca000082.jpg}
+% \caption{Miniature of plate \#32 of the Statistical Atlas.}
+% \label{fig:plate32}
+% \end{figure}
 
 
-<<plate32-repro, dependson="data", include = T, out.width = ".5\\textwidth", fig.width = 8, fig.height = 10.5, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
+<<plate32-repro, dependson="data", include = T, out.width = ".8\\textwidth", fig.width = 8, fig.height = 10.5, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
 cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey60")
 
 tmp <- createMosaics(state_name = "all")
@@ -693,21 +698,22 @@ cl %>% ggplot(aes(x = Denomination, weight=Number/10^6, fill=Denomination)) +
 @
 
 \begin{figure}
-  \centering
+\hfill
   \subfloat[Legend section of plate \#31.]{
-  \includegraphics[width = 0.48\textwidth]{images/plate31-legend.png}
+  \includegraphics[width = 0.4\textwidth]{images/plate31-legend.png}
   \label{fig:legend-31}
-  }
+  }\hfill
   \subfloat[Church sittings by denomination.]{
-  \includegraphics[width=0.48\textwidth]{figure/barchart-denominations-1}
+  \includegraphics[width=0.4\textwidth]{figure/barchart-denominations-1}
   \label{fig:barchart-31}
   }
+\hfill
 \caption{Old and new side-by-side: denominations are ordered from top to bottom according to the nation-wide number of sittings. On the right, all denominations are shown that were accommodated for in 1874. We also see that the number of unaccommodated people over the age of ten is higher than the number of sittings in any of the denominations.}
 \end{figure}
 
 We initially computed the unaccommodated population for each state as described in equation \eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:religious-bias-plot}) for all states except Minnesota, which we discuss below.
 
-<<religious-bias-plot, echo = FALSE, include=T, fig.width=4, fig.height=4, fig.cap = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".5\\textwidth", fig.align='center', fig.env = 'figure'>>=
+<<religious-bias-plot, echo = FALSE, include=T, fig.width=4, fig.height=4, fig.cap = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".35\\textwidth", fig.align='center', fig.env = 'figure'>>=
 church_noterritories <- churchPixel %>%
   filter(!(State.Territory %in% c("SW Territories", "NW Territories")))
 church_noterritories %>%
@@ -776,17 +782,8 @@ cl %>%
   ggtitle("Mississippi")
 @
 
-\begin{figure}
-\includegraphics[width = .32\textwidth]{images/31-Michigan.png}
-\includegraphics[width = .32\textwidth]{images/31-Minnesota.png}
-\includegraphics[width = .32\textwidth]{images/31-Mississippi.png}
-\caption{Panels from three states: Michigan, Minnesota, and Mississippi.\label{orig-state-plots-church}}
-\end{figure}
 
-
-\autoref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; \autoref{fig:state-church-plot1} shows a modern replication of the original charts, and \autoref{fig:state-church-plot2} shows an improved version of the same plots. We have improved the charts by adding an additional bar for the proportion of the population who are unaccommodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccommodated persons.
-
-<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = T, fig.width = 8, fig.height = 3, out.width = ".98\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
+<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = F, fig.width = 8, fig.height = 3, out.width = ".98\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
 mi <- createSpines(cl_data, "Michigan")
 mn <- createSpines(cl_data, "Minnesota")
@@ -823,6 +820,29 @@ p + theme(axis.text = element_blank(), axis.title = element_blank(),
 
 
 @
+
+\begin{figure}
+\subfloat[Statistical Atlas Panels] {
+\includegraphics[width = .32\textwidth]{images/31-Michigan.png}
+\includegraphics[width = .32\textwidth]{images/31-Minnesota.png}
+\includegraphics[width = .32\textwidth]{images/31-Mississippi.png}
+\label{orig-state-plots-church}
+}
+
+\subfloat[State religious accommodation plots generated with the \texttt{ggplot2} package\citep{ggplot2}.] {
+\includegraphics[width = .98\textwidth]{figure/state-church-plot-1}
+\label{fig:state-church-plot1}
+}
+
+\subfloat[Re-imagined religious accommodation plots.] {
+\includegraphics[width = .98\textwidth]{figure/state-church-plot-2}
+\label{fig:state-church-plot2}
+}
+\caption{Panels from Michigan, Minnesota, and Mississippi, shown in original, modern, and re-imagined form.}
+\end{figure}
+
+
+Figure \ref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; Figure \ref{fig:state-church-plot1} shows a modern replication of the original charts, and Figure \ref{fig:state-church-plot2} shows an improved version of the same plots. We have improved the charts by adding an additional bar for the proportion of the population who are unaccommodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccommodated persons.
 
 Both sets of re-imagined church accommodation plots use a triple color scheme. The lightest colors were drawn from the Colorbrewer\citep{colorbrewer} ``Paired" palette's light colors (a grey hue was also added); each color was then darkened twice using the \texttt{munsell} package\citep{munsell} to produce a color scheme composed of 21 colors and 7 hues. This scheme is similar to the color scheme in the Statistical Atlas, which is composed of 7 hues and uses crosshatching to create lighter and darker bars.
 
