@@ -444,7 +444,8 @@ In this paper, we describe the methodology used to re-create plots from the 1870
 \section{Statistical Archaeology}
 \label{sec:statarch}
 
-Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure~\autoref{fig:header}) and a legend detailing the color choices (see Figure~\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure~\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. The plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}.
+Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure~\autoref{fig:header}) and a legend detailing the color choices (see Figure~\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure~\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. The plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
+
 
 Plate 31 (see \autoref{fig:plate31}) gives an overview of the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame),
 plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population over the age of ten in different types of occupations.
@@ -506,9 +507,7 @@ Results from this estimation process are shown in Figures \ref{fig:plate32-simil
 
 \subsection{Plate 32: Gender Ratio in Agriculture, Trade, Service, Manufacturing, and Schools}
 
-\hh{mosaics are novel in 1874 - Georg von Mayr didn't publish his form of mosaic plots until 1877 (see \citet{friendly} ) }
-
-\autoref{fig:plate32} shows a miniature of the chart published as plate \#32 in the Statistical Atlas of 1874 \citep{atlas} produced from data collected in the 9th US Census. The chart shows the gender ratio of population over the age of ten in different types of occupations.
+Figure~\ref{fig:plate32} shows a miniature of the chart published as plate \#32 in the Statistical Atlas of 1874 \citep{atlas} produced from data collected in the 9th US Census. The chart shows the gender ratio of population over the age of ten in different types of occupations.
 
 
 <<overall-work-plot, eval=FALSE, out.width='.7\\textwidth', fig.width=5, fig.height=5.5, echo = FALSE, message=FALSE, warning = F>>=
@@ -899,9 +898,9 @@ Each participant was asked to evaluate 18 plots (details below). For each estima
 \caption{\label{fig:combinations} Overview of the six plots shown to one third of the participants: all six combinations of plot types and designs are covered. The yellow `A' marks the area that participants are asked to estimate. Three areas in each of the plots were selected for estimation. }
 \end{figure}
 
-Three plot types were used in this study - mosaic plots (as in \autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states, to provide replication. Finally, three sections of each plot were selected for estimation - a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, where each participant evaluated a single set of plots.
+Three plot types were used in this study - mosaic plots (as in Figure~\autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states, to provide replication. Finally, three sections of each plot were selected for estimation - a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, where each participant evaluated a single set of plots.
 
-Each set of 18 plots was chosen such that all combinations of framed and unframed plot types were included. For each plot type x frame combination, the participant evaluated a small, medium, and large region in the same plot. Thus, if a participant evaluated the framed pie chart for Illinois, they might evaluate the unframed pie chart for Alabama. At the end of the evaluation, a participant saw plots from 6 states, corresponding to each combination of plot type and frame condition.
+Each set of 18 plots was chosen such that all combinations of framed and unframed plot types were included. For each plot type $\times$ frame combination, the participant evaluated a small, medium, and large region in the same plot. Thus, if a participant evaluated the framed pie chart for Illinois, they might evaluate the unframed pie chart for Alabama. At the end of the evaluation, a participant saw plots from 6 states, corresponding to each combination of plot type and frame condition.
 
 The survey was administered in form of a branched Qualtrics survey, where each set constituted one of the branches. The survey software randomly assigned one of the branches to a participant (while balancing out participants across branches).
 
@@ -915,7 +914,7 @@ percentages %>% count(ResponseId) %>%
 @
 
 
-\section{Results}
+\subsection{Results}
 
 <<check0, fig.width=7.5, fig.height = 4.25, fig.cap="Scatterplots of actual versus estimated areas. The color and shape of points distinguish between areas that are part of the frame (or correspond to frame pieces) and inside the plot.">>=
 percentages %>%
@@ -1186,6 +1185,12 @@ Our participants were drawn from two different populations - reddit and amazon m
 
 \section{Conclusion}
 \label{sec:conc}
+
+While aesthetically appealing, framed charts are an inferior choice if the goal is to effectively communicate information. The Census Bureau did an incredible job at collecting, tabulating, visualizing, and maintaining the data presented in the Statistical Atlas. Reproducibility has become a more discussed topic in science lately, but few researchers attempt to preserve their data and methods in such a way that the results could be precisely duplicated 150 years later. The Census Bureau (in conjunction with the Library of Congress) has managed to make it fairly easy for researchers to access the data necessary to conduct this study online.
+
+In addition to the technical feat of reproducibility, the Statistical Atlas represented a state-sponsored foray into the development and use of new types of charts. While framed plots are aesthetically appealing, they are not effective at communicating numerical information accurately. With 107 pages of charts, and several relatively new types of plots, it is not surprising that some of these experiments fell flat. In addition, due to the limitations of printing technology at the time, some of the design choices are pragmatic, as well as aesthetic.
+
+The real conclusion from this study is that of all of the successes which underlie the creation of the 1870 Statistical Atlas, it would be better to leave the framed charts in the annals of history and focus on the remarkably resilient infrastructure which allows us to test this hypothesis 150 years later.
 
 
 \bigskip
