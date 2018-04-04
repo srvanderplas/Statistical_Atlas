@@ -40,11 +40,32 @@ read_and_clean <- function(file) {
   percentages
 }
 
+
+read_demographics <- function(file) {
+  responses <- read.csv(file)
+  responses <- responses[-(1:2),]
+  library(tidyverse)
+  responses <- responses %>% rename(
+    Age=Q56,
+    Gender = Q520,
+    Education=Q524
+  )
+  responses <- filter(responses, Finished %in% c("True", "TRUE", "Finished"))
+  responses %>% select(Age, Gender, Education, Duration..in.seconds.)  
+}
+
 amazon <- read_and_clean("../analysis/Frame Study - Amazon_February 9, 2018_13.18.csv")
 reddit <- read_and_clean("../analysis/Frame Study - reddit-final.csv")
 amazon$source <- "amazon"
 reddit$source <- "reddit"
 percentages <- rbind(amazon, reddit)
+
+amazon <- read_demographics("../analysis/Frame Study - Amazon_February 9, 2018_13.18.csv")
+reddit <- read_demographics("../analysis/Frame Study - reddit-final.csv")
+amazon$source <- "amazon"
+reddit$source <- "reddit"
+demographics <- rbind(amazon, reddit)
+write.csv(demographics, file="../data/demographics.csv", row.names=FALSE)
 
 percentages %>% ggplot(aes(x=ResponseId, y=howmuch)) + 
   geom_point() + coord_flip() +
