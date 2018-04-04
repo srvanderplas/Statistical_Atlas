@@ -871,9 +871,11 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \label{sec:meth}
 
 \subsection{Study Design}
-\paragraph{Participants} Participants were recruited using reddit and Amazon Mechanical Turk. Participants were required to be over 18, and we collected information about their age, gender, and education levels. \svp{Add in more information about demographics.}
+\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. %\svp{Add in more information about demographics.}
 % Add demographic information, explain difference between reddit and turk populations
-\hh{First atempt at demographics in \autoref{fig:demographics}.}
+\hh{
+Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. XXX gender
+}
 
 <<demo0, echo=FALSE, fig.height=4, fig.width=5, include=F>>=
 
@@ -887,6 +889,7 @@ demographics %>%
 <<demo1, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
 demographics$Gender <- factor(demographics$Gender)
 demographics$Gender <- factor(demographics$Gender, levels=c("Male", "Female", "Other", ""))
+levels(demographics$Gender) <- c("Male", "Female", "Other", "Other")
 
 demographics %>%
   ggplot(aes(x = source, fill=Gender)) +
@@ -925,6 +928,11 @@ edu_summ$Education <- factor(
            "College Graduate (Bachelor's)",
            "College Graduate (Master's or Doctorate)"))
 
+levels(edu_summ$Education)[4:5] <- c("Bachelor degree", "Master degree or higher")
+
+edu_summ$source <- factor(edu_summ$source)
+edu_summ$source <- factor(edu_summ$source, levels=c("reddit", "amazon", "US population"))
+
 edu_summ %>%
   ggplot() +
   geom_bar(aes(x=source, fill=Education, weight = n),
@@ -958,6 +966,9 @@ census_summ <- census %>%
     source = "US population"
   )
 age_summ <- rbind(data.frame(census_summ), data.frame(age_summ))
+
+age_summ$source <- factor(age_summ$source)
+age_summ$source <- factor(age_summ$source, levels=c("reddit", "amazon", "US population"))
 
 age_summ %>%
   ggplot() +
