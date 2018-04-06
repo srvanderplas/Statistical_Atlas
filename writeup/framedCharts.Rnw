@@ -877,13 +877,17 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. XXX gender
 }
 
-<<demo0, echo=FALSE, fig.height=4, fig.width=5, include=F>>=
+<<demo0, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
+demographics$source <- factor(demographics$source)
+demographics$source <- factor(demographics$source, 
+                              levels=c("reddit", "amazon"))
 
 demographics %>%
   ggplot(aes(x = source)) +
   geom_bar() +
   theme_bw() +
-  ylab("# Participants")
+  ylab("# Participants") +
+  coord_flip()
 
 @
 <<demo1, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
@@ -928,7 +932,7 @@ edu_summ$Education <- factor(
            "College Graduate (Bachelor's)",
            "College Graduate (Master's or Doctorate)"))
 
-levels(edu_summ$Education)[4:5] <- c("Bachelor degree", "Master degree or higher")
+levels(edu_summ$Education)[4:5] <- c("Bachelor degree", "Graduate degree")
 
 edu_summ$source <- factor(edu_summ$source)
 edu_summ$source <- factor(edu_summ$source, levels=c("reddit", "amazon", "US population"))
@@ -946,7 +950,7 @@ edu_summ %>%
 
 @
 
-<<demo3, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
+<<demo3, echo=FALSE, fig.height=4, fig.width=5, include=F>>=
 demographics$Age <- factor(demographics$Age)
 demographics$Age <- factor(
   demographics$Age,
@@ -978,7 +982,9 @@ age_summ %>%
   coord_flip() +
   theme(legend.position="bottom") +
   scale_fill_brewer(palette="Greens") +
-  ylab("Proportion")
+  ylab("Proportion") +
+  guides(fill = guide_legend(nrow = 3))
+
 
  @
 
@@ -1263,6 +1269,10 @@ From these observations, we can conclude that framed plots are perceptually not 
 \end{figure}
 
 <<participant-variability, include = F,  eval=T, echo=FALSE, fig.width = 5, fig.height = 3,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
+percentages$source <- factor(percentages$source)
+percentages$source <- factor(percentages$source, 
+                             levels=c("reddit", "amazon"))
+
 percentages %>%
   na.omit() %>%
   ggplot(aes(x = source, y= log(howmuch/perc) )) +
@@ -1274,6 +1284,9 @@ percentages %>%
 @
 
 <<participant-preference, include = F, eval=T, echo=FALSE, fig.width = 5, fig.height = 4,  fig.cap = "Histograms show preference for rounding to 5.">>=
+percentages$source <- factor(percentages$source, 
+                             levels=rev(c("reddit", "amazon")))
+
 percentages %>%
   na.omit() %>%
   ggplot(aes(x = howmuch)) +
