@@ -873,9 +873,9 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \subsection{Study Design}
 \paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. %\svp{Add in more information about demographics.}
 % Add demographic information, explain difference between reddit and turk populations
-\hh{
-Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. XXX gender
-}
+
+Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to be male or identify as non-binary gender.
+
 
 <<demo0, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
 demographics$source <- factor(demographics$source)
@@ -1123,7 +1123,7 @@ percentages %>% filter(abs(log(ratio)) < log(5)) %>%
 
 
 Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by participant $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece.
-<<demographics, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
+<<demographics2, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
 percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   geom_bar(position="dodge") +
   facet_grid(Type~.) +
@@ -1333,28 +1333,28 @@ Our participants were drawn from two different populations - reddit and amazon m
 \section{Conclusion}
 \label{sec:conc}
 
-While aesthetically appealing, framed charts are an inferior choice if the goal is to effectively communicate information. The Census Bureau did an incredible job at collecting, tabulating, visualizing, and maintaining the data presented in the Statistical Atlas. Reproducibility has become a more discussed topic in science lately, but few researchers attempt to preserve their data and methods in such a way that the results could be precisely duplicated 150 years later. The Census Bureau (in conjunction with the Library of Congress) has managed to make it fairly easy for researchers to access the data necessary to conduct this study online.
+While aesthetically appealing, framed charts are an inferior choice if the goal is to effectively communicate information. The Census Bureau did an incredible job at collecting, tabulating, visualizing, and maintaining the data presented in the Statistical Atlas. Reproducibility has risen to a highly discussed topic in science lately, but few researchers even attempt to preserve their data and methods in such a way that the results could be precisely duplicated 150 years later. The Census Bureau (in conjunction with the Library of Congress) has managed to make it fairly easy for researchers to access the data necessary to conduct this study online.
 
-In addition to the technical feat of reproducibility, the Statistical Atlas represented a state-sponsored foray into the development and use of new types of charts. While framed plots are aesthetically appealing, they are not effective at communicating numerical information accurately. With 107 pages of charts, and several relatively new types of plots, it is not surprising that some of these experiments fell flat. In addition, due to the limitations of printing technology at the time, some of the design choices are pragmatic, as well as aesthetic.
+In addition to the technical feat of reproducibility, the Statistical Atlas, spearheaded by the vision of Francis Walker, represented a state-sponsored foray into the development and use of new types of charts. While framed plots are aesthetically appealing, they are not effective at communicating numerical information accurately. With 107 pages of charts, and several relatively new types of plots, it is not surprising that some of these experiments fell flat. In addition, due to the limitations of printing technology at the time, some of the design choices are pragmatic, as well as aesthetic.
 
 The real conclusion from this study is that of all of the successes which underlie the creation of the 1870 Statistical Atlas, it would be better to leave the framed charts in the annals of history and focus on the remarkably resilient infrastructure which allows us to test this hypothesis 150 years later.
 
 
-\bigskip
-\begin{center}
-{\large\bf SUPPLEMENTAL MATERIALS}
-\end{center}
+% \bigskip
+% \begin{center}
+% {\large\bf SUPPLEMENTAL MATERIALS}
+% \end{center}
 
-\begin{description}
-
-\item[Online Supplement:] Additional plots and discussion not provided in the print version of this paper. (pdf)
-
-% \item[R-package for  MYNEW routine:] R-package {\tt MYNEW} containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
-
-% \item[HIV data set:] Data set used in the illustration of MYNEW method in Section~ 3.2. (.txt file)
-
-\end{description}
-
+% \begin{description}
+% 
+% \item[Online Supplement:] Additional plots and discussion not provided in the print version of this paper. (pdf)
+% 
+% % \item[R-package for  MYNEW routine:] R-package {\tt MYNEW} containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
+% 
+% % \item[HIV data set:] Data set used in the illustration of MYNEW method in Section~ 3.2. (.txt file)
+% 
+% \end{description}
+% 
 
 \bibliographystyle{plainnat}
 \bibliography{mybibfile}
