@@ -1127,11 +1127,11 @@ percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   xlab("Piece Location") +
   ylab("Number of responses") +
   theme_bw() +
-  scale_fill_manual(values = c(reddit = "#9494FF", amazon = "#F79B34"))
+  scale_fill_manual(values = c(reddit = "#5f99cf", amazon = "#ff9900")) # https://brandcolors.net/
 
 @
 
-The model is written in the form of regressions lines of the form  $\log E = \alpha + \beta \log E$, with the unframed version of each of the types as base line. The other parameters can then be written as contrasts to the base line, producing a set of  easily interpretable results:
+The model is written in the form of regressions lines of the form  $\log E = \alpha + \beta \log E$, with the unframed version of each of the types as the base line. The other parameters can then be written as contrasts to the base line, producing a set of  easily interpretable results:
 
 \begin{eqnarray*}
 \log E_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot \log A_{ij}  + \left(\alpha_{ij} + \beta_{ij} \cdot \log A_{ij}\right) + e_{ijk} + u_\ell, \hspace{1.5cm} \text{Model (1)}
