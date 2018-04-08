@@ -832,12 +832,12 @@ p + theme(axis.text = element_blank(), axis.title = element_blank(),
 }
 
 \subfloat[State religious accommodation plots generated with the \texttt{ggplot2} package\citep{ggplot2}.] {
-\includegraphics[width = .98\textwidth]{figure/state-church-plot-1}
+\includegraphics[width = .97\textwidth]{figure/state-church-plot-1}
 \label{fig:state-church-plot1}
 }
 
 \subfloat[Re-imagined religious accommodation plots.] {
-\includegraphics[width = .98\textwidth]{figure/state-church-plot-2}
+\includegraphics[width = .97\textwidth]{figure/state-church-plot-2}
 \label{fig:state-church-plot2}
 }
 \caption{Panels from Michigan, Minnesota, and Mississippi, shown in original, modern, and re-imagined form.}
