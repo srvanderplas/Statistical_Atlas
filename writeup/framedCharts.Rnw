@@ -988,21 +988,21 @@ age_summ %>%
 
 \begin{figure}
   \subfloat[Number of participants by source.]{
-  \includegraphics[width = 0.49\textwidth]{figure/demo0-1.pdf}
+  \includegraphics[width = 0.48\textwidth]{figure/demo0-1.pdf}
   \label{fig:demo0}
   }
   \subfloat[Gender distribution.]{
-  \includegraphics[width = 0.49\textwidth]{figure/demo1-1.pdf}
+  \includegraphics[width = 0.48\textwidth]{figure/demo1-1.pdf}
   \label{fig:demo1}
   }
   \hfill
   \subfloat[Educational background.]{
-  \includegraphics[width=0.49\textwidth]{figure/demo2-1.pdf}
+  \includegraphics[width=0.48\textwidth]{figure/demo2-1.pdf}
   \label{fig:demo2}
   }
   \hfill
   \subfloat[Age distribution.]{
-  \includegraphics[width=0.49\textwidth]{figure/demo3-1.pdf}
+  \includegraphics[width=0.48\textwidth]{figure/demo3-1.pdf}
   \label{fig:demo3}
   }
 \caption{\label{fig:demographics} Demographics of participants by source (amazon or reddit) compared to the general US population.}
