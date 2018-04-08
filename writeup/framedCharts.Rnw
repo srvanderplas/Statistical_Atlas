@@ -449,7 +449,7 @@ In this paper, we describe the methodology used to re-create plots from the 1870
 \section{Statistical Archaeology}
 \label{sec:statarch}
 
-Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure~\autoref{fig:header}) and a legend detailing the color choices (see Figure~\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure~\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. The plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
+Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure~\autoref{fig:header}) and a legend detailing the color choices (see Figure~\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure~\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}; Plate 31 uses spine plots. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
 
 
 Plate 31 (see \autoref{fig:plate31}) gives an overview of the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame),
@@ -879,7 +879,7 @@ Compared to demographics of the general US population \citep[as published in][]{
 
 <<demo0, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
 demographics$source <- factor(demographics$source)
-demographics$source <- factor(demographics$source, 
+demographics$source <- factor(demographics$source,
                               levels=c("reddit", "amazon"))
 
 demographics %>%
@@ -1270,7 +1270,7 @@ From these observations, we can conclude that framed plots are perceptually not 
 
 <<participant-variability, include = F,  eval=T, echo=FALSE, fig.width = 5, fig.height = 3,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
 percentages$source <- factor(percentages$source)
-percentages$source <- factor(percentages$source, 
+percentages$source <- factor(percentages$source,
                              levels=c("reddit", "amazon"))
 
 percentages %>%
@@ -1284,7 +1284,7 @@ percentages %>%
 @
 
 <<participant-preference, include = F, eval=T, echo=FALSE, fig.width = 5, fig.height = 4,  fig.cap = "Histograms show preference for rounding to 5.">>=
-percentages$source <- factor(percentages$source, 
+percentages$source <- factor(percentages$source,
                              levels=rev(c("reddit", "amazon")))
 
 percentages %>%
@@ -1346,15 +1346,15 @@ The real conclusion from this study is that of all of the successes which underl
 % \end{center}
 
 % \begin{description}
-% 
+%
 % \item[Online Supplement:] Additional plots and discussion not provided in the print version of this paper. (pdf)
-% 
+%
 % % \item[R-package for  MYNEW routine:] R-package {\tt MYNEW} containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
-% 
+%
 % % \item[HIV data set:] Data set used in the illustration of MYNEW method in Section~ 3.2. (.txt file)
-% 
+%
 % \end{description}
-% 
+%
 
 \bibliographystyle{plainnat}
 \bibliography{mybibfile}
