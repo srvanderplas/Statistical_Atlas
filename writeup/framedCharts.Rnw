@@ -568,7 +568,7 @@ plot2 <- us$plot2 + theme_bw() +  xlab("The United States") +
 
 plot2 + theme(legend.position = "none")
 @
-<<overall-work-mosaic-legend, include = F, fig.width = 1.5, fig.height=4>>=
+<<overall-work-mosaic-legend, include = F, fig.width = 1.2, fig.height=4>>=
 library(grid)
 grid.newpage()
 grid.draw(g_legend(plot2))
