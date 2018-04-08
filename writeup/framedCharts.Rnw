@@ -882,7 +882,8 @@ demographics %>%
   geom_bar() +
   theme_bw() +
   ylab("# Participants") +
-  coord_flip()
+  coord_flip() +
+  theme(axis.title.y = element_blank())
 
 @
 <<demo1, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
@@ -897,7 +898,8 @@ demographics %>%
   coord_flip() +
   theme_bw() +
   theme(legend.position="bottom") +
-  ylab("Proportion")
+  ylab("Proportion") +
+  theme(axis.title.y = element_blank())
 
 @
 
@@ -941,7 +943,8 @@ edu_summ %>%
   theme(legend.position="bottom") +
   scale_fill_brewer(palette="Greens") +
   ylab("Proportion") +
-  guides(fill = guide_legend(nrow = 3))
+  guides(fill = guide_legend(nrow = 3)) +
+  theme(axis.title.y = element_blank())
 
 @
 
@@ -978,7 +981,8 @@ age_summ %>%
   theme(legend.position="bottom") +
   scale_fill_brewer(palette="Greens") +
   ylab("Proportion") +
-  guides(fill = guide_legend(nrow = 3))
+  guides(fill = guide_legend(nrow = 3)) +
+  theme(axis.title.y = element_blank())
 
 
  @
