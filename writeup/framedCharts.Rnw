@@ -1132,7 +1132,7 @@ percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   xlab("Piece Location") +
   ylab("Number of responses") +
   theme_bw() +
-  scale_fill_manual(values = c(reddit = "#5f99cf", amazon = "#ff9900")) # https://brandcolors.net/
+  scale_fill_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900")) # https://brandcolors.net/
 
 @
 
@@ -1144,10 +1144,10 @@ The model is written in the form of regressions lines of the form  $\log E = \al
 where
 \begin{itemize}
 \item[$\alpha_i$] can be interpreted as the estimated size of an area in an unframed design with an actual size of zero for each of the plot types $i$ ($i = 1, 2, 3$),
-\item[$\beta_i$] can be interpreted as the average change in the log ratio of estimated and actual size of a piece in an unframed design of plot type $i$ ($i = 1, 2, 3$) when the actual size increase by 1 percentage point,
+\item[$\beta_i$] can be interpreted as the average change in the log ratio of estimated and actual size of a piece in an unframed design of plot type $i$ ($i = 1, 2, 3$) when the actual size increases by 1 percentage point,
 \item[$\alpha_{ij}$, $\beta_{ij}$] are the average multiplicative changes to $\alpha_i$ and $\beta_i$ for a piece in location $j$ ($j = 1,2,3$). For estimability, $\alpha_{i1} = \beta_{i1} = 0$ for all plot types $i$,
 \item[$e_{ijk}$] is the error observed within each combination of plot type and piece location $ij$. We assume $e_{ijk} \sim N(0, \sigma_e^2)$ i.i.d.\ for all $k=1, ..., n_{ij}$,
-\item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant was supposed to evaluate 18 pieces. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of the 18. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, e) = 0$.
+\item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of 18 possible evaluations. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, e) = 0$.
 \end{itemize}
 Estimates for all of the parameters are shown in \autoref{tab:results}.
 
@@ -1250,7 +1250,7 @@ m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 
 Assessing the fitted model, there are three main conclusions:
 \begin{itemize}
-\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent perceptual biases for estimation of an area of size A in unframed (regular) mosaic, pie, and spine charts. A value of one would indicate no bias; a value greater than one would indicate an over-estimate, and a value less than one would indicate an under-estimate. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to this bias; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
+\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent perceptual biases for estimation of an area of size A in unframed (regular) mosaic, pie, and spine charts. A value of 1.0 would indicate no bias; a value greater than 1.0 would indicate an over-estimate, and a value less than 1.0 would indicate an under-estimate. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to this bias; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
 \item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in any of the plot types. Both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region).
 \item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for mosaic and pie charts, but not for spine plots. In the unframed version of mosaic and pie charts, the unaccommodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
 \end{itemize}
@@ -1269,7 +1269,7 @@ From these observations, we can conclude that framed plots are perceptually not 
 \caption{\label{participant-source} Comparison of results from the two different sources of participant recruitment. }
 \end{figure}
 
-<<participant-variability, include = F,  eval=T, echo=FALSE, fig.width = 5, fig.height = 3,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
+<<participant-variability, include = F,  eval=T, echo=FALSE, fig.width = 3.5, fig.height = 2.1,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
 percentages$source <- factor(percentages$source)
 percentages$source <- factor(percentages$source,
                              levels=c("reddit", "amazon"))
@@ -1284,7 +1284,7 @@ percentages %>%
   coord_flip()
 @
 
-<<participant-preference, include = F, eval=T, echo=FALSE, fig.width = 5, fig.height = 4,  fig.cap = "Histograms show preference for rounding to 5.">>=
+<<participant-preference, include = F, eval=T, echo=FALSE, fig.width = 3.5, fig.height = 2.8,  fig.cap = "Histograms show preference for rounding to 5.">>=
 percentages$source <- factor(percentages$source,
                              levels=rev(c("reddit", "amazon")))
 
