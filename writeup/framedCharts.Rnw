@@ -874,7 +874,7 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender.
 
 
-<<demo0, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
+<<demo0, echo=FALSE, fig.height=2.25, fig.width=3.5, include=F>>=
 demographics$source <- factor(demographics$source)
 demographics$source <- factor(demographics$source,
                               levels=c("reddit", "amazon"))
@@ -885,10 +885,10 @@ demographics %>%
   theme_bw() +
   ylab("# Participants") +
   coord_flip() +
-  theme(axis.title.y = element_blank())
+  theme(axis.title.y = element_blank(), axis.text.y = element_text(angle = 90, hjust = .5))
 
 @
-<<demo1, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
+<<demo1, echo=FALSE, fig.height=2.25, fig.width=3.5, include=F>>=
 demographics$Gender <- factor(demographics$Gender)
 demographics$Gender <- factor(demographics$Gender, levels=c("Male", "Female", "Other", ""))
 levels(demographics$Gender) <- c("Male", "Female", "Other", "Other")
@@ -901,11 +901,11 @@ demographics %>%
   theme_bw() +
   theme(legend.position="bottom") +
   ylab("Proportion") +
-  theme(axis.title.y = element_blank())
+  theme(axis.title.y = element_blank(), axis.text.y = element_text(angle = 90, hjust = .5))
 
 @
 
-<<demo2, echo=FALSE, fig.height=4, fig.width=5, include =F>>=
+<<demo2, echo=FALSE, fig.height=3.5, fig.width=3.5, include =F>>=
 demographics$Education <- factor(demographics$Education)
 
 edu_summ <- demographics %>%
@@ -920,7 +920,7 @@ census_summ <- census %>%
     n = sum(count)
   ) %>%
   mutate(
-    source = "US population"
+    source = "US pop."
   )
 edu_summ <- rbind(data.frame(census_summ), data.frame(edu_summ))
 edu_summ$Education <- factor(
@@ -931,10 +931,11 @@ edu_summ$Education <- factor(
            "College Graduate (Bachelor's)",
            "College Graduate (Master's or Doctorate)"))
 
-levels(edu_summ$Education)[4:5] <- c("Bachelor degree", "Graduate degree")
+levels(edu_summ$Education)[4:5] <- c("Bachelors", "MS or PhD")
+levels(edu_summ$Education)[1:3] <- c("Some HS", "HS Graduate", "Some College")
 
 edu_summ$source <- factor(edu_summ$source)
-edu_summ$source <- factor(edu_summ$source, levels=c("reddit", "amazon", "US population"))
+edu_summ$source <- factor(edu_summ$source, levels=c("reddit", "amazon", "US pop."))
 
 edu_summ %>%
   ggplot() +
@@ -943,14 +944,14 @@ edu_summ %>%
   theme_bw() +
   coord_flip() +
   theme(legend.position="bottom") +
-  scale_fill_brewer(palette="Greens") +
+  scale_fill_brewer("Education", palette="Greens") +
   ylab("Proportion") +
   guides(fill = guide_legend(nrow = 3)) +
-  theme(axis.title.y = element_blank())
+  theme(axis.title.y = element_blank(), axis.text.y = element_text(angle = 90, hjust = .5))
 
 @
 
-<<demo3, echo=FALSE, fig.height=4, fig.width=5, include=F>>=
+<<demo3, echo=FALSE, fig.height=3.5, fig.width=3.5, include=F>>=
 demographics$Age <- factor(demographics$Age)
 demographics$Age <- factor(
   demographics$Age,
@@ -967,12 +968,12 @@ census_summ <- census %>%
     n = sum(count)
   ) %>%
   mutate(
-    source = "US population"
+    source = "US pop."
   )
 age_summ <- rbind(data.frame(census_summ), data.frame(age_summ))
 
 age_summ$source <- factor(age_summ$source)
-age_summ$source <- factor(age_summ$source, levels=c("reddit", "amazon", "US population"))
+age_summ$source <- factor(age_summ$source, levels=c("reddit", "amazon", "US pop."))
 
 age_summ %>%
   ggplot() +
@@ -984,7 +985,7 @@ age_summ %>%
   scale_fill_brewer(palette="Greens") +
   ylab("Proportion") +
   guides(fill = guide_legend(nrow = 3)) +
-  theme(axis.title.y = element_blank())
+  theme(axis.title.y = element_blank(), axis.text.y = element_text(angle = 90, hjust = .5))
 
 
  @
