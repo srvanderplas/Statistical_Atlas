@@ -869,10 +869,7 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \label{sec:meth}
 
 \subsection{Study Design}
-\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. %\svp{Add in more information about demographics.}
-% Add demographic information, explain difference between reddit and turk populations
-
-Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender.
+\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender.
 
 
 <<demo0, echo=FALSE, fig.height=3.5, fig.width=5, include=F>>=
