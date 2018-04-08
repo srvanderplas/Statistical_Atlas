@@ -785,31 +785,31 @@ cl %>%
 @
 
 
-<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = F, fig.width = 8, fig.height = 3, out.width = ".98\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
+<<state-church-plot, dependson="code", echo = F, message = F, warning = F, include = F, fig.width = 7.5, fig.height = 2.8, out.width = ".98\\textwidth", fig.cap = "State religious accommodation plots generated with the \\texttt{ggplot2} package\\citep{ggplot2}.">>=
 
 mi <- createSpines(cl_data, "Michigan")
 mn <- createSpines(cl_data, "Minnesota")
 ms <- createSpines(cl_data, "Mississippi")
 
-mi$plot1 <- mi$plot1 + ylab("MICHIGAN")
-mn$plot1 <- mn$plot1 + ylab("MINNESOTA")
-ms$plot1 <- ms$plot1 + ylab("MISSISSIPPI")
+mi$plot1 <- mi$plot1 + ylab("MICHIGAN") + theme(plot.margin = unit(c(0,0,0,0), "cm")) + scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
+mn$plot1 <- mn$plot1 + ylab("MINNESOTA") + theme(plot.margin = unit(c(0,0,0,0), "cm")) + scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
+ms$plot1 <- ms$plot1 + ylab("MISSISSIPPI") + theme(plot.margin = unit(c(0,0,0,0), "cm")) + scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
 library(gridExtra)
-
 grid.arrange(mi[1]$plot1, mn[1]$plot1, ms[1]$plot1, nrow=1)
 
 p <- cl %>%
   filter(State %in% c("Michigan", "Minnesota", "Mississippi"), Number > 0) %>%
+  mutate(State = toupper(State)) %>%
   mutate(Denomination = factor(Denomination, levels=rev(levels(Denomination)))) %>%
   ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination), fill=product(Denomination)), offset=0, alpha = 1) +
-  facet_grid(.~State, drop = TRUE) +
+  facet_grid(.~State, drop = TRUE, switch = "both") +
   scale_fill_manual(values = rev(rev(colHEX)[-c(3:4)])) +
   theme(legend.position = "none")
 
 scales <- ggplot_build(p)$data[[1]] %>%
   filter(xmax > xmin + 0.025) %>%
   mutate(
-    State = c("Michigan", "Minnesota", "Mississippi")[PANEL],
+    State = c("MICHIGAN", "MINNESOTA", "MISSISSIPPI")[PANEL],
     label = factor(label, levels = levels(cl$Denomination))
          )
 
@@ -818,7 +818,9 @@ p + theme(axis.text = element_blank(), axis.title = element_blank(),
   geom_text(data = scales,
             aes(x = (xmin+xmax)/2, label=label, colour = label),
             y = 0.025, angle=90, hjust=0, vjust=0.5, size = 2.5) +
-  scale_colour_manual(values = rep(c("grey90", "grey20", "grey90"), 7)) #rep("black",20))
+  scale_colour_manual(values = rep(c("grey90", "grey20", "grey90"), 7)) +
+  scale_y_continuous(expand = c(0,0)) + coord_cartesian(xlim=c(0.045,.955)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm"))
 
 
 @
