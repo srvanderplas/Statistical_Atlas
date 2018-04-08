@@ -665,7 +665,7 @@ occ2 %>% filter(Area.Name==State) %>% ggplot() +
         aspect.ratio=1)
 @
 
-The Census information about territories is available at a higher resolution than shown on plate \#32. Charts with mosaic plots of all territories are available in the online supplement.
+%The Census information about territories is available at a higher resolution than shown on plate \#32.
 
 \subsection{Plate 31: Church Accommodations by State}
 
