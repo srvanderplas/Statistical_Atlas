@@ -79,7 +79,7 @@ The statistical atlases published by the Census Bureau in the late 1800s utilize
 \end{abstract}
 
 \noindent%
-{\it Keywords:}  Mosaic plots, spine plots, statistical graphics, pie charts, Statistical Atlas, Census Bureau
+{\it Keywords:}  mosaic plots, spine plots, statistical graphics, pie charts, Statistical Atlas, Census Bureau
 \spacingset{2}
 
 
