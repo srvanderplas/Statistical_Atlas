@@ -74,7 +74,7 @@
 
 \bigskip
 \begin{abstract}
-The statistical atlases published by the Census Bureau in the late 1800s utilized a number of novel methods for displaying data. In this paper, we examine the use of framed spine and mosaic plots used in two plates of the Statistical Atlas of 1874. We use forensic statistics to recreate the data using available census information, and then use that data to create framed charts using modern plotting methods. We then examine the effectiveness of the framed charts compared to other alternatives with a user study.
+The statistical atlases published by the Census Bureau in the late 1800s utilized a number of novel methods for displaying data. In this paper, we examine the use of framed spine and mosaic plots used in two plates of the Statistical Atlas of 1874. We use forensic statistics to recreate the data using available census information, and then use that data to create framed charts using modern plotting methods. We then examine the effectiveness of the framed charts compared to other alternatives with a user study. The data and code for this study are available online.
 
 \end{abstract}
 
@@ -440,7 +440,7 @@ cl_data$colour <- with(cl_data, replace(colour, group=="Unaccommodated", "grey60
 \section{Introduction}
 \label{sec:intro}
 
-Three times in the past, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in the 9th, 10th, and 11th US census (in 1870, 1880, and 1890). Each of these atlases represents a  masterpiece in science and technology. The ninth census, supervised by Francis A. Walker, assessed a country of about 38.5 million people. The Statistical Atlas is a graphical compendium of census information laid out over more than 100 pages. Most of the illustrations are overlaid maps (38 of 107 pages), but some consist of more abstract and, at that time, novel visualizations, including age pyramids (bilateral frequency charts) and ring charts to show population growth. This paper addresses two types of charts from the 1870 statistical atlas which were presented as small multiples; that is, a separate chart was shown for each state and territory.
+Three times in the past, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in the 9th, 10th, and 11th US census (in 1870, 1880, and 1890). Each of these atlases represents a  masterpiece in science and technology. The ninth census, supervised by Francis A. Walker, assessed a country of about 38.5 million people. The Statistical Atlas is a graphical compendium of census information laid out over more than 100 pages. Most of the illustrations are overlaid maps (38 of 107 pages), but some consist of more abstract and, at that time, novel visualizations, including age pyramids (bilateral frequency charts) and ring charts to show population growth. This paper addresses two types of charts from the 1870 Statistical Atlas which were presented as small multiples; that is, a separate chart was shown for each state and territory.
 
 The charts in the Statistical Atlas were printed by Julius Bien's publishing house~\citep{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
 
@@ -449,7 +449,7 @@ In this paper, we describe the methodology used to re-create plots from the 1870
 \section{Statistical Archaeology}
 \label{sec:statarch}
 
-Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure~\autoref{fig:header}) and a legend detailing the color choices (see Figure~\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure~\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
+Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure\autoref{fig:header}) and a legend detailing the color choices (see Figure\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
 
 
 Plate 31 (see \autoref{fig:plate31})  uses spine plots to give an overview of the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame),
@@ -481,7 +481,7 @@ plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population ov
 
 In both plates, a grey band is drawn around each one of the states' squares representing essentially missing information. In plate 31, the grey band is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of five categories or attending school. In plate 32, the grey band represents the size of religiously unaccommodated population over the age of ten.
 
-In order to reproduce these charts using modern plotting methods, some statistical archaeology is necessary -- we must reconstruct the data underlying the charts, using only sources available nearly 150 years later. The National Historical Geographic Information System (NHGIS) \citep{NHGIS} provides a wealth of tabulated data, and most of the data needed to reproduce plate \#32 is available directly from table NT13 on ``Employed Population by Occupation by Age by Sex" from the 1870 Census: Religious Bodies, Occupation \& Government Data (1870\_sROG). Unfortunately, the size of the unemployed population is not published with this information. To get an estimate for the size of the unemployed population in each state, we make use of the 1\%~microsample of the 1870 census provided by the Integrated Public Use Microdata Series (IPUMS-USA) through the Minnesota Population Center~\citep{ipums}.
+In order to reproduce these charts using modern plotting methods, some statistical archaeology is necessary -- we must reconstruct the data underlying the charts, using only sources available nearly 150 years later. The National Historical Geographic Information System (NHGIS) \citep{NHGIS} provides a wealth of tabulated data, and most of the data needed to reproduce plate \#32 is available directly from table NT13 on ``Employed Population by Occupation by Age by Sex" from the 1870 Census: Religious Bodies, Occupation \& Government Data (1870\_sROG). Unfortunately, the size of the unemployed population is not published with this information. To get an estimate for the size of the unemployed population in each state, we make use of the 1\%~microsample of the 1870 census provided by the Integrated Public Use Microdata Series (IPUMS-USA) through the Minnesota Population Center \citep{ipums}.
 
 Using the microsample, we obtain counts of the male and female population above ten as well as state population numbers, which allows us to get estimates of the state-level population totals for individuals above the age of ten for each state by extrapolating from the sample proportions. This information is then used to calculate the size of the unaccommodated populations in each set of charts -- either those who are not gainfully employed (plate \#32) or those who are not accommodated religiously (plate \#31):
 
@@ -1149,6 +1149,7 @@ where
 \item[$e_{ijk}$] is the error observed within each combination of plot type and piece location $ij$. We assume $e_{ijk} \sim N(0, \sigma_e^2)$ i.i.d.\ for all $k=1, ..., n_{ij}$,
 \item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of 18 possible evaluations. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, e) = 0$.
 \end{itemize}
+
 Estimates for all of the parameters are shown in \autoref{tab:results}.
 
 <<re_model, warning=FALSE, message=FALSE, cache = F>>=
@@ -1250,8 +1251,7 @@ m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 
 Assessing the fitted model, there are three main conclusions:
 \begin{itemize}
-\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent estimates for a participant's assessment of an area of size $\log(A)$  in unframed (regular) mosaic, pie, and spine charts. Values of $\alpha_i = 0$ and $\beta_i=1$ indicate no bias; estimates with $\alpha_i + \beta_i\log(A) < \log(A)$ indicate a visual under-estimation of the area, while estimates with $\alpha_i + \beta_i\log(A) > \log(A)$  indicate an over-estimate. All parameter estimates $\beta_i$, $i=1,2,3$, are smaller than 1, indicating that participants tend to underestimate the size of area $A$ if areas are large enough. For small areas $A$ this effect is reversed: all parameter estimates $\alpha_i$, $i=1,2,3$ are positive, indicating that participants tend to overestimated the size of small areas.
-Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to these biases; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
+\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent estimates for a participant's assessment of an area of size $\log(A)$  in unframed (regular) mosaic, pie, and spine charts. Values of $\alpha_i = 0$ and $\beta_i=1$ indicate no bias; estimates with $\alpha_i + \beta_i\log(A) < \log(A)$ indicate a visual under-estimation of the area, while estimates with $\alpha_i + \beta_i\log(A) > \log(A)$  indicate an over-estimate. All parameter estimates $\beta_i$, $i=1,2,3$, are smaller than 1, indicating that participants tend to underestimate the size of area $A$ if areas are large enough. For small areas $A$ this effect is reversed: all parameter estimates $\alpha_i$, $i=1,2,3$ are positive, indicating that participants tend to overestimated the size of small areas. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to these biases; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
 \item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in any of the plot types. Both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region).
 \item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for mosaic and pie charts, but not for spine plots. In the unframed version of mosaic and pie charts, the unaccommodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
 \end{itemize}
@@ -1334,28 +1334,28 @@ Our participants were drawn from two different populations -- reddit and amazon 
 
 \section{Conclusion}
 \label{sec:conc}
-The Census Bureau did an incredible job at collecting, tabulating, visualizing, and maintaining the data presented in the Statistical Atlas. Reproducibility has become a highly discussed topic in science lately, but few researchers even try to preserve their data and methods in such a way that the results could be precisely duplicated 150 years later. The Census Bureau (in conjunction with the Library of Congress) has managed to make it fairly easy for researchers to access the data necessary to conduct this study online.
+The United States Census Bureau did an incredible job at collecting, tabulating, visualizing, and maintaining the data presented in the Statistical Atlas. Reproducibility has become a highly discussed topic in science lately, but few researchers even try to preserve their data and methods in such a way that the results could be precisely duplicated 150 years later. The Census Bureau (in conjunction with the Library of Congress) has managed to make it fairly easy for researchers to access the data necessary to conduct this study online.
 
 In addition to the technical feat of reproducibility, the Statistical Atlas, spearheaded by the vision of Francis Walker, represented a state-sponsored foray into the development and use of new types of charts. With 107 pages of charts, and several relatively new types of plots, it is not surprising that some of these experiments fell flat. While framed plots are aesthetically appealing, they are not effective at communicating numerical information accurately. In addition, there are several design choices made in plates 31 and 32 which can be attributed to the technological limitations of hand-drawn plots. These design choices are not ideal from a modern perspective, but are perfectly reasonable when viewed in light of the technological constraints of lithography. While we have established that using framed plots is a suboptimal design choice, we acknowledge that the plots have a certain visual appeal. It is possible that the creators of the Statistical Atlas recognized the failed experiment, as framed plots do not appear in the 1880 or 1890 atlases.
 
 Of the successes which underlie the creation of the 1870 Statistical Atlas, it would be better to leave the framed charts in the annals of history and focus on the remarkably resilient infrastructure which allows us to test the effectiveness of these plots 150 years later.
 
 
-% \bigskip
-% \begin{center}
-% {\large\bf SUPPLEMENTAL MATERIALS}
-% \end{center}
+\bigskip
+\begin{center}
+{\large\bf SUPPLEMENTAL MATERIALS}
+\end{center}
 
-% \begin{description}
-%
-% \item[Online Supplement:] Additional plots and discussion not provided in the print version of this paper. (pdf)
-%
-% % \item[R-package for  MYNEW routine:] R-package {\tt MYNEW} containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
-%
-% % \item[HIV data set:] Data set used in the illustration of MYNEW method in Section~ 3.2. (.txt file)
-%
-% \end{description}
-%
+\begin{description}
+
+\item[Github Repository:] \url{https://github.com/srvanderplas/Statistical\_Atlas} contains code and data sets used in this analysis.
+
+% \item[R-package for  MYNEW routine:] R-package {\tt MYNEW} containing code to perform the diagnostic methods described in the article. The package also contains all datasets used as examples in the article. (GNU zipped tar file)
+
+% \item[HIV data set:] Data set used in the illustration of MYNEW method in Section~ 3.2. (.txt file)
+
+\end{description}
+
 
 \bibliographystyle{plainnat}
 \bibliography{mybibfile}
