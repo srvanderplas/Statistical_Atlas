@@ -2,7 +2,9 @@ library(digest)
 library(readr)
 library(dplyr)
 library(tidyr)
-
+library(RColorBrewer)
+library(munsell)
+library(stringr)
 
 # ---- Code to anonymize identifiable data ----
 # # Read in original data
@@ -38,6 +40,7 @@ library(tidyr)
 
 # ---- Reproducible Pipeline ----
 
+# Clean up Anonymized Data
 coltypes <- paste0("TTccidlTc____dd__c", paste0(rep("c", 56), collapse = ""), "_", "c")
 amazon <- read_csv("../data/Amazon_Data_Anon.csv", col_types = coltypes)
 reddit <- read_csv("../data/Reddit_Data_Anon.csv", col_types = coltypes)
@@ -53,27 +56,26 @@ responses <- filter(responses, Finished)
 
 
 percentages <- responses %>%
-  dplyr::select(IPAddress, ResponseId,  starts_with("Q")) %>%
-  gather(key = question, value = howmuch, -IPAddress, -ResponseId)
+  dplyr::select(IPAddress, ResponseId, source, starts_with("Q")) %>%
+  gather(key = question, value = howmuch, -IPAddress, -ResponseId, -source)
 percentages$howmuch <- str_replace(percentages$howmuch, "\\.{2}", "") %>%
-  str_replace("~", "")
+  str_replace("~", "") %>%
+  as.numeric()
 
-percentages$howmuch <- as.numeric(percentages$howmuch)
 percentages <- percentages %>% filter(howmuch > 0)
 percentages <- percentages %>% filter(howmuch < 100)
 idx <- which(percentages$howmuch < 1)
 percentages$howmuch[idx] <- percentages$howmuch[idx]*100
 
-
-# percentages %>% group_by(ResponseId) %>% summarize(n=length(!is.na(howmuch)))
-
 pl <- read.csv("../data/PlotLabels.csv")
-percentages <- percentages %>% left_join(pl %>% select(Question, perc, Type, Frame, isFrame), by=c("question"="Question"))
-
-
 percentages <- percentages %>%
-  # I can't understand what this filter is doing (or if it just wasn't reported???)
-  # filter(howmuch < 75) %>%
+  left_join(
+    pl %>%
+      select(Question, perc, Type, Frame, isFrame), by=c("question"="Question")
+  )
+
+# Define errors and which observations are included
+percentages <- percentages %>%
   na.omit() %>%
   mutate(
     rel.error = (howmuch-perc)/perc,
@@ -89,6 +91,105 @@ percentages <- percentages %>% mutate(
 )
 percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
 percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
-percentages
+
+questions <- readr::read_csv("../data/PlotLabels.csv")
+percentages <- left_join(percentages, questions)
+
+write_csv(percentages, "../data/Cleaned_Data.csv")
 
 
+# ---- Statistical Atlas Data Sets ----
+datapath <- "../data"
+px2 <- read_csv(file.path(datapath, "px2.csv"))
+occ2 <- read_csv(file.path(datapath, "occ2.csv"))
+occ3 <- read_csv(file.path(datapath, "occ3.csv"))
+church <- read_csv(file.path(datapath, "denominations-1874.csv"))
+churchPixel <- read_csv(file.path(datapath, "church_pixel.csv"))
+
+
+# Set factor levels
+occ2 <- occ2 %>% mutate(
+  Occupation = factor(Occupation, levels =
+                        c("Agriculture", "Manufacturing",
+                          "Trade", "Service", "School")),
+  Gender = factor(Gender, levels = c("Male", "Female")),
+  State = as.character(State),
+  Area.Name = as.character(Area.Name)
+)
+
+# Set factor levels, recode territories
+occ3 <- occ3 %>% mutate(
+  Occupation = factor(Occupation, levels =
+                        c("Agriculture", "Manufacturing",
+                          "Trade", "Service", "School", "Unaccounted")),
+  Sex = factor(Sex, levels = c("Male", "Female")),
+  State = as.character(State),
+  Area.name = as.character(Area.name)
+) %>%
+  mutate(State = str_replace_all(
+    State,
+    c("(Arizona|New Mexico|Utah|Colorado) Territory" = "Southwest Territories",
+      "(Idaho|Wyoming|Washington|Montana|Dakota) Territory" = "Northwest Territories")))
+
+# Recode territories
+stateorder <- unique(occ3$State)
+stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia", "Northwest Territories", "Southwest Territories"))],
+                c("District of Columbia", "Northwest Territories", "Southwest Territories"))
+occ3$State <- factor(occ3$State, levels = stateorder, ordered = T)
+
+# Recode denominations
+cl <- church %>% gather(key = Denomination,
+                        value = Number,
+                        Baptist:Universalist, Unaccommodated)
+cl <- cl %>% mutate(Denomination =
+                      reorder(Denomination, Number, na.rm = TRUE))
+
+cl$Denomination <- factor(cl$Denomination,
+                          c("Unaccommodated", levels(cl$Denomination)[-20]))
+levels(cl$Denomination) <- gsub("\\.", " ", levels(cl$Denomination))
+
+
+cl_data <- cl %>% filter(as.character(STATEICP)==as.character(State)) %>%
+  group_by(STATEICP) %>% nest()
+
+cl_data$data <- cl_data$data %>% purrr::map(.f = function(x) {
+  x %>%  arrange(desc(Number)) %>% mutate(
+    group = c(as.character(Denomination[1:5]), rep("Other", n() - 5))
+  ) %>% group_by(group) %>% summarize(Number = sum(Number, na.rm=TRUE))
+})
+
+cl_data <- cl_data %>% unnest()
+
+cl_data <- cl_data %>% group_by(group) %>% mutate(Total = sum(Number, na.rm=TRUE))
+cl_data <- cl_data %>% ungroup(group) %>% mutate(
+  group = reorder(group, -Total, na.rm=TRUE)
+)
+
+# colours for church denominations
+cols = c(brewer.pal(n = 12, name = "Paired")[c(1,3,5,7,9,11)], "grey80")
+
+colRGB <- t(col2rgb(cols))/256
+colMNSL <- rgb2mnsl(colRGB)
+colMNSL <- c(colMNSL,
+             darker(colMNSL, steps = 2),
+             darker(colMNSL, steps = 4))
+
+colHEX <- mnsl(colMNSL)
+colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
+colHEX <- c(colHEX, "grey60")
+
+# put other and unaccommodated last:
+levels <- levels(cl_data$group)
+cl_data$group <- factor(cl_data$group, levels=c(setdiff(levels, c("Unaccommodated", "Other")), "Other", "Unaccommodated"))
+cl_data$colour <- colHEX[as.numeric(cl_data$group)]
+cl_data$colour <- with(cl_data, replace(colour, group=="Unaccommodated", "grey60"))
+
+
+save(px2, occ2, occ3, church, churchPixel, colHEX, file = "../data/Statistical_Atlas_Data.Rdata")
+
+# ---- Auxiliary Data ----
+# Need to document where census data comes from
+
+census <- read_csv(file.path(datapath, "census-2016.csv"))
+census <- census %>% gather(Education, count, -1)
+save(census, file = "../data/Auxiliary_Data.Rdata")
