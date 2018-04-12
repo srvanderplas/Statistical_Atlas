@@ -1066,7 +1066,7 @@ where
 \item[$u_\ell$] is a random effect introduced by participant $\ell$, $\ell = 1, ..., N$, where $N = 95$ participants taking part in the study. Each participant evaluated at least ten of the 18 pieces and gave, on average, 17 (valid) estimations out of 18 possible evaluations. We assume that the random effect is normally distributed, i.e.\ $u_{\ell} \sim N(0, \sigma_u^2)$ i.i.d.\ for all $\ell=1, ..., N$,  and independent of the error, i.e.\ $\text{cov}(u, e) = 0$.
 \end{itemize}
 
-Estimates for all of the parameters are shown in \autoref{tab:results}.
+
 
 <<re_model, warning=FALSE, message=FALSE, cache = F>>=
 #base <- lm(diff.error ~ Type-1 + (frameframe*perc):Type, data = percentages)
@@ -1092,6 +1092,9 @@ baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|Respon
 
 # baseplus <- lmer(log(howmuch+5) ~ Type-1 + (frameframe*log(perc+5)):Type + (1|ResponseId), data = percentages)
 
+remat <- summary(baseplus)
+sigma_u <- attr(remat$varcor$ResponseId, "stddev")
+sigma_eps <- attr(remat$varcor, "sc")
 
 confints <- data.frame(confint(baseplus, method="Wald"))[-(c(1:2)),]
 names(confints) <- c("LB", "UB")
@@ -1118,6 +1121,8 @@ table <- table %>% mutate(
   Location = factor(Location, levels=c("Unframed", "Framed-inside", "Framed-frame"))
 )
 @
+
+Estimates for all of the \hh{fixed effects} parameters are shown in \autoref{tab:results}. Variance estimates show that performance varies between participants  ($\widehat{\sigma_u} = \Sexpr{round(sigma_u, 3)}$) but  overall variability in evaluation of sizes is dominated by the residual error $\widehat{\sigma_e} = \Sexpr{round(sigma_eps, 3)}$.
 
 <<re_results, results='asis', warning=FALSE, message=FALSE>>=
 xtab <- table %>% arrange(Type, Location)
@@ -1167,8 +1172,9 @@ m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 
 Assessing the fitted model, there are three main conclusions:
 \begin{itemize}
-\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent estimates for a participant's assessment of an area of size $\log(A)$  in unframed (regular) mosaic, pie, and spine charts. Values of $\alpha_i = 0$ and $\beta_i=1$ indicate no bias; estimates with $\alpha_i + \beta_i\log(A) < \log(A)$ indicate a visual under-estimation of the area, while estimates with $\alpha_i + \beta_i\log(A) > \log(A)$  indicate an over-estimate. All parameter estimates $\beta_i$, $i=1,2,3$, are smaller than 1, indicating that participants tend to underestimate the size of area $A$ if areas are large enough. For small areas $A$ this effect is reversed: all parameter estimates $\alpha_i$, $i=1,2,3$ are positive, indicating that participants tend to overestimated the size of small areas \svp{, though $\alpha_3$ is not significantly different from zero, so this bias is less severe for spine plots}. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to these biases; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) are the worst. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
-\item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in \svp{mosaic or pie charts, as }both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region). \svp{For spine plots, estimation of the inside portion shows a larger bias towards over-estimation of small areas; that is, $\alpha_{22}$ = \Sexpr{round(xtab[15,4], 3)}. Even in framed spine plots, though, the small area over-estimation bias is smaller than in unframed mosaic or pie charts.}
+\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent estimates for a participant's assessment of an area of size $\log(A)$  in unframed (regular) mosaic, pie, and spine charts. Values of $\alpha_i = 0$ and $\beta_i=1$ indicate no bias; estimates with $\alpha_i + \beta_i\log(A) < \log(A)$ indicate a visual under-estimation of the area, while estimates with $\alpha_i + \beta_i\log(A) > \log(A)$  indicate an over-estimate. All parameter estimates $\beta_i$, $i=1,2,3$, are smaller than 1, indicating that participants tend to underestimate the size of large areas $A$. For small areas $A$ this effect is reversed: all parameter estimates $\alpha_i$, $i=1,2,3$ are positive, indicating that participants tend to overestimated the size of small areas. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to these biases, in particular $\alpha_1$ is not significantly different from zero; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) on the other hand exhibit the worst biases. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
+\item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in \svp{mosaics or pie charts, as }both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region). 
+\svp{For spine plots, estimation of the inside portion shows a larger bias towards over-estimation of small areas; that is, $\alpha_{22}$ = \Sexpr{round(xtab[15,4], 3)}. Even in framed spine plots, though, the small area over-estimation bias is smaller than in unframed mosaic or pie charts.}
 \item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for \svp{all three types of charts (though spine plots are only marginally significant)}. In the unframed version of mosaic and pie charts, the unaccommodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
 \end{itemize}
 
