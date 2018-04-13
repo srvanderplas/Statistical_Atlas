@@ -93,7 +93,7 @@ percentages$howmuch[idx] <- percentages$howmuch[idx]*100
 
 pl <- read.csv(file.path(datapath, "/study-setup/PlotLabels.csv"))
 percentages <- percentages %>%
-  left_join(pl, by=c("question"="Question"))
+  left_join(select(pl, "Question", "perc", "Type", "Frame", "isFrame"), by=c("question"="Question"))
 
 # Define errors and which observations are included
 percentages <- percentages %>%

@@ -1035,7 +1035,7 @@ where
 
 
 
-<<re_model, warning=FALSE, message=FALSE, cache = F>>=
+<<re_model, warning=FALSE, message=FALSE, error = T, include = F, cache = F>>=
 #base <- lm(diff.error ~ Type-1 + (frameframe*perc):Type, data = percentages)
 
 library(lme4)
@@ -1046,13 +1046,13 @@ library(xtable)
 #baseplus <- lmer(diff.error ~ Type-1 + (frameframe*perc):Type + (1|ResponseId), data = percentages)
 
 # baseplus <- lmer(log(ratio) ~ Type-1 + (frameframe*perc):Type + (1|ResponseId), data = percentages)
-unframed <- lmer(log(howmuch) ~ Type-1 + (log(perc)):Type + (1|ResponseId), data = filter(percentages, frameframe == "Unframed"))
+# unframed <- lmer(log(howmuch) ~ Type-1 + (log(perc)):Type + (1|ResponseId), data = filter(percentages, frameframe == "Unframed"))
 
 # # parameters for all nine lines separately:
 # baseplus <- lmer(log(howmuch) ~ -1 + frameframe:(Type + (log(perc)):Type) + (1|ResponseId), data = percentages)
 
 # contrasts wrt to first level of frameframe (== "Unframed")
-baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages %>% filter(abs(log(ratio)) < log(5)))
+baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|ResponseId), data = percentages)
 # baseplus <- heavyLme(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type , ~1, groups = ~ResponseId, data = percentages, family = contaminated())
 
 #baseplus <- heavyLme(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type , ~1, groups = ~ResponseId, data = percentages, family = Student(df=5))
