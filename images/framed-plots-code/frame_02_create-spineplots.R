@@ -36,7 +36,7 @@ colHEX <- mnsl(colMNSL)
 colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
 colHEX <- c(colHEX, "grey60")
 
-church <- read.csv("data/denominations-1874.csv")
+church <- read.csv("data/atlas-data-clean/denominations-1874.csv")
 cl <- church %>% gather(key = "Denomination",
                         value = "Number",
                         c(4:22, 26))
@@ -129,7 +129,7 @@ states$plot2
 #########
 # Read in plot annotation info
 
-plotlabs <- read.csv("data/PlotLabels.csv", stringsAsFactors = F) %>%
+plotlabs <- read.csv("data/study-setup/PlotLabels.csv", stringsAsFactors = F) %>%
   filter(Type == "spine") %>%
   group_by(State, Frame) %>%
   mutate(num = 1:n()) %>%
@@ -169,15 +169,19 @@ purrr::map(1:length(lvls), function(k) {
   if (is.null(states[1])) return()
 
   states[1]$plot1
-  ggsave( filename = paste0("inst/all-images/", lvls[k],
+  ggsave( filename = paste0("images/all-images/", lvls[k],
                             "-spine_with_frame", ".png"),
           width = 5, height = 5)
   states[2]$plot2
-  ggsave( filename = paste0("inst/all-images/", lvls[k],
+  ggsave( filename = paste0("images/all-images/", lvls[k],
                             "-spine_without_frame", ".png"),
           width = 5, height = 5)
 })
 
+
+if (!dir.exists("images/all-test-images")) {
+  dir.create("images/all-test-images")
+}
 
 # Save labeled test plots
 plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
@@ -186,12 +190,12 @@ plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
 
   p <- states[1]$plot1
   add_spineplot_label(p, fill = plotlabs$fill[k], label = "A", frame = plotlabs$isFrame[k])
-  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+  ggsave( filename = paste0("images/all-test-images/", plotlabs$State[k],
                             "-spine_with_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
   p <- states[2]$plot2
   add_spineplot_label(p, fill = plotlabs$fill[k], label = "A", frame = F)
-  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+  ggsave( filename = paste0("images/all-test-images/", plotlabs$State[k],
                             "-spine_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
   states
@@ -215,7 +219,7 @@ write.csv(plotlabs %>% select(-states), file="spines.csv", row.names=FALSE)
 
 add_s_label <- function(plot, fill, label = "A", frame = F) {
   pb <- ggplot_build(plot)
-  
+
   ldf <- data_frame(fill = fill, label = label) %>%
     left_join(bind_rows(pb$data)) %>%
     unique() %>%
@@ -224,7 +228,7 @@ add_s_label <- function(plot, fill, label = "A", frame = F) {
       ylab = (ymin + ymax)/2,
       xlab = (xmin + xmax)/2
     )
-  
+
   if (frame) {
     ldf$ylab <- 1
     ldf$xlab <- 1
@@ -239,19 +243,19 @@ plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
 
   states <- createSpine(data = cl_data, state_name = plotlabs$State[k+1])
   if (is.null(states[1])) return()
-  
+
   p <- states$plot1
   labelA <- add_s_label(p, fill = plotlabs$fill[k+1], label = "A", frame = plotlabs$isFrame[k+1])
   labelB <- add_s_label(p, fill = plotlabs$fill[k+2], label = "B", frame = plotlabs$isFrame[k+2])
   labelC <- add_s_label(p, fill = plotlabs$fill[k+3], label = "C", frame = plotlabs$isFrame[k+3])
-  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+  ggsave(p+labelA+labelB+labelC, filename = paste0("images/paper-images/", plotlabs$State[k+1],
                             "-spine_with_frame", plotlabs$num[k+1], ".png"),
           width = 5, height = 5)
   p <- states$plot2
   labelA <- add_s_label(p, fill = plotlabs$fill[k+1], label = "A", frame = F)
   labelB <- add_s_label(p, fill = plotlabs$fill[k+2], label = "B", frame = F)
   labelC <- add_s_label(p, fill = plotlabs$fill[k+3], label = "C", frame = F)
-  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+  ggsave(p+labelA+labelB+labelC, filename = paste0("images/paper-images/", plotlabs$State[k+1],
                             "-spine_without_frame", plotlabs$num[k+1], ".png"),
           width = 5, height = 5)
   k <- k+3

@@ -15,7 +15,7 @@ colHEX <- mnsl(colMNSL)
 colHEX <- colHEX[rep(0:6, each = 3) + c(1, 8, 15)]
 colHEX <- c(colHEX, "grey60")
 
-church <- read.csv("data/denominations-1874.csv")
+church <- read.csv("data/atlas-data-clean/denominations-1874.csv")
 cl <- church %>% gather(key = "Denomination",
                         value = "Number",
                         c(4:22, 26))
@@ -129,10 +129,10 @@ purrr::map(1:length(lvls), function(k) {
   if (is.null(states[1])) return()
 
   print(states[1])
-  ggsave( filename = paste0("inst/all-images/", lvls[k],"-pie_with_frame.png"),
+  ggsave( filename = paste0("images/all-images/", lvls[k],"-pie_with_frame.png"),
           width = 5, height = 5)
   print(states[2])
-  ggsave( filename = paste0("inst/all-images/", lvls[k],"-pie_without_frame.png"),
+  ggsave( filename = paste0("images/all-images/", lvls[k],"-pie_without_frame.png"),
           width = 5, height = 5)
 })
 
@@ -140,7 +140,7 @@ purrr::map(1:length(lvls), function(k) {
 #########
 # Read in plot annotation info
 
-plotlabs <- read.csv("data/PlotLabels.csv", stringsAsFactors = F) %>%
+plotlabs <- read.csv("data/study-setup/PlotLabels.csv", stringsAsFactors = F) %>%
   filter(Type == "pie") %>%
   group_by(State, Frame) %>%
   mutate(num = 1:n()) %>%
@@ -171,6 +171,12 @@ add_piechart_label <- function(plot, fill, label = "A", frame = F) {
   }
 
 }
+
+
+if (!dir.exists("images/all-test-images")) {
+  dir.create("images/all-test-images")
+}
+
 # Save labeled test plots
 plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
   states <- createPie(data = cl_data, state_name = plotlabs$State[k])
@@ -178,12 +184,12 @@ plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
 
   p <- states[1]$plot1
   add_piechart_label(p, fill = plotlabs$fill[k], label = "A", frame = plotlabs$isFrame[k])
-  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+  ggsave( filename = paste0("images/all-test-images/", plotlabs$State[k],
                             "-pie_with_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
   p <- states[2]$plot2
   add_piechart_label(p, fill = plotlabs$fill[k], label = "A", frame = F)
-  ggsave( filename = paste0("inst/test-images/", plotlabs$State[k],
+  ggsave( filename = paste0("images/all-test-images/", plotlabs$State[k],
                             "-pie_without_frame", plotlabs$num[k], ".png"),
           width = 5, height = 5)
   states
@@ -208,7 +214,7 @@ write.csv(plotlabs %>% select(-states), file="pies.csv", row.names=FALSE)
 
 add_p_label <- function(plot, fill, label = "A", frame = F) {
   pb <- ggplot_build(plot)
-  
+
   ldf <- data_frame(fill = fill, label = label) %>%
     left_join(bind_rows(pb$data)) %>%
     unique() %>%
@@ -217,7 +223,7 @@ add_p_label <- function(plot, fill, label = "A", frame = F) {
       ylab = (ymin + ymax)/2,
       xlab = .75*xmax
     )
-  
+
   if (frame) {
     ldf$ylab <- 1
     ldf$xlab <- 1
@@ -225,27 +231,27 @@ add_p_label <- function(plot, fill, label = "A", frame = F) {
   } else {
       annotate("text", x = ldf$xlab, y = ldf$ylab, label = ldf$label, color = "#FFFC00", size = 8, fontface = "bold")
   }
-  
+
 }
 
 plotlabs$states <- purrr::map(1:nrow(plotlabs), function(k) {
   k <- 3*(k %/% 3)
-  
+
   states <- createPie(data = cl_data, state_name = plotlabs$State[k+1])
   if (is.null(states[1])) return()
-  
+
   p <- states[1]$plot1
   labelA <- add_p_label(p, fill = plotlabs$fill[k+1], label = "A", frame = plotlabs$isFrame[k+1])
   labelB <- add_p_label(p, fill = plotlabs$fill[k+2], label = "B", frame = plotlabs$isFrame[k+2])
   labelC <- add_p_label(p, fill = plotlabs$fill[k+3], label = "C", frame = plotlabs$isFrame[k+3])
-  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+  ggsave(p+labelA+labelB+labelC, filename = paste0("images/paper-images/", plotlabs$State[k+1],
                                                    "-pie_with_frame", plotlabs$num[k+1], ".png"),
          width = 5, height = 5)
   p <- states[2]$plot2
   labelA <- add_p_label(p, fill = plotlabs$fill[k+1], label = "A", frame = F)
   labelB <- add_p_label(p, fill = plotlabs$fill[k+2], label = "B", frame = F)
   labelC <- add_p_label(p, fill = plotlabs$fill[k+3], label = "C", frame = F)
-  ggsave(p+labelA+labelB+labelC, filename = paste0("inst/paper-images/", plotlabs$State[k+1],
+  ggsave(p+labelA+labelB+labelC, filename = paste0("images/paper-images/", plotlabs$State[k+1],
                             "-pie_without_frame", plotlabs$num[k+1], ".png"),
           width = 5, height = 5)
   k <- k+3
