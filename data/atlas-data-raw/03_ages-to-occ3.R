@@ -1,5 +1,5 @@
 library(tidyverse)
-occupation <- read.csv("../Data-raw/occupation.csv")
+occupation <- read.csv("./data/atlas-data-raw/occupation.csv")
 occupation$State <- as.character(occupation$Area.name)
 occupation$Territory <- as.logical(gsub(".* Territory", "TRUE", occupation$State))
 occupation$Area.name <- gsub(" Territory", "", occupation$Area.name)
@@ -7,14 +7,14 @@ occupation$Area.name <- gsub(" Department", "", occupation$Area.name)
 occupation$Area.name <- gsub(" Terr.", "", occupation$Area.name)
 
 
-ages <- read.csv("../Data/ages-ipums.csv")
+ages <- read.csv("./data/atlas-data-clean/ages-ipums.csv")
 ages <- ages %>% mutate(
   STATEICP = replace(STATEICP, STATEICP == "Louisianna", "Louisiana"),
   STATEICP = replace(as.character(STATEICP), STATEICP %in% c("South Dakota", "North Dakota"), "Dakota")
 )
 ages <- ages %>% group_by(STATEICP) %>% summarize(total=sum(total), above10 = sum(above10), above11 = sum(above11))
 
-ages.sex <- read.csv("../Data/ages-sex-ipums.csv")
+ages.sex <- read.csv("./data/atlas-data-clean/ages-sex-ipums.csv")
 ages.sex <- ages.sex %>% mutate(
   STATEICP = replace(STATEICP, STATEICP == "Louisianna", "Louisiana"),
   STATEICP = replace(as.character(STATEICP), STATEICP %in% c("South Dakota", "North Dakota"), "Dakota")
@@ -54,4 +54,4 @@ occ3 <- occ3 %>% mutate(
                                             "Trade", "Service", "School", "Unaccounted")),
   Sex = factor(Sex, levels=c("Male", "Female"))
 )
-write.csv(occ3, file="../Data/occ3.csv", row.names=FALSE)
+write.csv(occ3, file="./data/atlas-data-clean/occ3.csv", row.names=FALSE)

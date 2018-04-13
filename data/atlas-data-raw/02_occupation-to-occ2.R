@@ -1,5 +1,5 @@
 library(tidyverse)
-occupation <- read.csv("../Data-raw/occupation.csv")
+occupation <- read.csv("./data/atlas-data-raw/occupation.csv")
 occupation$State <- as.character(occupation$Area.name)
 occupation$Territory <- as.logical(gsub(".* Territory", "TRUE", occupation$State))
 occupation$Area.name <- gsub(" Territory", "", occupation$Area.name)
@@ -18,4 +18,4 @@ occ2 <- occ2 %>% mutate(
 occ2 <- occ2 %>% group_by(State) %>% mutate(Total.Employed=sum(Number))
 occ2$Area.Name <- gsub(" Territory","", occ2$State)
 occ2$Area.Name <- gsub(" Terr.","", occ2$Area.Name)
-write.csv(occ2, "../Data/occ2.csv", row.names=FALSE)
+write.csv(occ2, "./data/atlas-data-clean/occ2.csv", row.names=FALSE)

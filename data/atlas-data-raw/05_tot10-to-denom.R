@@ -1,6 +1,6 @@
 library(tidyverse)
-denominations <- read.csv("../Data-raw/denominations-1874.csv")
-totals <- read.csv("../Data/ages-ipums.csv")
+denominations <- read.csv("./data/atlas-data-raw/denominations-1874.csv")
+totals <- read.csv("./data/atlas-data-clean/ages-ipums.csv")
 totals <- totals %>% mutate(
   Area.name = as.character(Area.name),
   Area.name = replace(Area.name, Area.name=="Louisianna", "Louisiana")
@@ -18,4 +18,4 @@ denominations <- denominations %>% mutate(
   Unaccommodated = pmax(0, Total.above10.est - Total)
 ) %>% unique()
 
-write.csv(denominations, file="../Data/denominations-1874.csv", row.names=FALSE)
+write.csv(denominations, file="./data/atlas-data-clean/denominations-1874.csv", row.names=FALSE)
