@@ -26,7 +26,7 @@ library(stringr)
 #     select(-matches("Click|Page")) %>%
 #     mutate_at(.vars = vars(matches("MTurkCode|IP|Recipient|IPAddress")), .funs = funs(digestvec)) %>%
 #     # Fuzz IP address-based location
-#     mutate_at(.vars = vars(matches("Location")), ~. + rnorm(length(.), sd = 0.1)) %>%
+#     mutate_at(.vars = vars(matches("Location")), ~. + rnorm(length(.), sd = ***CENSORED***)) %>%
 #     magrittr::set_names(stringr::str_replace(names(.), "Location", "Approx"))
 # }
 #
