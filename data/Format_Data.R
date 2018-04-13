@@ -1,3 +1,5 @@
+# This script is written to be run from within the writeup subdirectory (e.g. during the Rnw compilation process)
+
 library(digest)
 library(readr)
 library(dplyr)
@@ -8,11 +10,11 @@ library(stringr)
 
 # ---- Code to anonymize identifiable data ----
 # # Read in original data
-# amazon_header <- read_csv("../data/Frame Study - Amazon_February 9, 2018_13.18.csv", n_max = 1, col_names = F) %>% as.character()
-# amazon <- read_csv("../data/Frame Study - Amazon_February 9, 2018_13.18.csv", skip = 3, col_names = amazon_header)
+# amazon_header <- read_csv("../data/user-data-confidential/Frame Study - Amazon_February 9, 2018_13.18.csv", n_max = 1, col_names = F) %>% as.character()
+# amazon <- read_csv("../data/user-data-confidential/Frame Study - Amazon_February 9, 2018_13.18.csv", skip = 3, col_names = amazon_header)
 # amazon$source <- "amazon"
-# reddit_header <- read_csv("../data/Frame Study - reddit-final.csv", n_max = 1, col_names = F) %>% as.character()
-# reddit <- read_csv("../data/Frame Study - reddit-final.csv", skip = 3, col_names = reddit_header)
+# reddit_header <- read_csv("../data/user-data-confidential/Frame Study - reddit-final.csv", n_max = 1, col_names = F) %>% as.character()
+# reddit <- read_csv("../data/user-data-confidential/Frame Study - reddit-final.csv", skip = 3, col_names = reddit_header)
 # reddit$source <- "reddit"
 #
 # # Function to hash sensitive information
@@ -34,16 +36,38 @@ library(stringr)
 # amazon_anon <- anon_data(amazon)
 # reddit_anon <- anon_data(reddit)
 #
-# write_csv(amazon_anon, "../data/Amazon_Data_Anon.csv")
-# write_csv(reddit_anon, "../data/Reddit_Data_Anon.csv")
-
+# write_csv(amazon_anon, "../data/user-data-anon/Amazon.csv")
+# write_csv(reddit_anon, "../data/user-data-anon/Reddit.csv")
+#
+# # Extract demographic information
+# read_demographics <- function(file) {
+#   responses <- read.csv(file)
+#   responses <- responses[-(1:2),]
+#   library(tidyverse)
+#   responses <- responses %>% rename(
+#     Age=Q56,
+#     Gender = Q520,
+#     Education=Q524
+#   )
+#   responses <- filter(responses, Finished %in% c("True", "TRUE", "Finished"))
+#   responses %>% select(Age, Gender, Education, Duration = Duration..in.seconds.)
+# }
+#
+# amazon <- read_demographics("../data/user-data-confidential/Frame Study - Amazon_February 9, 2018_13.18.csv")
+# reddit <- read_demographics("../data/user-data-confidential/Frame Study - reddit-final.csv")
+# amazon$source <- "amazon"
+# reddit$source <- "reddit"
+# demographics <- rbind(amazon, reddit)
+# write.csv(demographics, file="../data/user-data-anon/demographics.csv", row.names=FALSE)
 
 # ---- Reproducible Pipeline ----
+datapath <- "../data"
 
 # Clean up Anonymized Data
 coltypes <- paste0("TTccidlTc____dd__c", paste0(rep("c", 56), collapse = ""), "_", "c")
-amazon <- read_csv("../data/Amazon_Data_Anon.csv", col_types = coltypes)
-reddit <- read_csv("../data/Reddit_Data_Anon.csv", col_types = coltypes)
+amazon <- read_csv(file.path(datapath, "user-data-anon/Amazon.csv"), col_types = coltypes)
+reddit <- read_csv(file.path(datapath, "user-data-anon/Reddit.csv"), col_types = coltypes)
+demographics <- read_csv(file.path(datapath, "user-data-anon/demographics.csv"))
 
 user_responses <- bind_rows(amazon, reddit)
 
@@ -67,12 +91,9 @@ percentages <- percentages %>% filter(howmuch < 100)
 idx <- which(percentages$howmuch < 1)
 percentages$howmuch[idx] <- percentages$howmuch[idx]*100
 
-pl <- read.csv("../data/PlotLabels.csv")
+pl <- read.csv(file.path(datapath, "/study-setup/PlotLabels.csv"))
 percentages <- percentages %>%
-  left_join(
-    pl %>%
-      select(Question, perc, Type, Frame, isFrame), by=c("question"="Question")
-  )
+  left_join(pl, by=c("question"="Question"))
 
 # Define errors and which observations are included
 percentages <- percentages %>%
@@ -90,21 +111,17 @@ percentages <- percentages %>% mutate(
   frameframe = replace(frameframe, Frame & isFrame, 2)
 )
 percentages$frameframe <- c("Unframed", "Framed-inside", "Framed-frame")[percentages$frameframe+1]
-percentages$frameframe <- factor(percentages$frameframe, levels=c("Unframed", "Framed-inside", "Framed-frame"))
+percentages$frameframe <- factor(percentages$frameframe,
+                                 levels=c("Unframed", "Framed-inside", "Framed-frame"))
 
-questions <- readr::read_csv("../data/PlotLabels.csv")
-percentages <- left_join(percentages, questions)
-
-write_csv(percentages, "../data/Cleaned_Data.csv")
-
+write_csv(percentages, file.path(datapath, "user-data-anon/Cleaned_Data.csv"))
 
 # ---- Statistical Atlas Data Sets ----
-datapath <- "../data"
-px2 <- read_csv(file.path(datapath, "px2.csv"))
-occ2 <- read_csv(file.path(datapath, "occ2.csv"))
-occ3 <- read_csv(file.path(datapath, "occ3.csv"))
-church <- read_csv(file.path(datapath, "denominations-1874.csv"))
-churchPixel <- read_csv(file.path(datapath, "church_pixel.csv"))
+px2 <- read_csv(file.path(datapath, "atlas-data-clean/px2.csv"))
+occ2 <- read_csv(file.path(datapath, "atlas-data-clean/occ2.csv"))
+occ3 <- read_csv(file.path(datapath, "atlas-data-clean/occ3.csv"))
+church <- read_csv(file.path(datapath, "atlas-data-clean/denominations-1874.csv"))
+churchPixel <- read_csv(file.path(datapath, "atlas-data-clean/church_pixel.csv"))
 
 
 # Set factor levels
@@ -133,7 +150,9 @@ occ3 <- occ3 %>% mutate(
 
 # Recode territories
 stateorder <- unique(occ3$State)
-stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia", "Northwest Territories", "Southwest Territories"))],
+stateorder <- c(stateorder[-which(stateorder %in% c("District of Columbia",
+                                                    "Northwest Territories",
+                                                    "Southwest Territories"))],
                 c("District of Columbia", "Northwest Territories", "Southwest Territories"))
 occ3$State <- factor(occ3$State, levels = stateorder, ordered = T)
 
@@ -180,16 +199,18 @@ colHEX <- c(colHEX, "grey60")
 
 # put other and unaccommodated last:
 levels <- levels(cl_data$group)
-cl_data$group <- factor(cl_data$group, levels=c(setdiff(levels, c("Unaccommodated", "Other")), "Other", "Unaccommodated"))
+cl_data$group <- factor(cl_data$group,
+                        levels=c(setdiff(levels, c("Unaccommodated", "Other")),
+                                 "Other", "Unaccommodated"))
 cl_data$colour <- colHEX[as.numeric(cl_data$group)]
 cl_data$colour <- with(cl_data, replace(colour, group=="Unaccommodated", "grey60"))
 
-
-save(px2, occ2, occ3, church, churchPixel, colHEX, file = "../data/Statistical_Atlas_Data.Rdata")
-
 # ---- Auxiliary Data ----
 # Need to document where census data comes from
-
-census <- read_csv(file.path(datapath, "census-2016.csv"))
+census <- read_csv(file.path(datapath, "other/census-2016.csv"))
 census <- census %>% gather(Education, count, -1)
-save(census, file = "../data/Auxiliary_Data.Rdata")
+
+
+# Save to a single data object
+save(percentages, demographics, census, colHEX, px2, occ2, occ3, church, churchPixel,
+     file = file.path(datapath, "Processed_Data.Rdata"))
