@@ -61,7 +61,7 @@ library(stringr)
 # write.csv(demographics, file="../data/user-data-anon/demographics.csv", row.names=FALSE)
 
 # ---- Reproducible Pipeline ----
-datapath <- "../data"
+datapath <- here::here("data")
 
 # Clean up Anonymized Data
 coltypes <- paste0("TTccidlTc____dd__c", paste0(rep("c", 56), collapse = ""), "_", "c")
