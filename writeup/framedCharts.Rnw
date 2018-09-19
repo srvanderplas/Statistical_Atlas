@@ -46,6 +46,7 @@
 \renewcommand{\floatpagefraction}{.9}%
 
 \begin{document}
+% \SweaveOpts{concordance=TRUE}
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
 
@@ -80,7 +81,7 @@
 
 \bigskip
 \begin{abstract}
-The Statistical Atlases published by the Census Bureau in the late 1800s utilized a number of novel methods for displaying data. In this paper, we examine the use of framed spine and mosaic plots used in two plates of the Statistical Atlas of 1874. We use forensic statistics to recreate the data using available census information, and then use that data to create framed charts using modern plotting methods. We then examine the effectiveness of the framed charts compared to other alternatives with a user study. The data and code for this study are available online.
+The Statistical Atlases published by the Census Bureau in the late 1800s utilized a number of novel methods for displaying data. In this paper, we examine the use of framed spine and mosaic plots used in two plates of the Statistical Atlas of 1870. We use forensic statistics to recreate the data using available census information, and then use that data to create framed charts using modern plotting methods. We then examine the effectiveness of the framed charts compared to other alternatives with a user study. The data and code for this study are available online.
 
 \end{abstract}
 
@@ -344,7 +345,7 @@ createPie <- function(data, state_name) {
 @
 
 <<data, cache=TRUE, message = F, warning = F>>=
-datapath <- "../data"
+datapath <- here::here("data")
 source(file.path(datapath, "Format_Data.R"))
 load(file.path(datapath, "Processed_Data.Rdata"))
 @
@@ -367,8 +368,15 @@ In this paper, we describe the methodology used to re-create plots from the 1870
 Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure\autoref{fig:header}) and a legend detailing the color choices (see Figure\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate plot of the data (shown in Figure\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
 
 
-Plate 31 (see \autoref{fig:plate31})  uses spine plots to give an overview of the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame),
-plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population over the age of ten in different types of occupations.
+\begin{figure}
+\centering
+\includegraphics[width = .9\textwidth]{images/ca000081.jpg}
+\caption{Plate \#31 from the Statistical Atlas of 1870: church accommodation by state and denomination for the population of over ten years of age. \label{fig:plate31}}
+\end{figure}
+
+Plate 31 (see \autoref{fig:plate31}) uses spine plots\footnote{Spine plots are horizontal stacked bar charts; the width of the bar is proportional to the percent of the population represented by the category. They can be seen as one-dimensional mosaic plots with the initial split on the x-axis.} to give an overview of the percentage of religious sittings\footnote{`Sittings' is the term used in the Atlas to denote the number of individuals accommodated by a church. Presumably, this corresponds to the number of physical seats available.} by denomination for each state (colored stripes in the square). Plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population over the age of ten in different types of occupations using a mosaic plot.
+
+In both plates, a grey band is drawn around each one of the states' squares representing essentially missing information. In plate 31, the grey band is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of five categories or attending school. In plate 32, the grey band represents the size of religiously unaccommodated population over the age of ten.
 
 \begin{figure}
   \subfloat[Description section of plate \#32.]{
@@ -393,39 +401,36 @@ plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population ov
 \caption{Overview of plate \#32, with zoom-ins to different components.}
 \end{figure}
 
-
-In both plates, a grey band is drawn around each one of the states' squares representing essentially missing information. In plate 31, the grey band is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of five categories or attending school. In plate 32, the grey band represents the size of religiously unaccommodated population over the age of ten.
-
 In order to reproduce these charts using modern plotting methods, some statistical archaeology is necessary -- we must reconstruct the data underlying the charts, using only sources available nearly 150 years later. The National Historical Geographic Information System (NHGIS) \citep{NHGIS} provides a wealth of tabulated data, and most of the data needed to reproduce plate \#32 is available directly from table NT13 on ``Employed Population by Occupation by Age by Sex" from the 1870 Census: Religious Bodies, Occupation \& Government Data (1870\_sROG). Unfortunately, the size of the unemployed population is not published with this information. To get an estimate for the size of the unemployed population in each state, we make use of the 1\%~microsample of the 1870 census provided by the Integrated Public Use Microdata Series (IPUMS-USA) through the Minnesota Population Center \citep{ipums}.
 
 Using the microsample, we obtain counts of the male and female population above ten as well as state population numbers, which allows us to get estimates of the state-level population totals for individuals above the age of ten for each state by extrapolating from the sample proportions. This information is then used to calculate the size of the unaccommodated populations in each set of charts -- either those who are not gainfully employed (plate \#32) or those who are not accommodated religiously (plate \#31):
 
-Let $n_{UA}^{(\text{X})}$ be the --unfortunately unknown-- size of the unaccounted population of state {\it X}. Then we have the relationship
+Let $n_{U}^{(\text{X})}$ be the --unfortunately unknown-- size of the unaccounted population of state {\it X}. Then we have the relationship
 \begin{equation}\label{eq:nUA}
-n_{UA}^{(\text{X})} = n_{\text{AGE}\ge 10}^{(\text{X})}  - n_{\text{acc}}^{(X)},
+n_{U}^{(\text{X})} = n_{\text{age}\ge 10}^{(\text{X})}  - n_{\text{A}}^{(X)},
 \end{equation}
-where $n_{\text{AGE}\ge 10}^{(\text{X})}$ is the number of over ten year olds in the state, and $n_{\text{acc}}^{(X)}$ is the size of the population accounted for (i.e. gainfully employed or going to school, or those who are religiously accommodated). $n_{\text{acc}}^{(X)}$ is known for each state from table NT13.
-We get an estimate for the unkown number of over ten year olds in each state $n_{\text{AGE}\ge 10}^{(\text{X})}$ from:
+where $n_{\text{age}\ge 10}^{(\text{X})}$ is the number of over ten year olds in the state, and $n_{\text{A}}^{(X)}$ is the size of the population accounted for (i.e. gainfully employed or going to school, or those who are religiously accommodated). $n_{\text{A}}^{(X)}$ is known for each state from table NT13.
+We get an estimate for the unknown number of over ten year olds in each state $n_{\text{age}\ge 10}^{(\text{X})}$ from:
 \[
-n_{\text{AGE}\ge 10}^{(\text{X})} = n_\text{total}^{(\text{X})} \cdot p_{\text{AGE}\ge 10}^{(\text{X})}.
+n_{\text{age}\ge 10}^{(\text{X})} = n_\text{total}^{(\text{X})} \cdot p_{\text{age}\ge 10}^{(\text{X})}.
 \]
-where $p_{\text{AGE}\ge 10}^{(\text{X})} \in [0,1]$ is the proportion of the  population in state {\it X} who is over ten years of age. While this proportion is also not known, we can estimate it from the 1\% microsample as the ratio of individuals over ten and the total number of individuals in the state.
+where $p_{\text{age}\ge 10}^{(\text{X})} \in [0,1]$ is the proportion of the  population in state {\it X} who is over ten years of age. While this proportion is also not known, we can estimate it from the 1\% microsample as the ratio of individuals over ten and the total number of individuals in the state.
 \[
-\widehat{p_{\text{AGE}\ge 10}}^{(\text{X})} = \frac{\text{\# individuals age ten and over in state } X}{\text{\# individuals in state } X}.
+\hat{p}_{\text{age}\ge 10}^{(\text{X})} = \frac{\text{\# individuals age ten and over in state } X}{\text{\# individuals in state } X}.
 \]
 Piecing this result back into \eqref{eq:nUA}, we get both estimates for the size of the unaccounted population as well as a standard error for it:
 \begin{eqnarray}\label{eq:nUA2}
-\widehat{n_{UA}}^{(\text{X})} &=& n_\text{total}^{(\text{X})} \cdot \widehat{p_{\text{AGE}\ge 10}}^{(\text{X})}  - n_{\text{acc}}^{(X)}, \\ \label{eq:seUA}
-s.e.(\widehat{n_{UA}}^{(\text{X})})^2 &=& \widehat{p_{\text{AGE}\ge 10}} \cdot \left( 1- \widehat{p_{\text{AGE}\ge 10}}\right) n_\text{total}^{(\text{X})}.
+\hat{n}_{U}^{(\text{X})} &=& n_\text{total}^{(\text{X})} \cdot \hat{p}_{\text{age}\ge 10}^{(\text{X})}  - n_{\text{A}}^{(X)}, \\ \label{eq:seUA}
+SE\left(\hat{n}_{U}^{(\text{X})}\right) &=& \sqrt{\hat{p}_{\text{age}\ge 10} \cdot \left( 1- \hat{p}_{\text{age}\ge 10}\right) n_\text{total}^{(\text{X})}}.
 \end{eqnarray}
 Estimates for the number of unaccounted women and men over ten years of age in each state can be achieved similarly. We also use these results to get estimates and standard errors for the size of the religiously unaccommodated population over ten years of age, used to recreate plate 31.
-Results from this estimation process are shown in Figures \ref{fig:plate32-similarities} and \ref{fig:religious-bias-plot}.
+% Results from this estimation process are shown in Figures \ref{fig:plate32-similarities} and \ref{fig:religious-bias-plot}.
 
 
 
 \subsection{Plate 32: Gender Ratio in Agriculture, Trade, Service, Manufacturing, and Schools}
 
-Figure~\ref{fig:plate32} shows a miniature of the chart published as plate \#32 in the Statistical Atlas of 1874 \citep{atlas} produced from data collected in the 9th US Census. The chart shows the gender ratio of population over the age of ten in different types of occupations.
+Figure~\ref{fig:plate32} shows a miniature of the chart published as plate \#32 in the Statistical Atlas of 1870 \citep{atlas} produced from data collected in the 9th US Census. The chart shows the gender ratio of population over the age of ten in different types of occupations.
 
 
 <<overall-work-plot, eval=FALSE, out.width='.7\\textwidth', fig.width=5, fig.height=5.5, echo = FALSE, message=FALSE, warning = F>>=
@@ -480,12 +485,15 @@ plot2 + theme(legend.position = "none")
 <<overall-work-mosaic-legend, include = F, fig.width = 1.2, fig.height=4>>=
 library(grid)
 grid.newpage()
-grid.draw(g_legend(plot2))
+tmp <- g_legend(plot2)
+tmp$grobs[[2]]$layout$t[3:8] <- tmp$grobs[[2]]$layout$t[c(5, 6, 3, 4, 8, 7)]
+tmp$grobs[[2]]$layout$b[3:8] <- tmp$grobs[[2]]$layout$b[c(5, 6, 3, 4, 8, 7)]
+grid.draw(tmp)
 @
 \begin{figure}
 %  \centering
   \hfill
-  \subfloat[Reproduction of the US-wide overview in plate \#32.]{
+  \subfloat[Reproduction: US-wide overview, plate \#32.]{
 \includegraphics[width=.4\textwidth,valign=c]{figure/overall-work-mosaic-unaccommodated-1}
 \label{fig:redo-1}
   }
@@ -493,7 +501,7 @@ grid.draw(g_legend(plot2))
 \includegraphics[width=.14\textwidth,valign=c]{figure/overall-work-mosaic-legend-1}
   }
   \addtocounter{subfigure}{-1}%
-  \subfloat[US-wide overview with integrated unemployed population.]{
+  \subfloat[US-wide overview with integrated unaccounted population.]{
 \includegraphics[width=.4\textwidth,valign=c]{figure/overall-work-mosaic-unaccommodated-2}
   \label{fig:redo-2}
   }
@@ -501,10 +509,10 @@ grid.draw(g_legend(plot2))
 \caption{Nation-wide overview of gender ratio by occupation based on gainfully employed population over ten. \label{fig:us-plate32-redo}}
 \end{figure}
 
-With the help of the description (Figure~\ref{fig:header}) and the legend (Figure~\ref{fig:legend}), we can interpret the details of each of the squares in Figure~\ref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is shown as the widths of the rectangles, the heights are proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The grey band around each one of the states' squares is proportional to the size of the ``unaccounted" for population, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
+With the help of the description (Figure~\ref{fig:header}) and the legend (Figure~\ref{fig:legend}), we can interpret the details of each of the squares in Figure~\ref{fig:us}. This figure shows an overview of type of occupation by gender across the US in 1870. The percentage of population in a particular type of occupation is represented by the width of the rectangles; the height is proportional to the percentage of gender, with men shown in the bottom rectangle and women in the top rectangle. The area of the grey band around each one of the states' squares is proportional to the size of the ``unaccounted" for population, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of the five categories or attending school.
 
 Showing the unaccounted population as a frame masks the size of the corresponding population by visually cutting it into quarters. The percentage of unaccounted individuals nation-wide is about 30\%. This number is  higher than any of the other groups. Assessing the size of the unaccounted population in form of the area of the grey frame is mentally strenuous, as discussed in \autoref{sec:psych}. The task becomes much easier if we incorporate the information directly into the mosaic plot, as shown in Figure \ref{fig:redo-2}.
-This figure reveals another previously hidden finding: about 97\% of the unaccounted population are women and girls!
+This figure reveals another previously hidden finding: about 97\% of the unaccounted population are female!
 
 <<plate32-repro, dependson="data", include = T, out.width = ".8\\textwidth", fig.width = 8, fig.height = 10.5, warning = F, message = F, fig.cap = "Reproduction of plate \\#32.", fig.align='center'>>=
 cols <- c("#30200c", "#000066", "#cc9900", "#4d374a", "#9e7637", "grey60")
@@ -514,8 +522,7 @@ tmp$plot1
 @
 
 
-
-Note that using our estimation method outlined in \autoref{eq:nUA2} and \autoref{eq:seUA}, we are able to get estimates for the size of the unaccounted population by gender. This information is not shown on plate \#32, but must have been available to the creators of the chart at the time. Clearly the gender breakdown here is interesting: when this information is included as a bar in the reconstructed plot shown in \autoref{fig:us-plate32-redo}, it becomes clear that almost all of this unaccounted population is female. This design decision may have been made because of the perceived aesthetic appeal of the unaccounted border region (which makes showing the gender of unaccounted persons difficult), but it may also have been made because the unpaid work by women in the home was not visible (those persons who kept house for other individuals would have been included in the personal and professional services category). This logic is still present today: women who are homemakers are not included in the labor force participation rate, and thus their contributions to the overall economy are not typically counted\citep{labor-participation}.
+Note that using our estimation method outlined in \autoref{eq:nUA2} and \autoref{eq:seUA}, we are able to get estimates for the size of the unaccounted population by gender. This information is not shown on plate \#32, but must have been available to the creators of the chart at the time. Clearly the gender breakdown here is interesting: when this information is included as a bar in the reconstructed plot shown in \autoref{fig:us-plate32-redo}, it becomes clear that almost all of this unaccounted population is female. This design decision may have been made because of the perceived aesthetic appeal of the unaccounted border region (which makes showing the gender of unaccounted persons difficult), but it may also have been made because the unpaid work by women in the home was not visible (those persons who kept house for other individuals would have been included in the personal and professional services category). This logic is still present today: women who are homemakers are not included in the labor force participation rate, and thus their contributions to the overall economy are not typically counted \citep{labor-participation}.
 
 Visual inspection tells us that the data used to render the nation-wide overview in \autoref{fig:us-plate32-redo} and the state-level aggregates in \autoref{fig:plate32-repro} is ``the right one", i.e.\ the figures are similar to the charts shown in plate \#32. A more precise evaluation of the similarity between the old and the new figures can be achieved by using pixel measurements of the high-resolution digitized image of plate \#32 and directly compare the percentages for each of the occupations.
 
@@ -570,18 +577,12 @@ occ2 %>% filter(Area.Name==State) %>% ggplot() +
 
 
 
-\autoref{fig:plate31} shows a miniature of plate \#31 from the Statistical Atlas. This plate shows the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame). For each state a square of the same size is drawn. The four most common denominations are shown as colored stripes, the width of each is proportional to the number of their sittings. Each denomination is shown by one of eleven different colors, all other denominations are represented jointly by a twelfth color. The color scheme chosen in the Statistical Atlas is essentially that of paired colors, i.e.\ each hue is represented with a lighter shade (using hatching) and a darker shade (see zoom-in to the legend of plate \#31 in Figure \ref{fig:legend-31}).
-
-\begin{figure}
-\centering
-\includegraphics[width = .9\textwidth]{images/ca000081.jpg}
-\caption{Plate \#31 from the Statistical Atlas of 1874: church accommodation by state and denomination for the population of over ten years of age. \label{fig:plate31}}
-\end{figure}
+\autoref{fig:plate31} shows a miniature of plate \#31 from the 1870 Statistical Atlas. This plate shows the percentage of religious sittings by denomination for each state (colored stripes in the square) as well as the percentage of unaccommodated population over the age of ten (area of the grey outer frame). For each state a square of the same size is drawn. The four most common denominations within each state are shown as colored stripes, the width of each is proportional to the number of people accommodated. Each denomination is shown by one of eleven different colors, all other denominations are represented jointly by a twelfth color. The color scheme chosen in the Statistical Atlas is essentially that of paired colors, i.e.\ each hue is represented with a lighter shade (using hatching) and a darker shade (see zoom-in to the legend of plate \#31 in Figure \ref{fig:legend-31}).
 
 The inside squares of plate~\#31 are simpler in structure than those of plate \#32 -- they are one-dimensional mosaic plots, also known as rotated stacked bar charts or spine plots \citep{hummel:1996}. As in the previous example, a grey frame is drawn with an area proportional to the size of the unaccommodated population over the age of ten. Additionally, other design choices were made which impact the readability of the charts:
 
 \begin{compactitem}
-\item[\bf Top four only:] A decision was made to only show the top four denominations in each state and the top eight denominations overall. As a result, some denominations are shown which have a lower overall number of sittings, while other denominations are excluded even though they have more sittings. For example,  in 1870 the Reformed Late Germans have 431,700 sittings nation-wide; the 10th highest number, as shown in Figure \ref{fig:barchart-31}. However, they are not mentioned in plate \#32. The Mormon Church is locally (Utah Territory) strong enough to be represented, even though with 87,838 sittings (17th place nationally) it is far behind the German Reformed Church. This decision was likely due in part to technical constraints: it would be very hard to align very thin bars with even high-precision lithography, as each color layer of each chart must be drawn by hand and carefully aligned. Limiting the choices to five total internal bars ensured that it was generally possible to render the image and match the colors to the denominations listed in the legend.
+\item[\bf Top four only:] A decision was made to only show the top four denominations in each state and the top eight denominations in the United States. As a result, some denominations are shown which have lower overall accommodation, while other denominations are excluded even though they accommodate more people. For example,  in 1870 the Reformed Late Germans accommodated 431,700 people nation-wide; the 10th highest number, as shown in Figure \ref{fig:barchart-31}. However, they are not mentioned in plate \#32. The Mormon Church is locally (Utah Territory) strong enough to be represented, even though it accommodates only 87,838 people (17th place nationally) and is far behind the German Reformed Church. This decision was likely due in part to technical constraints: it would be very hard to align very thin bars with even high-precision lithography, as each color layer of each chart must be drawn by hand and carefully aligned. Limiting the choices to five total internal bars ensured that it was generally possible to render the image and match the colors to the denominations listed in the legend.
 
 \item[\bf Re-ordering:] Within each state denominations are ordered from largest to smallest. This makes comparisons of the state-wide religious makeup between states more difficult, as it re-orders the colors in the bar code-like color strips representing each state, thus small differences in numbers might result in rather large visual differences.
 \end{compactitem}
@@ -609,10 +610,10 @@ cl %>% ggplot(aes(x = Denomination, weight=Number/10^6, fill=Denomination)) +
   \label{fig:barchart-31}
   }
 \hfill
-\caption{Old and new side-by-side: denominations are ordered from top to bottom according to the nation-wide number of sittings. On the right, all denominations are shown that were accommodated for in 1874. We also see that the number of unaccommodated people over the age of ten is higher than the number of sittings in any of the denominations.}
+\caption{Old and new side-by-side: denominations are ordered from top to bottom according to the nation-wide number of sittings. On the right, all denominations are shown that reported accommodations in 1870. We also see that the number of unaccommodated people over the age of ten is higher than the number accommodated by any single denomination.}
 \end{figure}
 
-We initially computed the unaccommodated population for each state as described in equation~\eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:religious-bias-plot}) for all states except Minnesota, which we discuss below.
+We initially computed the unaccommodated population for each state as described in equation~\eqref{eq:nUA2}, but found that there was a clear difference in the percentage reported by each state in the Statistical Atlas plots and the proportion estimated by using the 1\% microsample; this difference was present for every state and territory. This difference was resolved by considering only the population above age 11 when computing estimates for plate \#31. There is some ambiguity in the phrase ``population over 10 years of age", as an individual attains 10 years of age on their 10th birthday (that is,  $x \ge 10$), but in any other context, ``over 10" would indicate $x > 10$. In plate \# 32, the interpretation of $x \ge 10$ is used, but in plate \# 31, it appears that the interpretation $x > 10$ or $x \ge 11$ is used instead. This modification to the calculations resolves the difference in estimates (shown in \autoref{fig:religious-bias-plot}) for all states except Minnesota, which we discuss below.
 
 <<religious-bias-plot, echo = FALSE, include=T, fig.width=4, fig.height=4, fig.cap = "Percentage of state-wide unaccommodated population based on estimates from the 1\\% Microsample ($x$-axis) and pixel values measured from the digitized version of plate \\#31 ($y$-axis).\\label{fig:matches-plate31}", out.width = ".35\\textwidth", fig.align='center', fig.env = 'figure'>>=
 church_noterritories <- churchPixel %>%
@@ -700,12 +701,13 @@ p <- cl %>%
   filter(State %in% c("Michigan", "Minnesota", "Mississippi"), Number > 0) %>%
   mutate(State = toupper(State)) %>%
   mutate(Denomination = factor(Denomination, levels=rev(levels(Denomination)))) %>%
-  ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination), fill=product(Denomination)), offset=0, alpha = 1) +
+  ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination), 
+                             fill=Denomination), offset=0, alpha = 1) +
   facet_grid(.~State, drop = TRUE, switch = "both") +
   scale_fill_manual(values = rev(rev(colHEX)[-c(3:4)])) +
   theme(legend.position = "none")
 
-scales <- ggplot_build(p)$data[[1]] %>%
+scales <- ggplot2:::ggplot_build(p)$data[[1]] %>%
   filter(xmax > xmin + 0.025) %>%
   mutate(
     State = c("MICHIGAN", "MINNESOTA", "MISSISSIPPI")[PANEL],
@@ -745,9 +747,9 @@ p + theme(axis.text = element_blank(), axis.title = element_blank(),
 \end{figure}
 
 
-Figure \ref{orig-state-plots-church} shows 3 sub plots from the 1874 Statistical Atlas; Figure \ref{fig:state-church-plot1} shows a modern replication of the original charts, and Figure \ref{fig:state-church-plot2} shows an improved version of the same plots. We have improved the charts by adding an additional bar for the proportion of the population who are unaccommodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccommodated persons.
+Figure \ref{orig-state-plots-church} shows three sub plots from plate \#31 of the 1870 Statistical Atlas; Figure \ref{fig:state-church-plot1} shows a modern replication of the original charts, and Figure \ref{fig:state-church-plot2} shows an improved version of the same plots. We have improved the charts by adding an additional bar for the proportion of the population who are unaccommodated, and we have included all denominations which were part of the 1870 census. These changes produce much more complicated plots, but allow us to notice that Mississippi is much more religiously homogeneous than Michigan or Minnesota, and also that Mississippi has significantly fewer unaccommodated persons. We can also see that Minnesota has a higher proportion of Lutheran church accommodations than Michigan, but the same denominations seem to be present in both states. These details were much less obvious on the original plots due to the choice to show only 4 denominations surrounded by a rectangle representing unaccommodated persons.
 
-Both sets of re-imagined church accommodation plots use a triple color scheme. The lightest colors were drawn from the Colorbrewer\citep{colorbrewer} ``Paired" palette's light colors (a grey hue was also added); each color was then darkened twice using the \texttt{munsell} package\citep{munsell} to produce a color scheme composed of 21 colors and 7 hues. This scheme is similar to the color scheme in the Statistical Atlas, which is composed of 7 hues and uses crosshatching to create lighter and darker bars.
+Both sets of re-imagined church accommodation plots use a triple color scheme. The lightest colors were drawn from the Colorbrewer \citep{colorbrewer} ``Paired" palette's light colors (a grey hue was also added); each color was then darkened twice using the \texttt{munsell} package \citep{munsell} to produce a color scheme composed of 21 colors and 7 hues. This scheme is similar to the color scheme in the Statistical Atlas, which is composed of 7 hues and uses crosshatching to create lighter and darker bars. A one-to-one mapping of the hues is not feasible, however, as the re-imagined version of the plots shows all denominations reporting accommodations, rather than the top 8 denominations nationwide.
 
 \section{Perception of Framed Plots}
 \label{sec:psych}
@@ -756,7 +758,7 @@ While the use of framed plots in plates 31 and 32 of the Statistical Atlas is ae
 
 \begin{enumerate}
 \item The frame cuts the unaccommodated population into quarters, making it difficult to estimate the size of the unaccommodated population. Mosaic and spine plots require the viewer to make judgments along the x-axis, but this is difficult to do for the unaccommodated population, as the portion of the x-axis devoted to an unaccommodated population of $p$ is $1 - \sqrt{p}$.
-\item The frame makes it difficult to compare between states. Judgments comparing two states using a framed chart require the viewer to judge area, rather than length, and also break up any common scale between two states. Even if the viewer (incorrectly) uses length as a cue, they are comparing length on an un-aligned scale, which increases the difficulty level \citep{cleveland:1984}.
+\item The frame makes it difficult to compare between states. Judgments comparing two states using a framed chart require the viewer to judge area, rather than length, and also break up any common scale between two states, as the inside portion of the plots are not aligned between states. Even if the viewer (incorrectly) uses length as a cue, they are comparing length on an un-aligned scale, which increases the difficulty level \citep{cleveland:1984}.
 \item Numerical estimation in framed plots requires a two-stage estimation procedure. In order to estimate the proportion of the chart attributed to one occupation or denomination, one must first estimate the proportion of the overall square dedicated to the internal chart, the proportion of the internal chart dedicated to the category of interest, and finally multiply these two quantities together to obtain the overall estimate. In comparison, estimating the proportion of an unframed spine plot dedicated to one category requires only that the viewer estimate the width of the rectangle.
 \item The frame decreases the perceptual salience of the dimension of interest. Information is primarily conveyed on the $x$-axis in both spline and mosaic plots, though secondary information is conveyed through the $y$ axis in mosaic plots. In unframed plots, there is variation along the x-axis in color and in width, with additional unaligned variation along the y-axis in mosaic plots. The frame disrupts this by disconnecting the $x$ axis and the variation in bar width, increasing the perceptual effort required to map numerical information to the visual depiction. \citet{carpenter1998model} discuss the effects of increased cognitive load resulting from additional complexity among the dimension of interest.
 \item The frame cannot easily be divided into male and female portions, which means that information is lost when considering gender differences, as shown in plate 32.
@@ -914,7 +916,7 @@ age_summ %>%
 
 
 \paragraph{Survey Composition}
-Each participant was asked to evaluate 18 plots (details below). For each estimation, participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
+Each participant was asked to estimate the area of a marked region of 18 plots (details below). For each estimation, participants had to answer within 25 seconds before the survey automatically advanced to the next question. This ensured that individuals did not measure sections of the plot or otherwise calculate their answers.
 
 \begin{figure}
   \centering
@@ -1006,7 +1008,7 @@ percentages %>% filter(abs(log(ratio)) < log(5)) %>%
 @
 
 
-Let $E_{ijk}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by one of the participants $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece.
+Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by one of the participants $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece.
 <<demographics2, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
 percentages %>% ggplot(aes(x = frameframe, fill=source)) +
   geom_bar(position="dodge") +
@@ -1019,7 +1021,7 @@ percentages %>% ggplot(aes(x = frameframe, fill=source)) +
 
 @
 
-The model is written in the form of regressions lines of the form  $\log E = \alpha + \beta \log E$, with the unframed version of each of the types as the base line. The other parameters can then be written as contrasts to the base line, producing a set of  easily interpretable results:
+The model is written in the form of regressions lines of the form  $\log E = \alpha + \beta \log A$, with the unframed version of each of the types as the base line. The other parameters can then be written as contrasts to the base line, producing a set of  easily interpretable results:
 
 \begin{eqnarray*}
 \log E_{ijk\ell} &=& \alpha_{i} + \beta_{i} \cdot \log A_{ij}  + \left(\alpha_{ij} + \beta_{ij} \cdot \log A_{ij}\right) + e_{ijk} + u_\ell, \hspace{1.5cm} \text{Model (1)}
