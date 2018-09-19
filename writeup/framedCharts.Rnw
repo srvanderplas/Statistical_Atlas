@@ -344,7 +344,7 @@ createPie <- function(data, state_name) {
 @
 
 <<data, cache=TRUE, message = F, warning = F>>=
-datapath <- "../data"
+datapath <- here::here("data")
 source(file.path(datapath, "Format_Data.R"))
 load(file.path(datapath, "Processed_Data.Rdata"))
 @
@@ -700,7 +700,7 @@ p <- cl %>%
   filter(State %in% c("Michigan", "Minnesota", "Mississippi"), Number > 0) %>%
   mutate(State = toupper(State)) %>%
   mutate(Denomination = factor(Denomination, levels=rev(levels(Denomination)))) %>%
-  ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination), fill=product(Denomination)), offset=0, alpha = 1) +
+  ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination), fill=Denomination), offset=0, alpha = 1) +
   facet_grid(.~State, drop = TRUE, switch = "both") +
   scale_fill_manual(values = rev(rev(colHEX)[-c(3:4)])) +
   theme(legend.position = "none")
