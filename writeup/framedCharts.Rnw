@@ -355,27 +355,14 @@ load(file.path(datapath, "Processed_Data.Rdata"))
 \section{Introduction}
 \label{sec:intro}
 
-Three times in the past, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in the 9th, 10th, and 11th US census (in 1870, 1880, and 1890). Each of these atlases represents a  masterpiece in science and technology. The ninth census, supervised by Francis A. Walker, assessed a country of about 38.5 million people. The Statistical Atlas is a graphical compendium of census information laid out over more than 100 pages. Most of the illustrations are overlaid maps (38 of 107 pages), but some consist of more abstract and, at that time, novel visualizations, including age pyramids (bilateral frequency charts) and ring charts to show population growth. This paper addresses two types of charts from the 1870 Statistical Atlas which were presented as small multiples; that is, a separate chart was shown for each state and territory.
+Between 1870 and 1920, the US Census Bureau published a Statistical Atlas to map the state of the Union based on data collected in each census\footnote{A Census Atlas of the United States was published by the Census Bureau in 2007\citet{suchan2007census}.}. Each of these atlases represents a  masterpiece in science and technology. The ninth census, supervised by Francis A. Walker, assessed a country of about 38.5 million people. The 1870 Statistical Atlas is a graphical compendium of census information laid out over more than 100 pages, and corresponds to the ninth census. Most of the illustrations are overlaid maps (38 of 107 pages), but some consist of more abstract and, at that time, novel visualizations\citet{kostelnick2004melting}, including age pyramids (bilateral frequency charts) and ring charts to show population growth. This paper addresses two types of charts from the 1870 Statistical Atlas which were presented as small multiples; that is, a separate chart was shown for each state and territory.
 
-The charts in the Statistical Atlas were printed by Julius Bien's publishing house~\citep{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
+The charts in the 1870 Statistical Atlas were printed by Julius Bien's publishing house~\citep{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
 
 In this paper, we describe the methodology used to re-create plots from the 1870 statistical atlas, first by recreating the plots as they were presented, and then re-imagining the plots to provide a more visually optimal display that is similar to the original. We assess the accuracy of judgments made from these plots with a user study, and discuss the implications of the study on modern plot design.
 
 \section{Statistical Archaeology}
 \label{sec:statarch}
-
-Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure\autoref{fig:header}) and a legend detailing the color choices (see Figure\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
-
-
-\begin{figure}
-\centering
-\includegraphics[width = .9\textwidth]{images/ca000081.jpg}
-\caption{Plate \#31 from the Statistical Atlas of 1870: church accommodation by state and denomination for the population of over ten years of age. \label{fig:plate31}}
-\end{figure}
-
-Plate 31 (see \autoref{fig:plate31}) uses spine plots\footnote{Spine plots are horizontal stacked bar charts; the width of the bar is proportional to the percent of the population represented by the category. They can be seen as one-dimensional mosaic plots with the initial split on the x-axis.} to give an overview of the percentage of religious sittings\footnote{`Sittings' is the term used in the Atlas to denote the number of individuals accommodated by a church. Presumably, this corresponds to the number of physical seats available.} by denomination for each state (colored stripes in the square). Plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population over the age of ten in different types of occupations using a mosaic plot.
-
-In both plates, a grey band is drawn around each one of the states' squares representing essentially missing information. In plate 31, the grey band is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of five categories or attending school. In plate 32, the grey band represents the size of religiously unaccommodated population over the age of ten.
 
 \begin{figure}
   \subfloat[Description section of plate \#32.]{
@@ -389,16 +376,29 @@ In both plates, a grey band is drawn around each one of the states' squares repr
   }
 
   \subfloat[US wide distribution of genders across occupations.]{
-  \includegraphics[width=0.4\textwidth,valign=c]{images/occupations-us.png}
+  \includegraphics[width=0.45\textwidth,valign=c]{images/occupations-us.png}
   \label{fig:us}
   }
   \hfill
   \subfloat[Miniature of plate \#32 of the Statistical Atlas.]{
-\includegraphics[width=.54\textwidth,valign=c]{images/ca000082.jpg}
+\includegraphics[width=.44\textwidth,valign=c]{images/ca000082.jpg}
   \label{fig:plate32}
   }
 \caption{Overview of plate \#32, with zoom-ins to different components.}
 \end{figure}
+
+Plates 31 and 32 of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure\autoref{fig:header}) and a legend detailing the color choices (see Figure\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure\autoref{fig:us}), and a series of small multiples \citep{tufte} or trellis plots \citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic \citep{hartigan:1981, friendly, prodplots} or Marimekko plots \citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot \citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
+
+
+\begin{figure}
+\centering
+\includegraphics[width = .8\textwidth]{images/ca000081.jpg}
+\caption{Plate \#31 from the Statistical Atlas of 1870: church accommodation by state and denomination for the population of over ten years of age. \label{fig:plate31}}
+\end{figure}
+
+Plate 31 (see \autoref{fig:plate31}) uses spine plots\footnote{Spine plots are horizontal stacked bar charts; the width of the bar is proportional to the percent of the population represented by the category. They can be seen as one-dimensional mosaic plots with the initial split on the x-axis.} to give an overview of the percentage of religious sittings\footnote{`Sittings' is the term used in the Atlas to denote the number of individuals accommodated by a church. Presumably, this corresponds to the number of physical seats available.} by denomination for each state (colored stripes in the square). Plate 32 (see \autoref{fig:plate32}) shows the gender ratio of the population over the age of ten in different types of occupations using a mosaic plot.
+
+In both plates, a grey band is drawn around each one of the states' squares representing essentially missing information. In plate 31, the grey band represents the size of religiously unaccommodated population over the age of ten. In plate 32, the grey band is proportional to the number of population ``unaccounted" for, i.e.\ the difference between the total population over the age of ten and the population gainfully employed in one of five categories or attending school.
 
 In order to reproduce these charts using modern plotting methods, some statistical archaeology is necessary -- we must reconstruct the data underlying the charts, using only sources available nearly 150 years later. The National Historical Geographic Information System (NHGIS) \citep{NHGIS} provides a wealth of tabulated data, and most of the data needed to reproduce plate \#32 is available directly from table NT13 on ``Employed Population by Occupation by Age by Sex" from the 1870 Census: Religious Bodies, Occupation \& Government Data (1870\_sROG). Unfortunately, the size of the unemployed population is not published with this information. To get an estimate for the size of the unemployed population in each state, we make use of the 1\%~microsample of the 1870 census provided by the Integrated Public Use Microdata Series (IPUMS-USA) through the Minnesota Population Center \citep{ipums}.
 
@@ -424,8 +424,6 @@ SE\left(\hat{n}_{U}^{(\text{X})}\right) &=& \sqrt{\hat{p}_{\text{age}\ge 10} \cd
 \end{eqnarray}
 Estimates for the number of unaccounted women and men over ten years of age in each state can be achieved similarly. We also use these results to get estimates and standard errors for the size of the religiously unaccommodated population over ten years of age, used to recreate plate 31.
 % Results from this estimation process are shown in Figures \ref{fig:plate32-similarities} and \ref{fig:religious-bias-plot}.
-
-
 
 \subsection{Plate 32: Gender Ratio in Agriculture, Trade, Service, Manufacturing, and Schools}
 
@@ -771,7 +769,7 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \label{sec:meth}
 
 \subsection{Study Design}
-\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender.
+\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. Compared to demographics of the general US population \citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender. Reddit participants were recruited from two subreddits which are data and visualization related, and therefore might be expected to be more educated and proficient at reading charts and graphs than the general population; they were also volunteers and did not receive any remuneration, where Amazon Mechanical Turk users receive some minimal compensation for their participation. 
 
 
 <<demo0, echo=FALSE, fig.height=2.25, fig.width=3.5, include=F>>=
@@ -930,18 +928,18 @@ Each participant was asked to estimate the area of a marked region of 18 plots (
   }
 
   \subfloat[Mosaicplot w/o frame]{
-  \includegraphics[width = 0.3\textwidth]{images/California-mosaic_without_frame1.png}
+  \includegraphics[width = 0.3\textwidth]{images/Maine-mosaic_without_frame1.png}
   }
   \subfloat[Spineplot w/o frame]{
-  \includegraphics[width=0.3\textwidth]{images/Connecticut-spine_without_frame1.png}
+  \includegraphics[width=0.3\textwidth]{images/Michigan-spine_without_frame1.png}
   }
   \subfloat[Piechart w/o frame]{
-  \includegraphics[width=0.3\textwidth]{images/Alabama-pie_without_frame1.png}
+  \includegraphics[width=0.3\textwidth]{images/Illinois-pie_without_frame1.png}
   }
 \caption{\label{fig:combinations} Overview of the six plots shown to one third of the participants: all six combinations of plot types and designs are covered. The yellow `A', `B', and `C's mark the areas that participants are asked to estimate. Three areas in each of the plots were selected for estimation. }
 \end{figure}
 
-Three plot types were used in this study -- mosaic plots (as in Figure~\autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states, to provide replication. Finally, three sections of each plot were selected for estimation -- a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, and each participant evaluated a single set of plots.
+Three plot types were used in this study -- mosaic plots (as in Figure~\autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states, to provide replication\footnote{Pie charts: Alabama, Illinois, Indiana; Mosaic plots: California, Maine, Ohio; Spine plots: Connecticut, Michigan, Oregon}. Finally, three sections of each plot were selected for estimation -- a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, and each participant evaluated a single set of plots.
 
 Each set of 18 plots was chosen such that all combinations of framed and unframed plot types were included. For each plot type $\times$ frame combination, the participant evaluated a small, medium, and large region in the same plot. Thus, if a participant evaluated the framed pie chart for Illinois, they might evaluate the unframed pie chart for Alabama. At the end of the evaluation, a participant saw plots from six states, corresponding to each combination of plot type and frame condition.
 
@@ -958,65 +956,137 @@ percentages %>% count(ResponseId) %>%
 
 
 \subsection{Results}
+<<miniplot1,echo = F, include = F>>=
+miniplots <- createSpines(cl_data, "Illinois")
+p1 <- miniplots[[1]] + 
+  annotate("text", x = .95, y = .5, label = "TRUE", size = 2.25) + 
+  annotate("text", x = .5, y = .2, label = "FALSE", angle = 90, size = 2.25) + 
+  theme_void() + coord_flip()
 
-<<check0, fig.width=7.5, fig.height = 4.25, fig.cap="Scatterplots of actual versus estimated areas. The color and shape of points distinguish between areas that are part of the frame (or correspond to frame pieces) and inside the plot.">>=
-percentages %>%
+p2 <- miniplots[[2]] + 
+  annotate("text", x = 1, y = .87, label = "TRUE", size = 2.25, angle = 90) + 
+  annotate("text", x = 1, y = .125, label = "FALSE", size = 2.25, angle = 90) + 
+  guides(fill = 'none') + 
+  scale_x_discrete(expand = c(0, .5)) + 
+  theme_void() + 
+  coord_flip()
+@
+
+<<check0, fig.width=8, fig.height = 4, fig.cap="Scatterplots of actual versus estimated areas. The color and shape of points distinguish between areas that represent  unaccommodated or unaccounted populations (abbreviated Unacc. in the chart). In framed plots, these areas are part of the frame; in unframed plots, these areas are part of the main portion of the plot.">>=
+p3 <- percentages %>%
+  mutate(shape = ifelse(isFrame, 0, 3)) %>%
+  mutate(`Framed Plot` = Frame) %>%
   ggplot(aes(x = log(perc), y = log(howmuch))) +
   geom_abline() +
-  geom_point(aes(shape=isFrame, colour=isFrame)) +
-  facet_grid(Frame~Type, labeller="label_both") +
+  geom_point(aes(shape = isFrame, colour = isFrame)) +
+  facet_grid(`Framed Plot`~Type, labeller = "label_both") + 
+  # scale_x_continuous(limits = c(0, 4.5)) + scale_y_continuous(limits = c(0, 4.5)) +
   xlab("(Log) Actual Area") +
   ylab("(Log) Estimated Area") +
   theme_bw() +
   coord_fixed() +
-  scale_colour_brewer("Frame piece estimate", palette="Set1") +
-  scale_shape_discrete("Frame piece estimate", solid = F) +
-  theme(legend.position="right")
+  scale_colour_brewer("Unacc.\nestimate", palette = "Set1") +
+  scale_shape_manual("Unacc.\nestimate", values = c("FALSE" = 3, "TRUE" = 0), guide = "legend") +
+  theme(legend.position = "right") 
+p4 <- p3 + 
+  guides(colour = 'none', shape = 'none')
+
+p3grob <- ggplotGrob(p3)
+legend <- p3grob$grobs[[which(sapply(p3grob$grobs, function(x) x$name) == "guide-box")]]
+
+grid.arrange(p4, legend, p1, p2, layout_matrix = matrix(c(1, 1, 1, 1, 1, 2, 
+                                                          1, 1, 1, 1, 1, 3, 
+                                                          1, 1, 1, 1, 1, 4), 
+                                                        nrow = 3, byrow = T))
 @
 
 <<format-pcts, echo = F, include = F>>=
 percentages <- percentages %>% mutate(
   frameframe = factor(frameframe,
-                      levels=c("Unframed", "Framed-inside", "Framed-frame")),
+                      levels = c("Unframed", "Framed-inside", "Framed-frame")),
   ratio = howmuch/perc
 )
 @
 
 Figure~\ref{fig:check0} shows scatterplots of estimated area size versus actual size of the area for each of the plot types. Plots in the top row are designs in which the frame piece is incorporated in the design, the bottom row are plots with a frame. Color and shape distinguish between pieces on the inside of a plot and its frame. What we see is that there does not seem to be a difference between frame and inside pieces in designs without a frame. We also see that in framed designs, inside pieces have a tendency to be overestimated, while the size of the frame is underestimated.
-There are also quite a few very extreme differences between estimated and actual size of areas apparent, particularly for small areas in mosaic plots and un-framed pie charts. These extreme differences may have resulted from typos, interrupted answers (where the question advances before the participant has finished typing their answer), or participant confusion. In the most extreme example, a participant estimated the size of a pie slice to be 70\%, when it was in fact less than 3\% of the chart's area. In addition, several participants entered an estimate of zero for a plot area, which would also indicate a lack of understanding of some portion of the task. Estimates which are more than five times above or below the actual magnitude have been excluded from further analysis in this study (\Sexpr{sum(abs(log(percentages$ratio)) > log(5))} out of a total of \Sexpr{nrow(percentages)} evaluations). We cannot determine why these estimates were so far off of the actual, but it is likely that there was some fundamental issue affecting the participant responses which is not related to the psychophysical effects of area estimation.
 
-Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot.
+There are also quite a few very extreme differences between estimated and actual size of areas apparent, particularly for small areas in mosaic plots and un-framed pie charts. These extreme differences may have resulted from typos, interrupted answers (where the question advances before the participant has finished typing their answer), or participant confusion. In the most extreme example, a participant estimated the size of a pie slice to be 70\%, when it was in fact less than 3\% of the chart's area. In addition, several participants entered an estimate of zero for a plot area, which would also indicate a lack of understanding of some portion of the task. Estimates which are more than five times above or below the actual magnitude have been excluded from further analysis in this study (\Sexpr{sum(abs(log(percentages$ratio)) > log(5))} out of a total of \Sexpr{nrow(percentages)} evaluations). The specific value of 5x as a cutoff is somewhat arbitrary - we identified clear errors (e.g. 0 as an estimate, a response of 60\% for an actual area of about 10\%, etc.) and used a cutoff value which excluded those obvious errors but which preserves much of the rest of the data. We cannot determine why these estimates were so far off of the actual, but it is likely that there was some fundamental issue affecting the participant responses which is not related to the psychophysical effects of area estimation.
+
+Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot. As an example, in Figure \autoref{fig:comparisons}, region C of subplot (a) would be a framed plot frame piece, region B of subplot (a) would be a frame plot inside piece, and regions B and C of subplot (d) would be the corresponding unframed pieces. 
 
 As a measure of the error we compare the log estimated size of a portion of the chart to the log actual size of the portion of the chart. This approach has the advantage of relating to the psychophysics equation used in \citet{size}, $A_{est} \propto A_{act}^\beta$, where $\beta$ has historically been estimated to be between 0.6 and 0.9, depending on the task. We add a constant to this proportional relationship to create an equation which can be fit using standard statistical methods; $A_{est} = \tilde{\alpha} A_{act}^\beta$, which can be written in terms of logs as $\log A_{est} = \alpha + \beta \log A_{act}$. \autoref{fig:model} shows a scatterplots of log estimated versus log actual sizes of areas, with simple linear regressions summarising the relationship between estimated and actual size for each of the plot types and each of the types of pieces.
+<<miniplot,echo = F, include = F>>=
+miniplots <- createSpines(cl_data, "Maine")
+p1 <- miniplots[[1]] + 
+  annotate("text", x = .5, y = .2, label = "Framed - Interior", size = 2.25, angle = 90) + 
+  annotate("text", x = .965, y = .5, label = "Framed - Exterior", size = 2.25) + 
+  theme_void() + coord_flip()
 
-<<model, message = F, warning = F, echo=FALSE, fig.width='\\textwidth', fig.height = 3, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors show different types of areas. The lines correspond to simple linear regressions of the form $y$ versus $x$ for each type of area within plot types. ">>=
-percentages %>% filter(abs(log(ratio)) < log(5)) %>%
+p2 <- miniplots[[2]] + 
+  annotate("text", x = 1, y = .125, label = "Unframed", size = 2.25, angle = 90) + 
+  annotate("text", x = 1, y = .87, label = "Unframed", size = 2.25, angle = 90) + 
+  guides(fill = 'none') + 
+  scale_x_discrete(expand = c(0, .5)) + 
+  theme_void() + 
+  coord_flip()
+@
+
+<<model, message = F, warning = F, echo=FALSE, fig.width=8, fig.height = 4, fig.cap="Scatterplot of difference between actual and observed percentages plotted against actual percentages. Colors and shapes show different types of areas, as labeled in the sample figures below the legend. The lines correspond to simple linear regressions of the form $y$ versus $x$ for each type of area within plot types.">>=
+p3 <- percentages %>% filter(abs(log(ratio)) < log(5)) %>%
+  mutate(frameframe = factor(frameframe, labels = c("Unframed", "Framed - Interior", "Framed - Exterior"))) %>%
   ggplot(aes(x = log(perc), y = log(howmuch),
-             colour=frameframe, shape=frameframe)) +
-  geom_abline(slope = 1, colour="grey50", size=0.5) +
+             colour = frameframe, shape = frameframe)) +
+  geom_abline(slope = 1, colour = "grey50", size = 0.5) +
   geom_point() +
-  facet_grid(.~Type, labeller="label_both") +
-  geom_smooth(method="lm", se=FALSE) +
+  facet_grid(.~Type, labeller = "label_both") +
+  # geom_smooth(method = "lm", se = FALSE, fullrange = T, linetype = "dotted") +
+  geom_smooth(method = "lm", se = FALSE) +
   theme_bw() +
   coord_fixed() +
-  theme(legend.position="right") +
-  scale_colour_manual("Plot Area", values=c("grey50", "#FC8D62", "#66C2A5")) +
+  theme(legend.position = "right") +
+  scale_colour_manual("Plot Area", values = c("grey50", "#FC8D62", "#66C2A5")) +
+  scale_shape_manual("Plot Area", values = c(2, 3, 0)) + 
+  # scale_x_continuous(limits = c(0, 4.5)) + scale_y_continuous(limits = c(0, 4.5)) +
   xlab("(Log) Percent Actual Area") +
-  ylab("(Log) Percent Estimated Area") +
-  scale_shape_discrete("Plot Area", solid=F)
+  ylab("(Log) Percent Estimated Area")
+
+p4 <- p3 + 
+  guides(colour = 'none', shape = 'none')
+
+p3grob <- ggplotGrob(p3)
+legend <- p3grob$grobs[[which(sapply(p3grob$grobs, function(x) x$name) == "guide-box")]]
+
+grid.arrange(p4, legend, p1, p2, layout_matrix = matrix(c(1, 1, 1, 1, 1, 2, 
+                                                          1, 1, 1, 1, 1, 3, 
+                                                          1, 1, 1, 1, 1, 4), 
+                                                        nrow = 3, byrow = T))
 @
 
 
-Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = frame piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by one of the participants $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece.
-<<demographics2, fig.width = '.7\\textwidth', fig.height = 4, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
-percentages %>% ggplot(aes(x = frameframe, fill=source)) +
-  geom_bar(position="dodge") +
-  facet_grid(Type~.) +
-  coord_flip() +
-  xlab("Piece Location") +
-  ylab("Number of responses") +
-  theme_bw() +
-  scale_fill_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900")) # https://brandcolors.net/
+Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$ (with 1 = mosaic, 2 = pie, and 3 = spine),  location $j$ (with 1 = piece in unframed plot, 2 = inside piece of a framed plot, and 3 = exterior(frame) piece of a framed plot), response $k$ where $k = 1, ..., n_{ij}$, where $n_{ij}$ is the number of evaluations for plot-frame location combination $ij$ by one of the participants $\ell$, $\ell = 1, ..., 95$. Let  $A_{ij}$ be the corresponding actual size of the piece.
+<<demographics2, fig.width = '\\textwidth', fig.height = 3, fig.cap="Breakdown of the number of evaluations by source (reddit or amazon) for all combinations of plot type and piece locations.">>=
+library(ggmosaic)
+percentages %>%
+  mutate(frameframe = factor(frameframe, labels = c("Unframed", "Framed  \n(Interior)  ", "  Framed\n  (Exterior)"))) %>%
+ggplot() + 
+  geom_mosaic(aes(x = product(frameframe), fill = source)) +
+  ylab("Source") + 
+  xlab("Piece Location") + 
+  facet_grid(. ~ Type) + 
+  scale_fill_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900")) + # https://brandcolors.net/
+  theme(axis.text.y = element_blank(), axis.text.x = element_text(size = 8)) + 
+  coord_fixed() + 
+  ggtitle("Responses by Source")
+
+# percentages %>% 
+#   ggplot(aes(x = frameframe, fill=source)) +
+#   geom_bar(position="dodge") +
+#   facet_grid(Type~.) +
+#   coord_flip() +
+#   xlab("Piece Location") +
+#   ylab("Number of responses") +
+#   theme_bw() +
+#   scale_fill_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900")) # https://brandcolors.net/
 
 @
 
@@ -1059,6 +1129,13 @@ baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|Respon
 #baseplus <- heavyLme(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type , ~1, groups = ~ResponseId, data = percentages, family = Student(df=5))
 
 # baseplus <- lmer(log(howmuch+5) ~ Type-1 + (frameframe*log(perc+5)):Type + (1|ResponseId), data = percentages)
+percentages <- percentages %>% 
+  mutate(
+    round_perc2.5 = ceiling(perc/2.5)*2.5, 
+    round_perc5 = ceiling(perc/5)*5
+  )
+baseplus_round2.5 <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(round_perc2.5)):Type + (1|ResponseId), data = percentages)
+baseplus_round5 <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(round_perc5)):Type + (1|ResponseId), data = percentages)
 
 remat <- summary(baseplus)
 sigma_u <- attr(remat$varcor$ResponseId, "stddev")
@@ -1090,7 +1167,9 @@ table <- table %>% mutate(
 )
 @
 
-Estimates for all of the fixed effects parameters are shown in \autoref{tab:results}. Variance estimates show that performance varies between participants  ($\widehat{\sigma_u} = \Sexpr{round(sigma_u, 3)}$) but  overall variability in evaluation of sizes is dominated by the residual error $\widehat{\sigma_e} = \Sexpr{round(sigma_eps, 3)}$.
+Estimates for all of the fixed effects parameters are shown in \autoref{tab:results}. Variance estimates show that performance varies between participants  ($\widehat{\sigma_u} = \Sexpr{round(sigma_u, 3)}$) but  overall variability in evaluation of sizes is dominated by the residual error $\widehat{\sigma_e} = \Sexpr{round(sigma_eps, 3)}$. 
+
+As humans generally estimate using round numbers\citet{baird1970relative}, we fit a model of the same structure using the actual size rounded up to the nearest 5. Coefficient estimates and conclusions drawn from this model are similar to those using the (not round) actual percentage values, indicating that our results are not due to human rounding tendencies. 
 
 <<re_results, results='asis', warning=FALSE, message=FALSE>>=
 xtab <- table %>% arrange(Type, Location)
@@ -1138,9 +1217,10 @@ library(lme4)
 m0 <- lmer(howmuch~-1+perc+isFrame*Type+(1|ResponseId), data=percentages)
 @
 
+
 Assessing the fitted model, there are three main conclusions:
 \begin{itemize}
-\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent estimates for a participant's assessment of an area of size $\log(A)$  in unframed (regular) mosaic, pie, and spine charts. Values of $\alpha_i = 0$ and $\beta_i=1$ indicate no bias; estimates with $\alpha_i + \beta_i\log(A) < \log(A)$ indicate a visual under-estimation of the area, while estimates with $\alpha_i + \beta_i\log(A) > \log(A)$  indicate an over-estimate. All parameter estimates $\beta_i$, $i=1,2,3$, are smaller than 1, indicating that participants tend to underestimate the size of large areas $A$. For small areas $A$ this effect is reversed: all parameter estimates $\alpha_i$, $i=1,2,3$ are positive, indicating that participants tend to overestimated the size of small areas. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to these biases, in particular $\alpha_1$ is not significantly different from zero; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) on the other hand exhibit the worst biases. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
+\item $\alpha_1 + \beta_1\log(A)$, $\alpha_2 + \beta_2\log(A)$, $\alpha_3 + \beta_3\log(A)$ represent estimates for a participant's assessment of an area of size $\log(A)$  in unframed (regular) mosaic, pie, and spine charts. Values of $\alpha_i = 0$ and $\beta_i=1$ indicate no bias; estimates with $\alpha_i + \beta_i\log(A) < \log(A)$ indicate a visual under-estimation of the area, while estimates with $\alpha_i + \beta_i\log(A) > \log(A)$  indicate an over-estimate. All parameter estimates $\beta_i$, $i=1,2,3$, are smaller than 1, indicating that participants tend to underestimate the size of large areas $A$. For small areas $A$ this effect is reversed: all parameter estimates $\alpha_i$, $i=1,2,3$ are positive, indicating that participants tend to overestimated the size of small areas. Spine plots ($\hat\alpha_3$ = \Sexpr{round(xtab[13,4], 3)}, $\hat\beta_3$ = \Sexpr{round(xtab[14,4], 3)}) are less prone to these biases, in particular $\alpha_3$ is not significantly different from zero; Mosaic plots ($\hat\alpha_1$ = \Sexpr{round(xtab[1,4], 3)}, $\hat\beta_1$ = \Sexpr{round(xtab[2,4], 3)}) on the other hand exhibit the worst biases. The two-dimensional nature of area assessment in mosaic plots results in poorer estimates, which is consistent with our original hypothesis.
 \item Estimation of the inside portion of framed plots is not significantly different from estimation of portions of unframed plots in mosaics or pie charts, as both $\alpha_{\cdot 2}$ and $\beta_{\cdot 2}$ are not significantly different from the unframed plot estimates. It is possible that the known bias towards under-estimation of area is counteracted by the over-estimation of the area of the inside portion of the framed plot (and corresponding under-estimation of the framed region).
 For spine plots, estimation of the inside portion shows a larger bias towards over-estimation of small areas; that is, $\alpha_{22}$ = \Sexpr{round(xtab[15,4], 3)}. Even in framed spine plots, though, the small area over-estimation bias is smaller than in unframed mosaic or pie charts.
 \item Estimation of the framed portion of the plot is significantly worse than estimation of the same plot area in the unframed version of the plot for all three types of charts (though spine plots are only marginally significant). In the unframed version of mosaic and pie charts, the unaccommodated area tends to be over-estimated for small areas and approximately accurate for large areas; in the framed versions, the framed area tends to be under-estimated.
@@ -1149,7 +1229,7 @@ For spine plots, estimation of the inside portion shows a larger bias towards ov
 From these observations, we can conclude that framed plots are perceptually not an ideal choice, even though they are aesthetically pleasing. When spine plots are framed, area estimation does not suffer significantly, but with both pie and mosaic plots, it does; this inconsistency is likely due to the different perceptual demands of pie charts and mosaic plots compared to spine plots. Pie charts require estimation of the relative angle of the slice, which inherently requires consideration of two dimensions simultaneously. Spine plots require consideration of the relative length of a single dimension; \citet{cleveland:1984} ranks this as one of the easiest psychophysical estimation tasks.
 
 \begin{figure}
-  \subfloat[Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.]{
+  \subfloat[Variability is somewhat lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.]{
   \includegraphics[width=0.48\textwidth]{figure/participant-variability-1.pdf}
   \label{fig:participantvar}
   }
@@ -1163,15 +1243,18 @@ From these observations, we can conclude that framed plots are perceptually not 
 <<participant-variability, include = F,  eval=T, echo=FALSE, fig.width = 3.5, fig.height = 2.1,  fig.cap = "Variability is lower in responses from participants recruited from reddit compared with participants recruited from Amazon Turk.">>=
 percentages$source <- factor(percentages$source)
 percentages$source <- factor(percentages$source,
-                             levels=c("reddit", "amazon"))
+                             levels = c("reddit", "amazon"))
 
 percentages %>%
   na.omit() %>%
-  ggplot(aes(x = source, y= log(howmuch/perc) )) +
-    geom_boxplot() +
+  ggplot(aes(x = source, y = log(howmuch/perc) )) +
+  geom_jitter(aes(x = source, y = log(howmuch/perc), colour = source), alpha = .25, width = .33) + 
+    geom_boxplot(outlier.shape = NA, fill = 'transparent') +
     theme_bw() +
     ylab("Log (Estimated Size/Actual Size)") +
-    xlab("Recruitment source") +
+    xlab("Recruitment source") + 
+  scale_colour_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900"), guide = 'none')  +
+  theme(axis.text.y = element_text(angle = 90, hjust = .5, vjust = .5)) + 
   coord_flip()
 @
 
@@ -1207,7 +1290,7 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
 
 @
 
-Our participants were drawn from two different populations -- reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see Figure\autoref{fig:participantvar}). Figure\autoref{fig:participantpref} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms.
+Our participants were drawn from two different populations -- reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see Figure\autoref{fig:participantvar}). Figure\autoref{fig:participantpref} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms. We expected that redditors might be more accurate due to greater interest in the topic; however, other than the lower variability of responses, we did not detect any significant difference between the two populations. This may indicate that the biases responsible for estimation errors are perceptual in nature and may not decrease with education or exposure. 
 
 \section{Conclusion}
 \label{sec:conc}
