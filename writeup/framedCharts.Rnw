@@ -359,7 +359,7 @@ Between 1870 and 1920, the US Census Bureau published a Statistical Atlas to map
 
 The charts in the 1870 Statistical Atlas were printed by Julius Bien's publishing house~\citep{bien, atlas-review} using lithography. This process involved creating separate plates for each color utilized in the chart by hand, and then lining up each color precisely when the images were printed. Modern methods are much quicker and easier on the visualization designer; we only have to write computer code to describe the plot, and the computer renders the plot in a minuscule fraction of the time compared to what it would take to draw the same plot by hand.
 
-In this paper, we describe the methodology used to re-create plots from the 1870 statistical atlas, first by recreating the plots as they were presented, and then re-imagining the plots to provide a more visually optimal display that is similar to the original. We assess the accuracy of judgments made from these plots with a user study, and discuss the implications of the study on modern plot design.
+In this paper, we describe the methodology used to re-create plots from the 1870 Statistical Atlas, first by recreating the plots as they were presented, and then re-imagining the plots to provide a more visually optimal display that is similar to the original. We assess the accuracy of judgments made from these plots with a user study, and discuss the implications of the study on modern plot design.
 
 \section{Statistical Archaeology}
 \label{sec:statarch}
