@@ -54,7 +54,7 @@
 
 \if0\blind
 {
-\title{\bf Framed! Reproducing 150 year old charts}
+\title{\bf Framed! Reproducing and Revisiting 150 year old charts}
   \author{Susan VanderPlas\\
   %\thanks{
   %  The authors gratefully acknowledge \textit{please remember to list all relevant funding sources in the unblinded version}}\hspace{.2cm}\\
@@ -698,7 +698,7 @@ p <- cl %>%
   filter(State %in% c("Michigan", "Minnesota", "Mississippi"), Number > 0) %>%
   mutate(State = toupper(State)) %>%
   mutate(Denomination = factor(Denomination, levels=rev(levels(Denomination)))) %>%
-  ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination), 
+  ggplot() + geom_mosaic(aes(weight = Number, x = product(Denomination),
                              fill = Denomination), offset=0, alpha = 1) +
   facet_grid(.~State, drop = TRUE, switch = "both") +
   scale_fill_manual(values = rev(rev(colHEX)[-c(3:4)])) +
@@ -769,7 +769,7 @@ In order to quantify the perceptual biases induced by framed charts, we designed
 \label{sec:meth}
 
 \subsection{Study Design}
-\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. Compared to demographics of the general US population~\citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender. Reddit participants were recruited from two subreddits which are data and visualization related, and therefore might be expected to be more educated and proficient at reading charts and graphs than the general population; they were also volunteers and did not receive any remuneration, whereas Amazon Mechanical Turk users received some minimal compensation for their participation. 
+\paragraph{Participants} A total of $n= 98$ participants were recruited using reddit ($n=32$) and Amazon Mechanical Turk ($n=63$). Participants were required to be over 18. We collected information about their age range, gender, and education levels. Compared to demographics of the general US population~\citep[as published in][]{census2016} we see in \autoref{fig:demographics2} that survey participants are generally younger and more highly educated. This effect is even more pronounced amoung participants recruited from reddit than amazon turkers. In addition, redditors are slightly more likely to identify as male or non-binary gender. Reddit participants were recruited from two subreddits which are data and visualization related, and therefore might be expected to be more educated and proficient at reading charts and graphs than the general population; they were also volunteers and did not receive any remuneration, whereas Amazon Mechanical Turk users received some minimal compensation for their participation.
 
 
 <<demo0, echo=FALSE, fig.height=2.25, fig.width=3.5, include=F>>=
@@ -958,17 +958,17 @@ percentages %>% count(ResponseId) %>%
 \subsection{Results}
 <<miniplot1,echo = F, include = F>>=
 miniplots <- createSpines(cl_data, "Illinois")
-p1 <- miniplots[[1]] + 
-  annotate("text", x = .95, y = .5, label = "TRUE", size = 2.25) + 
-  annotate("text", x = .5, y = .2, label = "FALSE", angle = 90, size = 2.25) + 
+p1 <- miniplots[[1]] +
+  annotate("text", x = .95, y = .5, label = "TRUE", size = 2.25) +
+  annotate("text", x = .5, y = .2, label = "FALSE", angle = 90, size = 2.25) +
   theme_void() + coord_flip()
 
-p2 <- miniplots[[2]] + 
-  annotate("text", x = 1, y = .87, label = "TRUE", size = 2.25, angle = 90) + 
-  annotate("text", x = 1, y = .125, label = "FALSE", size = 2.25, angle = 90) + 
-  guides(fill = 'none') + 
-  scale_x_discrete(expand = c(0, .5)) + 
-  theme_void() + 
+p2 <- miniplots[[2]] +
+  annotate("text", x = 1, y = .87, label = "TRUE", size = 2.25, angle = 90) +
+  annotate("text", x = 1, y = .125, label = "FALSE", size = 2.25, angle = 90) +
+  guides(fill = 'none') +
+  scale_x_discrete(expand = c(0, .5)) +
+  theme_void() +
   coord_flip()
 @
 
@@ -979,7 +979,7 @@ p3 <- percentages %>%
   ggplot(aes(x = log(perc), y = log(howmuch))) +
   geom_abline() +
   geom_point(aes(shape = isFrame, colour = isFrame)) +
-  facet_grid(`Framed Plot`~Type, labeller = "label_both") + 
+  facet_grid(`Framed Plot`~Type, labeller = "label_both") +
    scale_x_continuous(limits = c(0, 4.5)) + scale_y_continuous(limits = c(0, 4.5)) +
   xlab("(Log) Actual Area") +
   ylab("(Log) Estimated Area") +
@@ -987,16 +987,16 @@ p3 <- percentages %>%
   coord_fixed() +
   scale_colour_brewer("Unacc.\nestimate", palette = "Set1") +
   scale_shape_manual("Unacc.\nestimate", values = c("FALSE" = 3, "TRUE" = 0), guide = "legend") +
-  theme(legend.position = "right") 
-p4 <- p3 + 
+  theme(legend.position = "right")
+p4 <- p3 +
   guides(colour = 'none', shape = 'none')
 
 p3grob <- ggplotGrob(p3)
 legend <- p3grob$grobs[[which(sapply(p3grob$grobs, function(x) x$name) == "guide-box")]]
 
-grid.arrange(p4, legend, p1, p2, layout_matrix = matrix(c(1, 1, 1, 1, 1, 2, 
-                                                          1, 1, 1, 1, 1, 3, 
-                                                          1, 1, 1, 1, 1, 4), 
+grid.arrange(p4, legend, p1, p2, layout_matrix = matrix(c(1, 1, 1, 1, 1, 2,
+                                                          1, 1, 1, 1, 1, 3,
+                                                          1, 1, 1, 1, 1, 4),
                                                         nrow = 3, byrow = T))
 @
 
@@ -1012,22 +1012,22 @@ Figure~\ref{fig:check0} shows scatterplots of estimated area size versus actual 
 
 There are also quite a few very extreme differences between estimated and actual size of areas apparent, particularly for small areas in mosaic plots and un-framed pie charts. These extreme differences may have resulted from typos, interrupted answers (where the question advances before the participant has finished typing their answer), or participant confusion. In the most extreme example, a participant estimated the size of a pie slice to be 70\%, when it was in fact less than 3\% of the chart's area. In addition, several participants entered an estimate of zero for a plot area, which would also indicate a lack of understanding of some portion of the task. Estimates which are more than five times above or below the actual magnitude have been excluded from further analysis in this study (\Sexpr{sum(abs(log(percentages$ratio)) > log(5))} out of a total of \Sexpr{nrow(percentages)} evaluations). The specific value of 5x as a cutoff is somewhat arbitrary - we identified clear errors (e.g. 0 as an estimate, a response of 60\% for an actual area of about 10\%, etc.) and used a cutoff value which excluded those obvious errors but which preserves much of the rest of the data. We cannot determine why these estimates were so far off of the actual, but it is likely that there was some fundamental issue affecting the participant responses which is not related to the psychophysical effects of area estimation.
 
-Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot. As an example, in  \autoref{fig:combinations}, region C of subplot (a) would be a framed plot frame piece, region B of subplot (a) would be a frame plot inside piece, and regions B and C of subplot (d) would be the corresponding unframed pieces. 
+Because estimates of pieces in unframed designs corresponding to the frame of framed designs do not appear different from pieces inside, we only distinguish between three types of pieces: pieces of an unframed plot, pieces of the frame in a framed plot and pieces within the plot of a framed plot. As an example, in  \autoref{fig:combinations}, region C of subplot (a) would be a framed plot frame piece, region B of subplot (a) would be a frame plot inside piece, and regions B and C of subplot (d) would be the corresponding unframed pieces.
 
 As a measure of the error we compare the log estimated size of a portion of the chart to the log actual size of the portion of the chart. This approach has the advantage of relating to the psychophysics equation used in~\citet{size}, $A_{est} \propto A_{act}^\beta$, where $\beta$ has historically been estimated to be between 0.6 and 0.9, depending on the task. We add a constant to this proportional relationship to create an equation which can be fit using standard statistical methods; $A_{est} = \tilde{\alpha} A_{act}^\beta$, which can be written in terms of logs as $\log A_{est} = \alpha + \beta \log A_{act}$. \autoref{fig:model} shows scatterplots of log estimated versus log actual sizes of areas, with simple linear regressions summarising the relationship between estimated and actual size for each of the plot types and each of the types of pieces.
 <<miniplot,echo = F, include = F>>=
 miniplots <- createSpines(cl_data, "Maine")
-p1 <- miniplots[[1]] + 
-  annotate("text", x = .5, y = .2, label = "Framed - Interior", size = 2.25, angle = 90) + 
-  annotate("text", x = .965, y = .5, label = "Framed - Exterior", size = 2.25) + 
+p1 <- miniplots[[1]] +
+  annotate("text", x = .5, y = .2, label = "Framed - Interior", size = 2.25, angle = 90) +
+  annotate("text", x = .965, y = .5, label = "Framed - Exterior", size = 2.25) +
   theme_void() + coord_flip()
 
-p2 <- miniplots[[2]] + 
-  annotate("text", x = 1, y = .125, label = "Unframed", size = 2.25, angle = 90) + 
-  annotate("text", x = 1, y = .87, label = "Unframed", size = 2.25, angle = 90) + 
-  guides(fill = 'none') + 
-  scale_x_discrete(expand = c(0, .5)) + 
-  theme_void() + 
+p2 <- miniplots[[2]] +
+  annotate("text", x = 1, y = .125, label = "Unframed", size = 2.25, angle = 90) +
+  annotate("text", x = 1, y = .87, label = "Unframed", size = 2.25, angle = 90) +
+  guides(fill = 'none') +
+  scale_x_discrete(expand = c(0, .5)) +
+  theme_void() +
   coord_flip()
 @
 
@@ -1045,20 +1045,20 @@ p3 <- percentages %>% filter(abs(log(ratio)) < log(5)) %>%
   coord_fixed() +
   theme(legend.position = "right") +
   scale_colour_manual("Plot Area", values = c("grey50", "#FC8D62", "#66C2A5")) +
-  scale_shape_manual("Plot Area", values = c(2, 3, 0)) + 
+  scale_shape_manual("Plot Area", values = c(2, 3, 0)) +
   # scale_x_continuous(limits = c(0, 4.5)) + scale_y_continuous(limits = c(0, 4.5)) +
   xlab("(Log) Percent Actual Area") +
   ylab("(Log) Percent Estimated Area")
 
-p4 <- p3 + 
+p4 <- p3 +
   guides(colour = 'none', shape = 'none')
 
 p3grob <- ggplotGrob(p3)
 legend <- p3grob$grobs[[which(sapply(p3grob$grobs, function(x) x$name) == "guide-box")]]
 
-grid.arrange(p4, legend, p1, p2, layout_matrix = matrix(c(1, 1, 1, 1, 1, 2, 
-                                                          1, 1, 1, 1, 1, 3, 
-                                                          1, 1, 1, 1, 1, 4), 
+grid.arrange(p4, legend, p1, p2, layout_matrix = matrix(c(1, 1, 1, 1, 1, 2,
+                                                          1, 1, 1, 1, 1, 3,
+                                                          1, 1, 1, 1, 1, 4),
                                                         nrow = 3, byrow = T))
 @
 
@@ -1068,17 +1068,17 @@ Let $E_{ijk\ell}$ be the estimated size of the area for a piece in plot type $i$
 library(ggmosaic)
 percentages %>%
   mutate(frameframe = factor(frameframe, labels = c("Unframed", "Framed  \n(Interior)  ", "  Framed\n  (Exterior)"))) %>%
-ggplot() + 
+ggplot() +
   geom_mosaic(aes(x = product(frameframe), fill = source)) +
-  scale_y_productlist(name = "Source") + 
-  scale_x_productlist(name = "Piece Location") + 
-  facet_grid(. ~ Type) + 
+  scale_y_productlist(name = "Source") +
+  scale_x_productlist(name = "Piece Location") +
+  facet_grid(. ~ Type) +
   scale_fill_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900")) + # https://brandcolors.net/
-  theme(axis.text.y = element_blank(), axis.text.x = element_text(size = 8)) + 
-  coord_fixed() + 
+  theme(axis.text.y = element_blank(), axis.text.x = element_text(size = 8)) +
+  coord_fixed() +
   ggtitle("Responses by Source")
 
-# percentages %>% 
+# percentages %>%
 #   ggplot(aes(x = frameframe, fill=source)) +
 #   geom_bar(position="dodge") +
 #   facet_grid(Type~.) +
@@ -1129,9 +1129,9 @@ baseplus <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type + (1|Respon
 #baseplus <- heavyLme(log(howmuch) ~ Type-1 + (frameframe*log(perc)):Type , ~1, groups = ~ResponseId, data = percentages, family = Student(df=5))
 
 # baseplus <- lmer(log(howmuch+5) ~ Type-1 + (frameframe*log(perc+5)):Type + (1|ResponseId), data = percentages)
-percentages <- percentages %>% 
+percentages <- percentages %>%
   mutate(
-    round_perc2.5 = ceiling(perc/2.5)*2.5, 
+    round_perc2.5 = ceiling(perc/2.5)*2.5,
     round_perc5 = ceiling(perc/5)*5
   )
 baseplus_round2.5 <- lmer(log(howmuch) ~ Type-1 + (frameframe*log(round_perc2.5)):Type + (1|ResponseId), data = percentages)
@@ -1167,9 +1167,9 @@ table <- table %>% mutate(
 )
 @
 
-Estimates for all of the fixed effects parameters are shown in \autoref{tab:results}. Variance estimates show that performance varies between participants  ($\widehat{\sigma_u} = \Sexpr{round(sigma_u, 3)}$) but  overall variability in evaluation of sizes is dominated by the residual error $\widehat{\sigma_e} = \Sexpr{round(sigma_eps, 3)}$. 
+Estimates for all of the fixed effects parameters are shown in \autoref{tab:results}. Variance estimates show that performance varies between participants  ($\widehat{\sigma_u} = \Sexpr{round(sigma_u, 3)}$) but  overall variability in evaluation of sizes is dominated by the residual error $\widehat{\sigma_e} = \Sexpr{round(sigma_eps, 3)}$.
 
-Humans generally estimate using round numbers~\citet{baird1970relative}. Participants in our study showed the same preference, as can be seen in Figure \autoref{fig:participantpref}. We therefore fit a model of the same structure using the actual size rounded up to the nearest 5. Coefficient estimates and conclusions drawn from this model are similar to those using the (not rounded) actual percentage values, indicating that our results are not due to human rounding tendencies. 
+Humans generally estimate using round numbers~\citet{baird1970relative}. Participants in our study showed the same preference, as can be seen in Figure \autoref{fig:participantpref}. We therefore fit a model of the same structure using the actual size rounded up to the nearest 5. Coefficient estimates and conclusions drawn from this model are similar to those using the (not rounded) actual percentage values, indicating that our results are not due to human rounding tendencies.
 
 <<re_results, results='asis', warning=FALSE, message=FALSE>>=
 xtab <- table %>% arrange(Type, Location)
@@ -1248,13 +1248,13 @@ percentages$source <- factor(percentages$source,
 percentages %>%
   na.omit() %>%
   ggplot(aes(x = source, y = log(howmuch/perc) )) +
-  geom_jitter(aes(x = source, y = log(howmuch/perc), colour = source), alpha = .25, width = .33) + 
+  geom_jitter(aes(x = source, y = log(howmuch/perc), colour = source), alpha = .25, width = .33) +
     geom_boxplot(outlier.shape = NA, fill = 'transparent') +
     theme_bw() +
     ylab("Log (Estimated Size/Actual Size)") +
-    xlab("Recruitment source") + 
+    xlab("Recruitment source") +
   scale_colour_manual("", values = c(reddit = "#5f99cf", amazon = "#ff9900"), guide = 'none')  +
-  theme(axis.text.y = element_text(angle = 90, hjust = .5, vjust = .5)) + 
+  theme(axis.text.y = element_text(angle = 90, hjust = .5, vjust = .5)) +
   coord_flip()
 @
 
@@ -1290,7 +1290,7 @@ percentages %>% na.omit() %>% ggplot(aes(x = perc, y = howmuch)) +
 
 @
 
-Our participants were drawn from two different populations -- reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see Figure\autoref{fig:participantvar}). Figure\autoref{fig:participantpref} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms. We expected that redditors might be more accurate due to greater interest in the topic; however, other than the lower variability of responses, we did not detect any significant difference between the two populations. This may indicate that the biases responsible for estimation errors are perceptual in nature and may not decrease with education or exposure. 
+Our participants were drawn from two different populations -- reddit and amazon mechanical turk. On reddit, participants were recruited from \href{http://reddit.com/r/samplesize}{/r/samplesize} and \href{http://reddit.com/r/visualization}{/r/visualization}; both communities are interested in data or data visualization, and thus are more likely to be data-literate than the general population. This may explain why responses from redditors have lower variability than responses from amazon mechanical turkers (see Figure\autoref{fig:participantvar}). Figure\autoref{fig:participantpref} shows responses from redditors and mechanical turkers. On the left side of the figure we see that both groups tend to round their area estimates to the nearest 5\%, as seen in the modes of the histograms. We expected that redditors might be more accurate due to greater interest in the topic; however, other than the lower variability of responses, we did not detect any significant difference between the two populations. This may indicate that the biases responsible for estimation errors are perceptual in nature and may not decrease with education or exposure.
 
 \section{Conclusion}
 \label{sec:conc}
