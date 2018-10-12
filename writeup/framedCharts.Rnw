@@ -387,7 +387,7 @@ In this paper, we describe the methodology used to re-create plots from the 1870
 \caption{Overview of plate \#32, with zoom-ins to different components.}
 \end{figure}
 
-Plates 31 (\autoref{fig:plate31}) and 32 (\autoref{fig:plate32}) of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure\autoref{fig:header}) and a legend detailing the color choices (see Figure\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure\autoref{fig:us}), and a series of small multiples~\citep{tufte} or trellis plots~\citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic~\citep{hartigan:1981, friendly, prodplots} or Marimekko plots~\citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot~\citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
+Plates 31 (\autoref{fig:plate31}) and 32 (Figure \ref{fig:plate32}) of the Statistical Atlas are very similar in their setup and structure: at the top of the chart we find an in-depth description (see the legend for plate \#32 in Figure\autoref{fig:header}) and a legend detailing the color choices (see Figure\autoref{fig:legend}). In the top left corner, there is an US-wide aggregate of the situation (shown in Figure\autoref{fig:us}), and a series of small multiples~\citep{tufte} or trellis plots~\citep{becker:1996}, one for each state. In Plate 32, the plots are what are now known as mosaic~\citep{hartigan:1981, friendly, prodplots} or Marimekko plots~\citep{marimekkochart}. In 1874 these were a novel type of chart; Georg von Mayr, who is sometimes credited with publishing the first mosaic plot~\citep[see][]{friendly}, didn't publish his form of mosaic plots until 1877.
 
 
 \begin{figure}
@@ -793,8 +793,8 @@ levels(demographics$Gender) <- c("Male", "Female", "Other", "Other")
 
 demographics %>%
   ggplot(aes(x = source, fill=Gender)) +
-  geom_bar(position = position_fill(reverse = TRUE)) +
-  scale_fill_manual(values = c("steelblue", "darkorange", "grey20"), na.value = "grey80") +
+  geom_bar(position = position_fill(reverse = TRUE), color = "black") +
+  scale_fill_manual(values = c("steelblue", "sienna2", "grey20"), na.value = "grey80") +
   coord_flip() +
   theme_bw() +
   theme(legend.position="bottom") +
@@ -939,7 +939,7 @@ Each participant was asked to estimate the area of a marked region of 18 plots (
 \caption{\label{fig:combinations} Overview of the six plots shown to one third of the participants: all six combinations of plot types and designs are covered. The yellow `A', `B', and `C's mark the areas that participants are asked to estimate. Three areas in each of the plots were selected for estimation. }
 \end{figure}
 
-Three plot types were used in this study -- mosaic plots (as in Figure~\autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states \hh{(representative in the sense, that the three selected states provided an exampled for a small, medium, and large  missing/unaccounted population)}, to provide replication\footnote{Pie charts: Alabama, Illinois, Indiana; Mosaic plots: California, Maine, Ohio; Spine plots: Connecticut, Michigan, Oregon}. Finally, three sections of each plot were selected for estimation -- a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, and each participant evaluated a single set of plots.
+Three plot types were used in this study -- mosaic plots (as in Figure~\autoref{fig:plate32}), spine plots (as in \autoref{fig:plate31}), and pie charts (using data from \autoref{fig:plate31}). Each plot type was rendered in a framed version and in an unframed version. For each plot type, three states were chosen as ``representative" states (representative in the sense that the three selected states provided an example of small, medium, and large  missing/unaccounted populations), to provide replication\footnote{Pie charts: Alabama, Illinois, Indiana; Mosaic plots: California, Maine, Ohio; Spine plots: Connecticut, Michigan, Oregon}. Finally, three sections of each plot were selected for estimation -- a small, medium, and large section. Thus, a total of 54 images were used in the study. These images were assembled into three sets of 18 plots, and each participant evaluated a single set of plots.
 
 Each set of 18 plots was chosen such that all combinations of framed and unframed plot types were included. For each plot type $\times$ frame combination, the participant evaluated a small, medium, and large region in the same plot. Thus, if a participant evaluated the framed pie chart for Illinois, they might evaluate the unframed pie chart for Alabama. At the end of the evaluation, a participant saw plots from six states, corresponding to each combination of plot type and frame condition.
 
@@ -1169,7 +1169,7 @@ table <- table %>% mutate(
 
 Estimates for all of the fixed effects parameters are shown in \autoref{tab:results}. Variance estimates show that performance varies between participants  ($\widehat{\sigma_u} = \Sexpr{round(sigma_u, 3)}$) but  overall variability in evaluation of sizes is dominated by the residual error $\widehat{\sigma_e} = \Sexpr{round(sigma_eps, 3)}$. 
 
-Humans generally estimate using round numbers~\citet{baird1970relative}. \hh{Participants in our study showed the same preference, as can be seen in \autoref{fig:participantpref}. We therefore} fit a model of the same structure using the actual size rounded up to the nearest 5. Coefficient estimates and conclusions drawn from this model are similar to those using the (not rounded) actual percentage values, indicating that our results are not due to human rounding tendencies. 
+Humans generally estimate using round numbers~\citet{baird1970relative}. Participants in our study showed the same preference, as can be seen in Figure \autoref{fig:participantpref}. We therefore fit a model of the same structure using the actual size rounded up to the nearest 5. Coefficient estimates and conclusions drawn from this model are similar to those using the (not rounded) actual percentage values, indicating that our results are not due to human rounding tendencies. 
 
 <<re_results, results='asis', warning=FALSE, message=FALSE>>=
 xtab <- table %>% arrange(Type, Location)
