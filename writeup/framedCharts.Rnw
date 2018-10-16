@@ -61,7 +61,7 @@
     CSAFE, Iowa State University\\
     and \\
     Ryan C Goluch \\
-    Department of Engineering, Iowa State University\\
+    Department of Electrical \& Computer Engineering, Iowa State University\\
     and \\
     Heike Hofmann\\
     Department of Statistics, Iowa State University}
