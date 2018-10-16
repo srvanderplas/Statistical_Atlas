@@ -60,7 +60,7 @@
   %  The authors gratefully acknowledge \textit{please remember to list all relevant funding sources in the unblinded version}}\hspace{.2cm}\\
     CSAFE, Iowa State University\\
     and \\
-    Ryan C Gorluch \\
+    Ryan C Goluch \\
     Department of Engineering, Iowa State University\\
     and \\
     Heike Hofmann\\
