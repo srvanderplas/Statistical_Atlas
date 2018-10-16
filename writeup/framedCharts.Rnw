@@ -4,6 +4,8 @@
 \usepackage{enumerate}
 \usepackage{natbib}
 
+% \usepackage[markers,nolists]{endfloat}
+
 \newcommand{\blind}{0}
 
 \addtolength{\oddsidemargin}{-.75in}%
@@ -23,7 +25,6 @@
 \usepackage{subfig}
 \usepackage{paralist}
 \usepackage{hyperref}
-
 \usepackage[export]{adjustbox}
 \usepackage{placeins}
 %%% Settings %%%
